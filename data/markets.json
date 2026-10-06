@@ -1,0 +1,290 @@
+{
+ "agora-public-market": {
+  "name": "Agora Public Market/San Juan",
+  "lat": 14.60516,
+  "lng": 121.02328,
+  "area": "137405000",
+  "osm": "Agora Public Market, N. Domingo Street, Rivera, Pedro Cruz, 1st District, San Juan, Eastern Manila District, Metro Manil"
+ },
+ "alabang-central-market": {
+  "name": "Alabang Central Market",
+  "lat": 14.41928,
+  "lng": 121.04453,
+  "area": "137603000",
+  "manual": true,
+  "note": "OSM, checked by hand"
+ },
+ "balintawak-market": {
+  "name": "Balintawak (Cloverleaf) Market",
+  "lat": 14.65636,
+  "lng": 121.00248,
+  "area": "137502000",
+  "osm": "Balintawak Market, Balingasa, Balintawak, 1st District, Quezon City, Eastern Manila District, Metro Manila, 1115, Philip"
+ },
+ "bicutan-market": {
+  "name": "Bicutan Market",
+  "lat": 14.4861,
+  "lng": 121.04587,
+  "area": "137607000",
+  "osm": "Bicutan Market, Tanyag, San Martin de Porres, Parañaque District 2, Parañaque, Southern Manila District, Metro Manila, 1"
+ },
+ "cartimar-market": {
+  "name": "Cartimar Market",
+  "lat": 14.5501,
+  "lng": 120.99611,
+  "area": "137605000",
+  "osm": "Cartimar Market, Mabolo Street, Barangay 39, Zone 5, District 1, Pasay, Southern Manila District, Metro Manila, 1306, Ph"
+ },
+ "commonwealth-market": {
+  "name": "Commonwealth Market/Quezon City",
+  "lat": 14.69541,
+  "lng": 121.08699,
+  "area": "137404000",
+  "osm": "Commonwealth Market, Commonwealth Avenue, Commonwealth, 2nd District, Quezon City, Eastern Manila District, Metro Manila"
+ },
+ "dagonoy-market": {
+  "name": "Dagonoy Market",
+  "lat": 14.57211,
+  "lng": 121.00493,
+  "area": "137602000",
+  "osm": "San Andres Public Market, Dagonoy Street, San Andres Bukid, Fifth District, Manila, Capital District, Metro Manila, 1017"
+ },
+ "dagonoy-market-farmers-market": {
+  "name": "Dagonoy Market Farmers Market",
+  "manual": true,
+  "note": "merged label of two markets in some reports"
+ },
+ "farmers-market": {
+  "name": "Farmers Market",
+  "lat": 14.6193,
+  "lng": 121.05239,
+  "area": "137405000",
+  "osm": "Farmers' Market, General Araneta Avenue, Araneta City, Socorro, Cubao, 3rd District, Quezon City, Eastern Manila Distric"
+ },
+ "grace-marketplace": {
+  "name": "Grace Marketplace",
+  "lat": 14.54552,
+  "lng": 121.0696,
+  "area": "137606000",
+  "manual": true,
+  "approx": true,
+  "note": "city centroid; exact spot unknown"
+ },
+ "guadalupe-public-market": {
+  "name": "Guadalupe Public Market/Makati",
+  "lat": 14.56598,
+  "lng": 121.04591,
+  "area": "137602000",
+  "manual": true,
+  "note": "OSM, checked by hand"
+ },
+ "hulong-duhat-public-market": {
+  "name": "Hulong Duhat Public Market",
+  "lat": 14.67604,
+  "lng": 120.94118,
+  "area": "137503000",
+  "osm": "Hulong Duhat Public Market, Women's Club Street, Flores, Malabon, Northern Manila District, Metro Manila, 1471, Philippi"
+ },
+ "kamuning-public-market": {
+  "name": "Kamuning Public Market",
+  "lat": 14.67656,
+  "lng": 121.05968,
+  "area": "137404000",
+  "manual": true,
+  "approx": true,
+  "note": "city centroid; exact spot unknown"
+ },
+ "klmv-new-karuhatan-market": {
+  "name": "KLMV New Karuhatan Market",
+  "lat": 14.68995,
+  "lng": 120.97445,
+  "area": "137504000",
+  "manual": true,
+  "note": "OSM, checked by hand"
+ },
+ "la-huerta-market": {
+  "name": "La Huerta Market/Parañaque",
+  "lat": 14.49855,
+  "lng": 120.99103,
+  "area": "137604000",
+  "osm": "Wet Market Goods Store, La Huerta, Parañaque District 1, Parañaque, Southern Manila District, Metro Manila, Philippines"
+ },
+ "malabon-central-market": {
+  "name": "Malabon Central Market",
+  "lat": 14.67499,
+  "lng": 120.96179,
+  "area": "137502000",
+  "osm": "Dagat-dagatan Central Market, Sapsap Street, Barangay 8, Zone 1, Dagat-Dagatan, District 2, Malabon, Northern Manila Dis",
+  "manual": true,
+  "approx": true,
+  "note": "city centroid; exact spot unknown"
+ },
+ "mandaluyong-public-market-i": {
+  "name": "Mandaluyong Public Market",
+  "lat": 14.59159,
+  "lng": 121.02517,
+  "area": "137405000",
+  "osm": "Mandaluyong Public Market, General Kalentong Street, Pag-asa, Mandaluyong, Eastern Manila District, Metro Manila, 1067, "
+ },
+ "mandaluyong-public-market-ii": {
+  "name": "Mandaluyong Public Market II",
+  "lat": 14.58738,
+  "lng": 121.03773,
+  "area": "137401000",
+  "osm": "Mandaluyong Public Market II, Fabella Road, Block 41 Zone 8, Addition Hills, Mandaluyong, Eastern Manila District, Metro"
+ },
+ "marikina-public-market": {
+  "name": "Marikina Public Market",
+  "lat": 14.633,
+  "lng": 121.09621,
+  "area": "137402000",
+  "osm": "Marikina Public Market - Wet Section, Padre Burgos Street, Marikina City Market (Bayan), Santa Elena, District I, Mariki"
+ },
+ "maypajo-public-market": {
+  "name": "Maypajo Public Market/Caloocan",
+  "lat": 14.63785,
+  "lng": 120.974,
+  "area": "137501000",
+  "manual": true,
+  "note": "OSM, checked by hand"
+ },
+ "mega-q-mart": {
+  "name": "Mega Q-mart/Quezon City",
+  "lat": 14.67656,
+  "lng": 121.05968,
+  "area": "137404000",
+  "manual": true,
+  "approx": true,
+  "note": "city centroid; exact spot unknown"
+ },
+ "munoz-market": {
+  "name": "Muñoz Market/Quezon City",
+  "lat": 14.65698,
+  "lng": 121.01996,
+  "area": "137404000",
+  "osm": "Muñoz Market, EDSA, Veterans Village, Project 7, 1st District, Quezon City, Eastern Manila District, Metro Manila, 1105,"
+ },
+ "murphy-public-market": {
+  "name": "Murphy Public Market",
+  "lat": 14.61558,
+  "lng": 121.06235,
+  "area": "137403000",
+  "osm": "Murphy Public Market, 1st Camarilla Street, San Roque, Cubao, 3rd District, Quezon City, Eastern Manila District, Metro "
+ },
+ "mutya-ng-pasig-mega-market": {
+  "name": "Mutya ng Pasig Mega Market",
+  "lat": 14.60059,
+  "lng": 121.07523,
+  "area": "137403000",
+  "manual": true,
+  "approx": true,
+  "note": "city centroid; exact spot unknown"
+ },
+ "navotas-agora-market": {
+  "name": "Navotas Agora Market",
+  "lat": 14.64421,
+  "lng": 120.95409,
+  "area": "137503000",
+  "osm": "Agora Market, North Bay Boulevard, Cocomo Island, NBBS Proper, Navotas, Northern Manila District, Metro Manila, 1472, Ph"
+ },
+ "new-las-pinas-public-market": {
+  "name": "New Las Piñas City Public Market",
+  "lat": 14.46554,
+  "lng": 120.9702,
+  "area": "137601000",
+  "osm": "New Las Piñas City Public Market, Aldebaran Street, Basa Village, Zapote, 1st District, Las Piñas, Southern Manila Distr"
+ },
+ "new-marulas-public-market": {
+  "name": "New Marulas Public Market/Valenzuela",
+  "lat": 14.67389,
+  "lng": 120.98331,
+  "area": "137504000",
+  "manual": true,
+  "note": "OSM, checked by hand"
+ },
+ "new-parang-market": {
+  "name": "New Parang Market",
+  "lat": 14.65944,
+  "lng": 121.11303,
+  "area": "137402000",
+  "manual": true,
+  "note": "OSM, checked by hand"
+ },
+ "north-diversion-market": {
+  "name": "North Diversion Market",
+  "manual": true,
+  "note": "no reliable location"
+ },
+ "obrero-market": {
+  "name": "Obrero Market",
+  "lat": 14.62336,
+  "lng": 120.98416,
+  "area": "133900000",
+  "osm": "Obrero Market, Blumentritt Road, Santa Cruz, Third District, Manila, Capital District, Metro Manila, 1014, Philippines"
+ },
+ "paco-market": {
+  "name": "Paco Market",
+  "lat": 14.57907,
+  "lng": 120.9933,
+  "area": "133900000",
+  "osm": "Paco Market, Angel Linao Street, 734 Zone 80, Paco, Fifth District, Manila, Capital District, Metro Manila, 1007, Philip"
+ },
+ "pasay-city-market": {
+  "name": "Pasay City Market",
+  "lat": 14.54647,
+  "lng": 120.99825,
+  "area": "137605000",
+  "osm": "Market Road, Barangay 91, Zone 9, District 1, Pasay, Southern Manila District, Metro Manila, 1302, Philippines"
+ },
+ "poblacion-public-market": {
+  "name": "Poblacion Public Market",
+  "lat": 14.38965,
+  "lng": 121.04402,
+  "area": "137603000",
+  "osm": "Poblacion Public Market, Katihan Street, Tensuan Site, Poblacion, Muntinlupa District 1, Muntinlupa, Southern Manila Dis"
+ },
+ "pritil-market": {
+  "name": "Pritil Market/Manila",
+  "lat": 14.61755,
+  "lng": 120.97051,
+  "area": "133900000",
+  "osm": "Pritil Market, Nicolas Zamora Street, Barangay 245, Tondo, First District, Manila, Capital District, Metro Manila, 1012,"
+ },
+ "quinta-market": {
+  "name": "Quinta Market/Manila",
+  "lat": 14.59648,
+  "lng": 120.98288,
+  "area": "133900000",
+  "osm": "Quinta Market, Carlos Palanca Street, Barangay 384, Barangay 306, Quiapo, Third District, Manila, Capital District, Metr"
+ },
+ "san-andres-market": {
+  "name": "San Andres Market/Manila",
+  "lat": 14.56953,
+  "lng": 120.98906,
+  "area": "133900000",
+  "osm": "San Andres Market, Leveriza Street, Barangay 706, Malate, Fifth District, Manila, Capital District, Metro Manila, 1004, "
+ },
+ "suki-market-moonwalk": {
+  "name": "Suki Market Moonwalk",
+  "lat": 14.48305,
+  "lng": 121.01402,
+  "area": "137604000",
+  "manual": true,
+  "approx": true,
+  "note": "city centroid; exact spot unknown"
+ },
+ "taguig-people-s-market": {
+  "name": "Taguig People's Market",
+  "lat": 14.48778,
+  "lng": 121.06051,
+  "area": "137607000",
+  "osm": "Taguig People's Market, General Santos Avenue Service Road, Lower Bicutan, Taguig District 1, Taguig, Southern Manila Di"
+ },
+ "trabajo-market": {
+  "name": "Trabajo Market",
+  "lat": 14.61004,
+  "lng": 120.99594,
+  "area": "133900000",
+  "osm": "Trabajo Market, S. H. Loyola Street, Barangay 494, Sampaloc, Fourth District, Manila, Capital District, Metro Manila, 10"
+ }
+}

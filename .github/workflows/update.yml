@@ -1,0 +1,79 @@
+name: Update prices
+
+# Twice a day: fetch new government reports, commit the normalized data,
+# rebuild the app's JSON and deploy to Cloudflare Pages. Code pushes to main
+# rebuild and deploy without fetching.
+on:
+  schedule:
+    - cron: "0 4 * * *"   # 12:00 Manila (DA posts the day's reports by then)
+    - cron: "0 12 * * *"  # 20:00 Manila (late uploads, DOE Monday/Tuesday notices)
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths-ignore: ["data/**", "**.md"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-prices
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          cache-dependency-glob: ingest/uv.lock
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+
+      - name: Install
+        run: |
+          (cd ingest && uv sync --frozen)
+          (cd app && npm ci --no-audit --no-fund)
+
+      - name: Test
+        run: |
+          (cd ingest && uv run pytest -q)
+          (cd app && npm test && npx tsc --noEmit)
+
+      - name: Fetch new reports
+        if: github.event_name != 'push'
+        working-directory: ingest
+        run: uv run presyo-ingest all
+
+      - name: Commit new data
+        if: github.event_name != 'push'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          if git diff --cached --quiet; then
+            echo "No new reports."
+          else
+            git commit -m "data: reports as of $(TZ=Asia/Manila date +%F)"
+            git push
+          fi
+
+      - name: Build and deploy
+        if: env.CLOUDFLARE_API_TOKEN != ''
+        run: ./scripts/release.sh
+
+      - name: Build only (no Cloudflare token yet)
+        if: env.CLOUDFLARE_API_TOKEN == ''
+        run: |
+          echo "::notice::CLOUDFLARE_API_TOKEN secret is not set; building without deploying."
+          ./scripts/release.sh --no-deploy

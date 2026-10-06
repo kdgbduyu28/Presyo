@@ -1,0 +1,134 @@
+{
+ "035401000": {
+  "name": "City of Angeles",
+  "lat": 15.13481,
+  "lng": 120.59069,
+  "source": "nominatim"
+ },
+ "037107000": {
+  "name": "City of Olongapo",
+  "lat": 14.83888,
+  "lng": 120.28436,
+  "source": "nominatim"
+ },
+ "043425000": {
+  "name": "City of San Pedro",
+  "lat": 14.36394,
+  "lng": 121.05677,
+  "source": "nominatim"
+ },
+ "045624000": {
+  "name": "City of Lucena",
+  "lat": 13.93577,
+  "lng": 121.61286,
+  "source": "nominatim"
+ },
+ "045807000": {
+  "name": "Jala-Jala",
+  "lat": 14.35363,
+  "lng": 121.32377,
+  "source": "nominatim"
+ },
+ "175316000": {
+  "name": "City of Puerto Princesa",
+  "lat": 9.73986,
+  "lng": 118.74382,
+  "source": "nominatim"
+ },
+ "175321000": {
+  "name": "Kalayaan",
+  "lat": 11.05372,
+  "lng": 114.28481,
+  "source": "nominatim"
+ },
+ "063022000": {
+  "name": "City of Iloilo",
+  "lat": 10.69329,
+  "lng": 122.57326,
+  "source": "nominatim"
+ },
+ "064501000": {
+  "name": "City of Bacolod",
+  "lat": 10.67628,
+  "lng": 122.95138,
+  "source": "nominatim"
+ },
+ "072217000": {
+  "name": "City of Cebu",
+  "lat": 10.29349,
+  "lng": 123.90182,
+  "source": "nominatim"
+ },
+ "072226000": {
+  "name": "City of Lapu-Lapu",
+  "lat": 10.31267,
+  "lng": 123.94882,
+  "source": "nominatim"
+ },
+ "072230000": {
+  "name": "City of Mandaue",
+  "lat": 10.3269,
+  "lng": 123.94273,
+  "source": "nominatim"
+ },
+ "083747000": {
+  "name": "City of Tacloban",
+  "lat": 11.24316,
+  "lng": 125.00829,
+  "source": "nominatim"
+ },
+ "086419000": {
+  "name": "Limasawa",
+  "lat": 9.92512,
+  "lng": 125.07409,
+  "source": "nominatim"
+ },
+ "097332000": {
+  "name": "City of Zamboanga",
+  "lat": 6.90469,
+  "lng": 122.07649,
+  "source": "nominatim"
+ },
+ "103504000": {
+  "name": "City of Iligan",
+  "lat": 8.22816,
+  "lng": 124.24115,
+  "source": "nominatim"
+ },
+ "104305000": {
+  "name": "City of Cagayan De Oro",
+  "lat": 8.47564,
+  "lng": 124.64215,
+  "source": "nominatim"
+ },
+ "124712000": {
+  "name": "Pikit",
+  "lat": 7.05374,
+  "lng": 124.67225,
+  "source": "nominatim"
+ },
+ "126303000": {
+  "name": "City of General Santos",
+  "lat": 6.11222,
+  "lng": 125.17219,
+  "source": "nominatim"
+ },
+ "141102000": {
+  "name": "City of Baguio",
+  "lat": 16.41199,
+  "lng": 120.59339,
+  "source": "nominatim"
+ },
+ "160202000": {
+  "name": "City of Butuan",
+  "lat": 8.94771,
+  "lng": 125.54321,
+  "source": "nominatim"
+ },
+ "129804000": {
+  "name": "City of Cotabato",
+  "lat": 7.22376,
+  "lng": 124.24671,
+  "source": "nominatim"
+ }
+}

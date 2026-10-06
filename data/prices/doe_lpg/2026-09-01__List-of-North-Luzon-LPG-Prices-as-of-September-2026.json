@@ -1,0 +1,6 @@
+{
+ "doc": {"source": "doe_lpg", "url": "https://d24qbtp4vooyzi.cloudfront.net/api/media/file/List%20of%20North%20Luzon%20LPG%20Prices%20as%20of%20September%202026.pdf", "filename": "List of North Luzon LPG Prices as of September 2026.pdf", "sha256": "6bdb523735b3666a0bbd94aa7af52666c5b873154915467bec89962334f0702d", "period_start": "2026-09-01", "period_end": "2026-09-30", "status": "needs_ocr", "areas": 0, "parser_version": 1, "parsed_at": "2026-10-06T13:58:49Z", "rows": 0},
+ "rows": [
+
+ ]
+}

@@ -1,0 +1,34 @@
+{
+  "expo": {
+    "name": "Presyo",
+    "slug": "presyo",
+    "scheme": "presyo",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "ph.presyo.app"
+    },
+    "android": {
+      "package": "ph.presyo.app",
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "single"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Presyo uses your location to show prices from the markets and fuel stations near you."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}

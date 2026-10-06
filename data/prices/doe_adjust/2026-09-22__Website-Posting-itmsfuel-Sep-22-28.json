@@ -1,0 +1,26 @@
+{
+ "doc": {"source": "doe_adjust", "url": "https://d24qbtp4vooyzi.cloudfront.net/api/media/file/Website%20Posting%20itmsfuel%20Sep%2022-28.pdf", "filename": "Website Posting itmsfuel Sep 22-28.pdf", "sha256": "abf9835b9c8d0ebf390f52d2c3d6dbcf6755ce0e8f1b63e09d1a2953b872f73d", "period_start": "2026-09-22", "period_end": "2026-09-28", "status": "partial", "parser_version": 1, "parsed_at": "2026-10-06T14:00:06Z", "rows": 21},
+ "rows": [
+  {"item": "Diesel price change", "cat": "fuel", "unit": "L", "key": "adj_diesel", "brand": "Caltex", "start": "2026-09-22", "end": "2026-09-28", "price": 1.0},
+  {"item": "Diesel price change", "cat": "fuel", "unit": "L", "key": "adj_diesel", "brand": "City Oil", "start": "2026-09-22", "end": "2026-09-28", "price": 8.82},
+  {"item": "Gasoline price change", "cat": "fuel", "unit": "L", "key": "adj_gasoline", "brand": "City Oil", "start": "2026-09-22", "end": "2026-09-28", "price": 4.88},
+  {"item": "Kerosene price change", "cat": "fuel", "unit": "L", "key": "adj_kerosene", "brand": "City Oil", "start": "2026-09-22", "end": "2026-09-28", "price": 6.47},
+  {"item": "Diesel price change", "cat": "fuel", "unit": "L", "key": "adj_diesel", "brand": "Clean Fuel", "start": "2026-09-22", "end": "2026-09-28", "price": 7.8},
+  {"item": "Gasoline price change", "cat": "fuel", "unit": "L", "key": "adj_gasoline", "brand": "Clean Fuel", "start": "2026-09-22", "end": "2026-09-28", "price": 4.8},
+  {"item": "Diesel price change", "cat": "fuel", "unit": "L", "key": "adj_diesel", "brand": "Ecooil", "start": "2026-09-22", "end": "2026-09-28", "price": 1.0},
+  {"item": "Gasoline price change", "cat": "fuel", "unit": "L", "key": "adj_gasoline", "brand": "Ecooil", "start": "2026-09-22", "end": "2026-09-28", "price": 0.88},
+  {"item": "Diesel price change", "cat": "fuel", "unit": "L", "key": "adj_diesel", "brand": "Filpride", "start": "2026-09-22", "end": "2026-09-28", "price": 4.0},
+  {"item": "Gasoline price change", "cat": "fuel", "unit": "L", "key": "adj_gasoline", "brand": "Filpride", "start": "2026-09-22", "end": "2026-09-28", "price": 2.0},
+  {"item": "Diesel price change", "cat": "fuel", "unit": "L", "key": "adj_diesel", "brand": "Flying V", "start": "2026-09-22", "end": "2026-09-28", "price": 1.0},
+  {"item": "Diesel price change", "cat": "fuel", "unit": "L", "key": "adj_diesel", "brand": "Jetti", "start": "2026-09-22", "end": "2026-09-28", "price": 2.0},
+  {"item": "Diesel price change", "cat": "fuel", "unit": "L", "key": "adj_diesel", "brand": "PTT", "start": "2026-09-22", "end": "2026-09-28", "price": 1.0},
+  {"item": "Diesel price change", "cat": "fuel", "unit": "L", "key": "adj_diesel", "brand": "Petro Gazz", "start": "2026-09-22", "end": "2026-09-28", "price": 1.5},
+  {"item": "Gasoline price change", "cat": "fuel", "unit": "L", "key": "adj_gasoline", "brand": "Petro Gazz", "start": "2026-09-22", "end": "2026-09-28", "price": 0.88},
+  {"item": "Diesel price change", "cat": "fuel", "unit": "L", "key": "adj_diesel", "brand": "Petron", "start": "2026-09-22", "end": "2026-09-28", "price": 1.0},
+  {"item": "Diesel price change", "cat": "fuel", "unit": "L", "key": "adj_diesel", "brand": "Phoenix", "start": "2026-09-22", "end": "2026-09-28", "price": 1.0},
+  {"item": "Diesel price change", "cat": "fuel", "unit": "L", "key": "adj_diesel", "brand": "Seaoil", "start": "2026-09-22", "end": "2026-09-28", "price": 1.0},
+  {"item": "Diesel price change", "cat": "fuel", "unit": "L", "key": "adj_diesel", "brand": "Shell", "start": "2026-09-22", "end": "2026-09-28", "price": 1.0},
+  {"item": "Diesel price change", "cat": "fuel", "unit": "L", "key": "adj_diesel", "brand": "Total", "start": "2026-09-22", "end": "2026-09-28", "price": 1.0},
+  {"item": "Gasoline price change", "cat": "fuel", "unit": "L", "key": "adj_gasoline", "brand": "Total", "start": "2026-09-22", "end": "2026-09-28", "price": 0.88}
+ ]
+}

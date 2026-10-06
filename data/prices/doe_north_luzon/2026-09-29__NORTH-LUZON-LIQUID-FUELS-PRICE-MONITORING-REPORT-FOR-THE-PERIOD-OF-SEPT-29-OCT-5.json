@@ -1,0 +1,6 @@
+{
+ "doc": {"source": "doe_north_luzon", "url": "https://d24qbtp4vooyzi.cloudfront.net/api/media/file/NORTH%20LUZON%20LIQUID%20FUELS%20PRICE%20MONITORING%20REPORT%20FOR%20THE%20PERIOD%20OF%20SEPT%2029%20-%20OCT%205%202026-2-17.pdf", "filename": "NORTH LUZON LIQUID FUELS PRICE MONITORING REPORT FOR THE PERIOD OF SEPT 29 - OCT 5 2026-2-17.pdf", "sha256": "f6430e070651436bf47451b2ec3a9d0c029d8a0d65f09c3060ca5fb68e9c254c", "period_start": "2026-09-29", "period_end": "2026-10-05", "status": "needs_ocr", "areas": 0, "parser_version": 1, "parsed_at": "2026-10-06T14:15:59Z", "rows": 0},
+ "rows": [
+
+ ]
+}
