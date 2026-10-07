@@ -1,5 +1,5 @@
 {
- "doc": {"source": "dti_srp", "url": "https://dtiwebfiles.s3.ap-southeast-1.amazonaws.com/e-Presyo/SRP+Basic+Necessities+and+Prime+Commodities/2026/BNPC+SRP+BULLETIN.11+MAY+2026.0010.PSU+%5BCLEAN+A3-final%5D.pdf", "sha256": "ef9ecbfbcf19215e74bac76512e0acb272e6e3c62cc30391e97402755c15c6ae", "period_start": "2026-05-11", "period_end": "2026-05-11", "status": "ok", "effective": "2026-05-11", "parser_version": 1, "parsed_at": "2026-10-07T02:06:21Z", "rows": 167},
+ "doc": {"source": "dti_srp", "url": "https://dtiwebfiles.s3.ap-southeast-1.amazonaws.com/e-Presyo/SRP+Basic+Necessities+and+Prime+Commodities/2026/BNPC+SRP+BULLETIN.11+MAY+2026.0010.PSU+%5BCLEAN+A3-final%5D.pdf", "sha256": "ef9ecbfbcf19215e74bac76512e0acb272e6e3c62cc30391e97402755c15c6ae", "period_start": "2026-05-11", "period_end": "2026-05-11", "status": "ok", "effective": "2026-05-11", "parser_version": 1, "parsed_at": "2026-10-07T10:40:57Z", "rows": 167},
  "rows": [
   {"item": "Energizer Max – Blister Pack of 4", "spec": "AA", "cat": "grocery", "unit": "pc", "brand": "Batteries", "area": "PH", "start": "2026-05-11", "end": "2026-05-11", "price": 216.75, "n": 165},
   {"item": "Eveready Super Heavy Duty Black – Blister Pack of 2", "spec": "D", "cat": "grocery", "unit": "pc", "brand": "Batteries", "area": "PH", "start": "2026-05-11", "end": "2026-05-11", "price": 81.75, "n": 166},

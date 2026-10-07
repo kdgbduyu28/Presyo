@@ -1,5 +1,5 @@
 {
- "doc": {"source": "doe_lpg_monitor", "url": "https://d24qbtp4vooyzi.cloudfront.net/api/media/file/LPG%20Monitor%20as%20of%2001%20September%202026.pdf", "filename": "LPG Monitor as of 01 September 2026.pdf", "sha256": "9414865372fc6887283bc02c2fe7e0a2436b5e84f85366428a6e0f4554a6a9c2", "period_start": "2026-01-01", "period_end": "2026-09-30", "status": "ok", "parser_version": 1, "parsed_at": "2026-10-07T02:06:15Z", "rows": 9},
+ "doc": {"source": "doe_lpg_monitor", "url": "https://d24qbtp4vooyzi.cloudfront.net/api/media/file/LPG%20Monitor%20as%20of%2001%20September%202026.pdf", "filename": "LPG Monitor as of 01 September 2026.pdf", "sha256": "9414865372fc6887283bc02c2fe7e0a2436b5e84f85366428a6e0f4554a6a9c2", "period_start": "2026-01-01", "period_end": "2026-09-30", "status": "ok", "parser_version": 1, "parsed_at": "2026-10-07T10:40:51Z", "rows": 9},
  "rows": [
   {"item": "LPG 11 kg tank", "cat": "fuel", "unit": "tank", "key": "lpg_11kg", "area": "130000000", "start": "2026-01-01", "end": "2026-01-31", "min": 820.0, "max": 1120.0},
   {"item": "LPG 11 kg tank", "cat": "fuel", "unit": "tank", "key": "lpg_11kg", "area": "130000000", "start": "2026-02-01", "end": "2026-02-28", "min": 825.0, "max": 1135.0},
