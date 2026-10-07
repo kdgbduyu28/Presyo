@@ -1,5 +1,5 @@
 {
- "doc": {"source": "doe_power", "url": "https://docs.google.com/spreadsheets/d/1oGc1iGpacELS6tkHjesvAeKZo8v2iv4UkYFY04e0p-I/edit?gid=0", "status": "ok", "period_start": "2026-01-01", "period_end": "2026-09-01", "utilities": 130, "parser_version": 1, "parsed_at": "2026-10-07T10:40:53Z", "rows": 1105},
+ "doc": {"source": "doe_power", "url": "https://docs.google.com/spreadsheets/d/1oGc1iGpacELS6tkHjesvAeKZo8v2iv4UkYFY04e0p-I/edit?gid=0", "status": "ok", "period_start": "2026-01-01", "period_end": "2026-09-01", "utilities": 130, "parser_version": 1, "parsed_at": "2026-10-07T18:06:02Z", "rows": 1105},
  "rows": [
   {"item": "CENPELCO", "spec": "CENPELCO Central Pangasinan Electric Cooperative", "cat": "power", "unit": "kWh", "key": "power_cenpelco", "brand": "EC", "area": "010000000", "start": "2026-01-01", "end": "2026-01-28", "price": 10.28},
   {"item": "INEC", "cat": "power", "unit": "kWh", "key": "power_inec", "brand": "EC", "area": "010000000", "start": "2026-01-01", "end": "2026-01-28", "price": 8.9},
