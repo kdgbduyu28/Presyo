@@ -36,3 +36,6 @@ cd app && npm install && npx expo start --web
 
 - North Luzon DOE fuel/LPG reports are scanned images: not parsed (needs OCR).
 - DOE's new site only has fuel reports from late August 2026.
+
+See [ROADMAP.md](ROADMAP.md) for planned work (settings & preferences, dark mode,
+desktop/landscape layout, alerts, …).

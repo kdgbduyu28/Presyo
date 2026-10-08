@@ -34,3 +34,6 @@ app/.kotlin/
 .DS_Store
 npm-debug.*
 .env*
+
+# wrangler local state
+.wrangler/

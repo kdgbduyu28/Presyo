@@ -34,6 +34,15 @@ def write(source: str, name: str, doc: dict, rows: list[dict]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     clean = [{k: v for k, v in r.items() if v is not None} for r in rows]
     clean.sort(key=lambda r: json.dumps(r, sort_keys=True, ensure_ascii=False))
+    # Sources re-read every run (PSA, electricity, DTI) mostly return the
+    # same data; keep the file untouched so the daily job doesn't commit
+    # timestamp-only changes.
+    if path.exists():
+        old = json.loads(path.read_text())
+        same_doc = {k: v for k, v in old["doc"].items() if k not in ("parsed_at", "rows")} == \
+            {"source": source, **doc, "parser_version": PARSER_VERSION}
+        if same_doc and old["rows"] == clean:
+            return
     body = {
         "doc": {
             "source": source,
