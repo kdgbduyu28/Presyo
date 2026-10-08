@@ -6,7 +6,8 @@ import { peso, pesoPrice, periodLabel, rangeLabel, value } from '../lib/format';
 import type { Spot } from '../lib/location';
 import { placeName } from '../lib/names';
 import { lpgArea, NCR, Place, PlacesFile } from '../lib/places';
-import { C, R } from '../theme';
+import { usePrefs } from '../lib/prefs';
+import { C, R, themed } from '../theme';
 import { Chart } from './Chart';
 import { Card, Notice, PriceRow, SectionTitle } from './bits';
 import { Sheet } from './Sheet';
@@ -129,8 +130,9 @@ export function LpgSection({ place, spot, places }: { place: Place; spot: Spot; 
 // ---------------------------------------------------------------- trip cost
 
 export function TripCost({ pricePerLiter }: { pricePerLiter: number }) {
+  const { prefs } = usePrefs();
   const [km, setKm] = useState('20');
-  const [kmpl, setKmpl] = useState('12');
+  const [kmpl, setKmpl] = useState(String(prefs.kmpl)); // Settings → Fuel → mileage
   const d = parseFloat(km);
   const e = parseFloat(kmpl);
   const cost = d > 0 && e > 0 ? (d / e) * pricePerLiter : null;
@@ -159,7 +161,7 @@ function Field({ label, value: v, onChange }: { label: string; value: string; on
 
 export { Notice };
 
-const s = StyleSheet.create({
+const s = themed(() => ({
   banner: {
     backgroundColor: C.card, borderRadius: R.xl, borderWidth: StyleSheet.hairlineWidth, borderColor: C.line,
     marginHorizontal: 16, marginBottom: 12, padding: 14,
@@ -186,4 +188,4 @@ const s = StyleSheet.create({
     borderWidth: 1, borderColor: C.line, borderRadius: R.md, paddingHorizontal: 10, paddingVertical: 8,
     fontSize: 16, color: C.text, backgroundColor: C.card,
   },
-});
+}));

@@ -4,10 +4,15 @@ import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 
 import { locate, Spot } from '../lib/location';
 import { placeName } from '../lib/names';
 import { PlacesFile, searchPlaces } from '../lib/places';
-import { C, R } from '../theme';
+import type { RecentPlace } from '../lib/prefs';
+import { C, R, themed } from '../theme';
 
-/** GPS button + city search. Used on first run and from the location chip. */
-export function LocationPicker({ places, onPick }: { places: PlacesFile; onPick: (s: Spot) => void }) {
+type Picked = { code: string; name: string };
+
+/** GPS button + recent places + city search. Used on first run and from the location chip. */
+export function LocationPicker({ places, onPick, recent = [] }: {
+  places: PlacesFile; onPick: (s: Spot, place?: Picked) => void; recent?: RecentPlace[];
+}) {
   const [q, setQ] = useState('');
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -32,6 +37,16 @@ export function LocationPicker({ places, onPick }: { places: PlacesFile; onPick:
         {busy ? <ActivityIndicator color="#fff" /> : <Text style={s.gpsText}>📍  Use my location</Text>}
       </Pressable>
       {err ? <Text style={s.err}>{err} You can search for your city instead.</Text> : null}
+      {recent.length ? (
+        <View style={s.recent}>
+          {recent.map((r) => (
+            <Pressable key={r.code} onPress={() => onPick({ lat: r.lat, lng: r.lng, via: 'pick' }, r)} style={s.recentChip}
+              accessibilityRole="button" accessibilityLabel={`Use ${r.name}`}>
+              <Text style={s.recentText}>🕘 {r.name}</Text>
+            </Pressable>
+          ))}
+        </View>
+      ) : null}
       <Text style={s.or}>or choose your city / town</Text>
       <TextInput
         value={q}
@@ -44,7 +59,7 @@ export function LocationPicker({ places, onPick }: { places: PlacesFile; onPick:
         accessibilityLabel="Search city or town"
       />
       {results.map((p) => (
-        <Pressable key={p.code} onPress={() => onPick({ lat: p.lat, lng: p.lng, via: 'pick' })}
+        <Pressable key={p.code} onPress={() => onPick({ lat: p.lat, lng: p.lng, via: 'pick' }, { code: p.code, name: placeName(p, places, { short: true }) })}
           style={({ pressed }) => [s.result, pressed && { backgroundColor: C.bg }]} accessibilityRole="button">
           <Text style={s.resultText}>{placeName(p, places)}</Text>
         </Pressable>
@@ -53,10 +68,13 @@ export function LocationPicker({ places, onPick }: { places: PlacesFile; onPick:
   );
 }
 
-const s = StyleSheet.create({
+const s = themed(() => ({
   gps: { backgroundColor: C.primary, borderRadius: R.lg, paddingVertical: 14, alignItems: 'center' },
-  gpsText: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  gpsText: { color: C.onPrimary, fontSize: 16, fontWeight: '700' },
   err: { color: C.up, fontSize: 13, marginTop: 8 },
+  recent: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 12 },
+  recentChip: { borderRadius: R.pill, borderWidth: 1, borderColor: C.line, paddingHorizontal: 12, paddingVertical: 6, backgroundColor: C.card },
+  recentText: { fontSize: 13, color: C.text, fontWeight: '600' },
   or: { color: C.muted, fontSize: 13, textAlign: 'center', marginVertical: 14 },
   input: {
     borderWidth: 1, borderColor: C.line, borderRadius: R.lg, paddingHorizontal: 14, paddingVertical: 12,
@@ -64,4 +82,4 @@ const s = StyleSheet.create({
   },
   result: { paddingVertical: 12, paddingHorizontal: 4, borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: C.line },
   resultText: { fontSize: 15, color: C.text },
-});
+}));

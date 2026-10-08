@@ -6,9 +6,9 @@ import { daysAgo, peso, pesoPrice, rangeLabel, value } from '../lib/format';
 import type { Spot } from '../lib/location';
 import { placeName } from '../lib/names';
 import { fuelArea, Place, PlacesFile } from '../lib/places';
-import { C } from '../theme';
+import { C, themed } from '../theme';
 import { Chart } from './Chart';
-import { Card, Delta, Loading, Notice, PriceRow, SectionTitle } from './bits';
+import { Card, Columns, Delta, Loading, Notice, PriceRow, SectionTitle } from './bits';
 import { AdjustmentBanner, LpgSection, TripCost, useLatestAdjustment } from './FuelExtras';
 import { Sheet } from './Sheet';
 
@@ -49,7 +49,7 @@ function summarize(rows: FuelRow[], key: string, label: string, hint: string): S
   };
 }
 
-export function FuelView({ place, spot, places }: { place: Place; spot: Spot; places: PlacesFile }) {
+export function FuelView({ place, spot, places, wide }: { place: Place; spot: Spot; places: PlacesFile; wide?: boolean }) {
   const area = useMemo(() => fuelArea(places.rows, place, spot.lat, spot.lng), [places, place, spot]);
   const { data, loading, error } = useJson<FuelFile>(area ? `fuel/${area.place.code}.json` : null);
   const [open, setOpen] = useState<string | null>(null);
@@ -68,8 +68,8 @@ export function FuelView({ place, spot, places }: { place: Place; spot: Spot; pl
   const name = placeName(area.place, places);
   const sel = summaries.find((x) => x.key === open);
 
-  return (
-    <View>
+  const left = (
+    <>
       {adjustment ? <AdjustmentBanner week={adjustment} /> : null}
       {area.km > 0 ? (
         <Notice>
@@ -103,7 +103,12 @@ export function FuelView({ place, spot, places }: { place: Place; spot: Spot; pl
       <Text style={s.source}>
         {name} · DOE weekly retail pump price monitoring. Prices change every Tuesday.
       </Text>
-      <LpgSection place={place} spot={spot} places={places} />
+    </>
+  );
+
+  return (
+    <>
+      <Columns wide={wide} left={left} right={<LpgSection place={place} spot={spot} places={places} />} />
 
       <Sheet open={sel != null} onClose={() => setOpen(null)} title={sel?.label}>
         {sel ? (
@@ -130,11 +135,11 @@ export function FuelView({ place, spot, places }: { place: Place; spot: Spot; pl
           </View>
         ) : null}
       </Sheet>
-    </View>
+    </>
   );
 }
 
-const s = StyleSheet.create({
+const s = themed(() => ({
   source: { fontSize: 12, color: C.faint, marginHorizontal: 16, marginBottom: 24 },
   big: { flexDirection: 'row', alignItems: 'baseline', gap: 10 },
   bigPrice: { fontSize: 30, fontWeight: '800', color: C.text, fontVariant: ['tabular-nums'] },
@@ -147,4 +152,4 @@ const s = StyleSheet.create({
   },
   brand: { fontSize: 14, color: C.text },
   brandPrice: { fontSize: 14, fontWeight: '600', color: C.text, fontVariant: ['tabular-nums'] },
-});
+}));

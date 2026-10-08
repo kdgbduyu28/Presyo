@@ -18,7 +18,15 @@ export function pesoPrice(p: Price): string {
   return `${peso(p[0])}–${p[1].toFixed(2)}`;
 }
 
-export const UNIT_LABEL: Record<string, string> = { kg: '/kg', pc: '/pc', L: '/L', tank: '/tank', bottle: '/bottle' };
+export const UNIT_LABEL: Record<string, string> = {
+  kg: '/kg', pc: '/pc', L: '/L', tank: '/tank', bottle: '/bottle', tray: '/tray',
+};
+
+/** Multiply a price (or both ends of a range), e.g. per piece -> per tray of 30. */
+export function scale(p: Price, k: number): Price {
+  if (p == null) return null;
+  return typeof p === 'number' ? p * k : [p[0] * k, p[1] * k];
+}
 
 /** Latest non-null value and the one before it. */
 export function lastTwo(series: Price[]): { last: number | null; lastIdx: number; prev: number | null } {

@@ -4,8 +4,8 @@
     "slug": "presyo",
     "scheme": "presyo",
     "version": "0.1.0",
-    "orientation": "portrait",
-    "userInterfaceStyle": "light",
+    "orientation": "default",
+    "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "ph.presyo.app"

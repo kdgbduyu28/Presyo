@@ -7,24 +7,26 @@ import type { Spot } from '../lib/location';
 import { placeName } from '../lib/names';
 import { foodSource, fuelArea, Place, PlacesFile } from '../lib/places';
 import { SEEN_KEY, useStored } from '../lib/stored';
+import { usePrefs } from '../lib/prefs';
 import { useWatch } from '../lib/watch';
-import { C, TAB_LABELS } from '../theme';
-import { Card, Loading, Notice, PriceRow, SectionTitle } from './bits';
+import { C, TAB_LABELS, themed } from '../theme';
+import { Card, Columns, Loading, Notice, PriceRow, SectionTitle } from './bits';
 import { AdjustmentBanner, useLatestAdjustment, useLpg } from './FuelExtras';
 import { Search } from './Search';
 
 const GROUPS = ['rice', 'meat', 'seafood', 'vegetables', 'fruits', 'pantry'] as const;
 
 /** The home tab: headline prices for where you are, in one screen. */
-export function TodayView({ place, spot, places, markets, onOpenTab }: {
-  place: Place; spot: Spot; places: PlacesFile; markets: Market[]; onOpenTab: (tab: string) => void;
+export function TodayView({ place, spot, places, markets, onOpenTab, wide }: {
+  place: Place; spot: Spot; places: PlacesFile; markets: Market[]; onOpenTab: (tab: string) => void; wide?: boolean;
 }) {
+  const { prefs } = usePrefs();
   const source = foodSource(place, places.psa);
   const scope = source?.kind === 'da' ? 'ncr' : source?.code ?? null;
   const summary = useJson<SummaryFile>(scope ? `summary/${scope}.json` : null);
   const watch = useWatch();
   const adjustment = useLatestAdjustment();
-  const fuel = useFuelHeadline(place, spot, places);
+  const fuel = useFuelHeadline(place, spot, places, prefs.fuel);
   const lpg = useLpg(place, spot, places);
   const sinceLast = useSinceLastVisit(scope, summary.data?.items);
 
@@ -55,8 +57,11 @@ export function TodayView({ place, spot, places, markets, onOpenTab }: {
     );
   };
 
-  return (
-    <View>
+  // Settings → LPG brand: that brand's price when DOE lists it here.
+  const lpgBrand = lpg && prefs.lpgBrand ? lpg.summary.brands.find((b) => b.brand === prefs.lpgBrand) : undefined;
+
+  const left = (
+    <>
       <Search source={source} spot={spot} markets={markets} />
       {adjustment ? <AdjustmentBanner week={adjustment} /> : null}
 
@@ -69,46 +74,57 @@ export function TodayView({ place, spot, places, markets, onOpenTab }: {
                 last={f.price} prev={f.prev} onPress={() => onOpenTab('fuel')} />
             ))}
             {lpg ? (
-              <PriceRow title="LPG, 11 kg tank" subtitle={`${placeName(lpg.area.place, places, { short: true })} · ${periodLabel(lpg.month.start.slice(0, 7))}`}
-                price={lpg.summary.main} unit="tank" last={null} prev={null} onPress={() => onOpenTab('fuel')} />
+              <PriceRow
+                title={lpgBrand ? `LPG, 11 kg · ${lpgBrand.brand}` : 'LPG, 11 kg tank'}
+                subtitle={`${placeName(lpg.area.place, places, { short: true })} · ${periodLabel(lpg.month.start.slice(0, 7))}`}
+                price={lpgBrand ? lpgBrand.p : lpg.summary.main} unit="tank" last={null} prev={null}
+                onPress={() => onOpenTab('fuel')} />
             ) : null}
           </Card>
         </>
       ) : null}
 
-      {summary.loading ? <Loading /> : !items.length ? (
-        <Notice tone="warn">No food price data covers {placeName(place, places)} yet.</Notice>
-      ) : (
+      {mine.length ? (
         <>
-          {mine.length ? (
-            <>
-              <SectionTitle>My items</SectionTitle>
-              <Card>{mine.map(row)}</Card>
-            </>
-          ) : (
-            <Notice>Tip: open any item and tap “☆ Add to my items” to pin it here.</Notice>
-          )}
-          {GROUPS.map((g) => {
-            const list = items.filter((it) => it.cat === g && !watch.has(it.key));
-            if (!list.length) return null;
-            return (
-              <View key={g}>
-                <SectionTitle>{TAB_LABELS[g]}</SectionTitle>
-                <Card>{list.map(row)}</Card>
-              </View>
-            );
-          })}
-          <Text style={s.source}>
-            {where} · latest {periodLabel(items[0].period)}. Tap an item for the full list.
-          </Text>
+          <SectionTitle>My items</SectionTitle>
+          <Card>{mine.map(row)}</Card>
         </>
-      )}
-    </View>
+      ) : items.length ? (
+        <Notice>Tip: open any item and tap “☆ Add to my items” to pin it here.</Notice>
+      ) : null}
+    </>
   );
+
+  const right = summary.loading ? <Loading /> : !items.length ? (
+    <Notice tone="warn">No food price data covers {placeName(place, places)} yet.</Notice>
+  ) : (
+    <>
+      {GROUPS.map((g) => {
+        const list = items.filter((it) => it.cat === g && !watch.has(it.key));
+        if (!list.length) return null;
+        return (
+          <View key={g}>
+            <SectionTitle>{TAB_LABELS[g]}</SectionTitle>
+            <Card>{list.map(row)}</Card>
+          </View>
+        );
+      })}
+      <Text style={s.source}>
+        {where} · latest {periodLabel(items[0].period)}. Tap an item for the full list.
+      </Text>
+    </>
+  );
+
+  return <Columns wide={wide} left={left} right={right} />;
 }
 
-/** RON 91 + diesel common price for the nearest DOE-monitored area. */
-function useFuelHeadline(place: Place, spot: Spot, places: PlacesFile) {
+const FUEL_LABEL: Record<string, string> = {
+  fuel_ron91: 'Gasoline RON 91', fuel_ron95: 'Gasoline RON 95', fuel_ron97: 'Gasoline RON 97',
+  fuel_ron100: 'Gasoline RON 100', fuel_diesel: 'Diesel', fuel_diesel_plus: 'Diesel Plus',
+};
+
+/** Your fuel (Settings) plus RON 91 / diesel: common price in the nearest DOE-monitored area. */
+function useFuelHeadline(place: Place, spot: Spot, places: PlacesFile, preferred: string) {
   const area = useMemo(() => fuelArea(places.rows, place, spot.lat, spot.lng), [places, place, spot]);
   const { data } = useJson<FuelFile>(area ? `fuel/${area.place.code}.json` : null);
   return useMemo(() => {
@@ -118,14 +134,13 @@ function useFuelHeadline(place: Place, spot: Spot, places: PlacesFile) {
       value(w?.rows.find((r) => r.key === key && !r.brand)?.p ?? null);
     const latest = weeks[weeks.length - 1];
     const prev = weeks[weeks.length - 2];
-    const rows = [
-      { key: 'fuel_ron91', label: 'Gasoline RON 91' },
-      { key: 'fuel_diesel', label: 'Diesel' },
-    ].map((r) => ({ ...r, price: pick(latest, r.key), prev: pick(prev, r.key) }))
+    const keys = [preferred, ...['fuel_ron91', 'fuel_diesel'].filter((k) => k !== preferred)].slice(0, 2);
+    const rows = keys
+      .map((key) => ({ key, label: FUEL_LABEL[key] ?? key, price: pick(latest, key), prev: pick(prev, key) }))
       .filter((r) => r.price != null);
     const where = `${placeName(area.place, places, { short: true })}${area.km > 0 ? ` (${area.km.toFixed(0)} km)` : ''}`;
     return rows.length ? { rows, where } : null;
-  }, [area, data, places]);
+  }, [area, data, places, preferred]);
 }
 
 /** Price change per key since the previous visit (stored on the device). */
@@ -158,6 +173,6 @@ function useSinceLastVisit(scope: string | null, items?: SummaryItem[]) {
   }, [baseline, scope, items]);
 }
 
-const s = StyleSheet.create({
+const s = themed(() => ({
   source: { fontSize: 12, color: C.faint, marginHorizontal: 16, marginBottom: 24 },
-});
+}));

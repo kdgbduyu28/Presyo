@@ -24,10 +24,18 @@ test('priceAt prefers local, falls back to imported, ranges use the midpoint', (
 
 test('basketTotals: complete baskets first, then cheapest; far markets skipped', () => {
   const lines = [{ key: 'rice_well_milled', qty: 5 }, { key: 'egg_medium', qty: 30 }];
-  const r = basketTotals(lines, items, markets, 14.6, 121.0, 10);
+  const r = basketTotals(lines, items, markets, 14.6, 121.0, { maxKm: 10 });
   assert.deepEqual(r.map((x) => x.market.id), ['b', 'a', 'c']);
   assert.equal(r[0].total, 47 * 5 + 8 * 30);
   assert.deepEqual(r[2].missing, ['egg_medium']);
+});
+
+test('origin preference and favourites', () => {
+  assert.equal(priceAt(items, 'rice_well_milled', 'a', 'imported'), 46);
+  assert.equal(priceAt(items, 'rice_well_milled', 'a', 'any'), 46); // cheapest
+  const lines = [{ key: 'rice_well_milled', qty: 1 }];
+  const ids = basketTotals(lines, items, markets, 14.6, 121.0, { maxKm: 1, favourites: ['c'] }).map((x) => x.market.id);
+  assert.ok(ids.includes('c') && ids.includes('a') && !ids.includes('far'));
 });
 
 test('basketFromAverages', () => {

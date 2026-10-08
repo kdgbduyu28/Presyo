@@ -1,10 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { useJson } from '../lib/data';
+import { useSlashToFocus } from '../lib/hotkey';
 import { fold } from '../lib/places';
 import { peso, periodLabel } from '../lib/format';
-import { C, R } from '../theme';
+import { C, R, themed } from '../theme';
 import { Card, Loading, Notice, SectionTitle } from './bits';
 
 type SrpFile = {
@@ -17,6 +18,8 @@ type SrpFile = {
 export function GroceryView() {
   const { data, loading, error } = useJson<SrpFile>('grocery/srp.json');
   const [q, setQ] = useState('');
+  const input = useRef<TextInput>(null);
+  useSlashToFocus(input);
   const sections = useMemo(() => {
     if (!data) return [];
     const needle = fold(q);
@@ -38,6 +41,7 @@ export function GroceryView() {
         {data.effective.slice(0, 4)}. Stores shouldn't charge more. Report overpricing to the DTI hotline 1-384.
       </Notice>
       <TextInput
+        ref={input}
         value={q}
         onChangeText={setQ}
         placeholder="Search: sardinas, kape, pandesal, sabon…"
@@ -68,7 +72,7 @@ export function GroceryView() {
   );
 }
 
-const s = StyleSheet.create({
+const s = themed(() => ({
   search: {
     marginHorizontal: 16, marginBottom: 8, borderWidth: 1, borderColor: C.line, borderRadius: R.lg,
     paddingHorizontal: 14, paddingVertical: 10, fontSize: 15, color: C.text, backgroundColor: C.card,
@@ -81,4 +85,4 @@ const s = StyleSheet.create({
   size: { fontSize: 12, color: C.muted, marginTop: 1 },
   price: { fontSize: 15, fontWeight: '700', color: C.text, fontVariant: ['tabular-nums'] },
   source: { fontSize: 12, color: C.faint, marginHorizontal: 16, marginBottom: 24 },
-});
+}));

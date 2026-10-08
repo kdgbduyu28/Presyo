@@ -1,11 +1,12 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { Market, SeriesFile, SeriesItem, useJson } from '../lib/data';
+import { useSlashToFocus } from '../lib/hotkey';
 import { lastTwo, peso, value } from '../lib/format';
 import type { Spot } from '../lib/location';
 import { fold, FoodSource } from '../lib/places';
-import { C, R, TAB_LABELS } from '../theme';
+import { C, R, TAB_LABELS, themed } from '../theme';
 import { Card, Loading, PriceRow } from './bits';
 import { ItemDetail, titleOf } from './FoodView';
 import { Sheet } from './Sheet';
@@ -16,6 +17,8 @@ type Srp = { sections: { name: string; items: { item: string; size?: string; srp
 /** Search every item for the current area (market data + DTI grocery SRPs). */
 export function Search({ source, spot, markets }: { source: FoodSource | null; spot: Spot; markets: Market[] }) {
   const [q, setQ] = useState('');
+  const input = useRef<TextInput>(null);
+  useSlashToFocus(input);
   const [open, setOpen] = useState<{ item: SeriesItem; periods: string[] } | null>(null);
   const on = fold(q).length >= 2;
   const da = source?.kind === 'da';
@@ -53,6 +56,7 @@ export function Search({ source, spot, markets }: { source: FoodSource | null; s
   return (
     <View>
       <TextInput
+        ref={input}
         value={q}
         onChangeText={setQ}
         placeholder="Search any price: galunggong, sibuyas, kape…"
@@ -106,7 +110,7 @@ export function Search({ source, spot, markets }: { source: FoodSource | null; s
   );
 }
 
-const s = StyleSheet.create({
+const s = themed(() => ({
   input: {
     marginHorizontal: 16, marginBottom: 12, borderWidth: 1, borderColor: C.line, borderRadius: R.lg,
     paddingHorizontal: 14, paddingVertical: 10, fontSize: 15, color: C.text, backgroundColor: C.card,
@@ -119,4 +123,4 @@ const s = StyleSheet.create({
   srpSub: { fontSize: 12, color: C.muted, marginTop: 1 },
   srpPrice: { fontSize: 15, fontWeight: '700', color: C.text, fontVariant: ['tabular-nums'] },
   none: { color: C.muted, marginHorizontal: 16, marginBottom: 12 },
-});
+}));

@@ -6,8 +6,9 @@ import { lastTwo, peso, pesoPrice, periodLabel, Price, UNIT_LABEL, value } from 
 import { activeMarkets, foodSource, km, Market, nearestMarkets, Place, PlacesFile } from '../lib/places';
 import type { Spot } from '../lib/location';
 import { placeName, shortName } from '../lib/names';
+import { usePrefs } from '../lib/prefs';
 import { useWatch } from '../lib/watch';
-import { C } from '../theme';
+import { C, themed } from '../theme';
 import { Chart } from './Chart';
 import { Card, Chips, Delta, Loading, Notice, PriceRow, SectionTitle, ShareButton, StarButton } from './bits';
 import { Sheet } from './Sheet';
@@ -28,7 +29,14 @@ export function FoodView({ cat, place, spot, places, markets }: {
 // ---------------------------------------------------------------- Metro Manila
 
 function DaView({ cat, spot, markets, places }: { cat: string; spot: Spot; markets: Market[]; places: PlacesFile }) {
-  const near = useMemo(() => nearestMarkets(activeMarkets(markets), spot.lat, spot.lng, 3), [markets, spot]);
+  const { prefs } = usePrefs();
+  // Favourite markets (Settings) first, then the nearest others.
+  const near = useMemo(() => {
+    const active = activeMarkets(markets);
+    const favs = nearestMarkets(active.filter((m) => prefs.favMarkets.includes(m.id)), spot.lat, spot.lng, 99);
+    const others = nearestMarkets(active.filter((m) => !prefs.favMarkets.includes(m.id)), spot.lat, spot.lng, 3);
+    return [...favs, ...others].slice(0, Math.max(3, favs.length));
+  }, [markets, spot, prefs.favMarkets]);
   const [scope, setScope] = useState<string>(near[0]?.market.id ?? 'ncr');
   const path = scope === 'ncr' ? `da/index-${cat}.json` : `da/m/${scope}.json`;
   const { data, loading, error } = useJson<SeriesFile>(path);
@@ -38,7 +46,7 @@ function DaView({ cat, spot, markets, places }: { cat: string; spot: Spot; marke
     ...near.map(({ market: m, km: d }) => ({
       id: m.id,
       label: m.name.split('/')[0],
-      hint: m.approx ? `in ${cityOf(m, places)}` : `${d < 10 ? d.toFixed(1) : Math.round(d)} km away`,
+      hint: `${prefs.favMarkets.includes(m.id) ? '★ ' : ''}${m.approx ? `in ${cityOf(m, places)}` : `${d < 10 ? d.toFixed(1) : Math.round(d)} km away`}`,
     })),
     { id: 'ncr', label: 'Metro Manila average', hint: 'all items · 34 markets' },
   ];
@@ -100,12 +108,16 @@ function ItemList({ file, cat, sourceLine, cadence, emptyHint, compare }: {
 }) {
   const [open, setOpen] = useState<SeriesItem | null>(null);
   const watch = useWatch();
+  const { prefs } = usePrefs();
   const items = useMemo(() => {
+    // Settings → Local or imported: your choice lists first within an item.
+    const rank = (o?: string) => (prefs.origin === 'any' || !o ? 1 : o === prefs.origin ? 0 : 2);
     const recent = Math.max(0, file.periods.length - (cadence === 'day' ? 14 : 3));
     return file.items
       .filter((it) => it.cat === cat && it.s.slice(recent).some((v) => v != null))
-      .sort((a, b) => Number(!a.key) - Number(!b.key) || a.item.localeCompare(b.item));
-  }, [file, cat, cadence]);
+      .sort((a, b) => Number(!a.key) - Number(!b.key) || a.item.localeCompare(b.item)
+        || rank(a.origin) - rank(b.origin));
+  }, [file, cat, cadence, prefs.origin]);
 
   const latestIdx = Math.max(-1, ...items.map((it) => lastTwo(it.s).lastIdx));
   const asOf = latestIdx >= 0 ? file.periods[latestIdx] : null;
@@ -237,7 +249,7 @@ function NearbyMarkets({ item, spot, markets }: { item: SeriesItem; spot: Spot; 
   );
 }
 
-const s = StyleSheet.create({
+const s = themed(() => ({
   source: { fontSize: 12, color: C.faint, marginHorizontal: 16, marginBottom: 24 },
   spec: { color: C.muted, fontSize: 14, marginBottom: 8 },
   detailHead: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
@@ -246,7 +258,7 @@ const s = StyleSheet.create({
   range: { paddingHorizontal: 12, paddingVertical: 5, borderRadius: 999, borderWidth: 1, borderColor: C.line },
   rangeOn: { backgroundColor: C.text, borderColor: C.text },
   rangeText: { fontSize: 13, fontWeight: '600', color: C.muted },
-  rangeTextOn: { color: '#fff' },
+  rangeTextOn: { color: C.onPrimary },
   big: { flexDirection: 'row', alignItems: 'baseline', gap: 10 },
   bigPrice: { fontSize: 30, fontWeight: '800', color: C.text, fontVariant: ['tabular-nums'] },
   bigUnit: { fontSize: 15, fontWeight: '400', color: C.muted },
@@ -259,4 +271,4 @@ const s = StyleSheet.create({
   cmpName: { flex: 1, color: C.text, fontSize: 14 },
   cmpKm: { color: C.faint, fontSize: 12, width: 56, textAlign: 'right' },
   cmpPrice: { color: C.text, fontSize: 14, fontWeight: '600', width: 120, textAlign: 'right', fontVariant: ['tabular-nums'] },
-});
+}));

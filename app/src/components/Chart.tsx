@@ -3,7 +3,7 @@ import { LayoutChangeEvent, StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle, Line, Path } from 'react-native-svg';
 
 import { peso, periodLabel } from '../lib/format';
-import { C } from '../theme';
+import { C, themed } from '../theme';
 
 function path(values: (number | null)[], w: number, h: number, pad: number, lo: number, hi: number) {
   const n = values.length;
@@ -76,9 +76,9 @@ export function Chart({ periods, values, height = 160 }: { periods: string[]; va
   );
 }
 
-const s = StyleSheet.create({
+const s = themed(() => ({
   empty: { color: C.muted, paddingVertical: 24, textAlign: 'center' },
   guide: { color: C.muted, fontSize: 12, textAlign: 'right' },
   axis: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 4 },
   axisLabel: { color: C.faint, fontSize: 12 },
-});
+}));

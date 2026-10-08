@@ -1,9 +1,10 @@
 import { ReactNode } from 'react';
 import { ActivityIndicator, Platform, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 
-import { change, pesoPrice, Price, UNIT_LABEL } from '../lib/format';
+import { change, pesoPrice, Price, scale, UNIT_LABEL } from '../lib/format';
+import { usePrefs } from '../lib/prefs';
 import { useWatch } from '../lib/watch';
-import { C, R } from '../theme';
+import { C, R, themed } from '../theme';
 import { Sparkline } from './Chart';
 
 /** ▲ 3.2% (red: dearer) / ▼ 1.0% (green: cheaper). */
@@ -32,6 +33,12 @@ export function PriceRow({ title, subtitle, badge, starred, price, unit, last, p
   spark?: (number | null)[];
   onPress?: () => void;
 }) {
+  // Settings → Eggs: per tray of 30 instead of per piece.
+  const { prefs } = usePrefs();
+  if (prefs.eggs === 'tray' && unit === 'pc' && /\begg/i.test(title)) {
+    price = scale(price, 30);
+    unit = 'tray';
+  }
   return (
     <Pressable onPress={onPress} style={({ pressed }) => [s.row, pressed && { backgroundColor: C.bg }]}
       accessibilityRole="button" accessibilityLabel={`${title}, ${pesoPrice(price)} ${UNIT_LABEL[unit] ?? ''}`}>
@@ -63,7 +70,7 @@ export function StarButton({ itemKey }: { itemKey?: string }) {
     <Pressable onPress={() => watch.toggle(itemKey)} style={[s.starBtn, on && s.starBtnOn]} hitSlop={8}
       accessibilityRole="button" accessibilityState={{ selected: on }}
       accessibilityLabel={on ? 'Remove from my items' : 'Add to my items'}>
-      <Text style={[s.starBtnText, on && { color: '#fff' }]}>{on ? '★ My item' : '☆ Add to my items'}</Text>
+      <Text style={[s.starBtnText, on && { color: C.onPrimary }]}>{on ? '★ My item' : '☆ Add to my items'}</Text>
     </Pressable>
   );
 }
@@ -77,6 +84,17 @@ export function ShareButton({ text }: { text: string }) {
       accessibilityRole="button">
       <Text style={s.shareText}>Share this price</Text>
     </Pressable>
+  );
+}
+
+/** Two columns on wide screens, stacked on phones. */
+export function Columns({ wide, left, right }: { wide?: boolean; left: ReactNode; right: ReactNode }) {
+  if (!wide) return <View>{left}{right}</View>;
+  return (
+    <View style={s.columns}>
+      <View style={s.col}>{left}</View>
+      <View style={s.col}>{right}</View>
+    </View>
   );
 }
 
@@ -120,7 +138,7 @@ export function Notice({ children, tone = 'info' }: { children: ReactNode; tone?
   );
 }
 
-const s = StyleSheet.create({
+const s = themed(() => ({
   row: {
     flexDirection: 'row', alignItems: 'center', gap: 12,
     paddingVertical: 12, paddingHorizontal: 16,
@@ -138,12 +156,14 @@ const s = StyleSheet.create({
   unit: { fontSize: 12, fontWeight: '400', color: C.muted },
   delta: { fontSize: 13, fontWeight: '600', marginTop: 2, fontVariant: ['tabular-nums'] },
   small: { fontSize: 12 },
-  star: { color: '#D97706' },
+  star: { color: C.star },
   starBtn: { borderWidth: 1, borderColor: C.line, borderRadius: R.pill, paddingHorizontal: 12, paddingVertical: 6 },
-  starBtnOn: { backgroundColor: '#D97706', borderColor: '#D97706' },
+  starBtnOn: { backgroundColor: C.star, borderColor: C.star },
   starBtnText: { fontSize: 13, fontWeight: '600', color: C.text },
   share: { marginTop: 20, alignSelf: 'flex-start', paddingVertical: 8 },
   shareText: { color: C.primary, fontWeight: '600', fontSize: 14 },
+  columns: { flexDirection: 'row', alignItems: 'flex-start', gap: 4 },
+  col: { flex: 1, minWidth: 0 },
   card: {
     backgroundColor: C.card, borderRadius: R.xl, marginHorizontal: 16, marginBottom: 12,
     overflow: 'hidden', borderWidth: StyleSheet.hairlineWidth, borderColor: C.line,
@@ -160,7 +180,7 @@ const s = StyleSheet.create({
   chipOn: { backgroundColor: C.primary, borderColor: C.primary },
   chipText: { fontSize: 14, fontWeight: '600', color: C.text },
   chipHint: { fontSize: 11, color: C.muted, marginTop: 1 },
-  chipTextOn: { color: '#fff' },
+  chipTextOn: { color: C.onPrimary },
   notice: { backgroundColor: C.primarySoft, borderRadius: R.lg, padding: 12, marginHorizontal: 16, marginBottom: 12 },
   noticeText: { fontSize: 13, color: C.primaryDark, lineHeight: 18 },
-});
+}));

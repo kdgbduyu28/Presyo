@@ -7,9 +7,10 @@ import { peso, periodLabel, value } from '../lib/format';
 import type { Spot } from '../lib/location';
 import { placeName } from '../lib/names';
 import { activeMarkets, foodSource, Place, PlacesFile } from '../lib/places';
+import { usePrefs } from '../lib/prefs';
 import { BASKET_KEY, useStored } from '../lib/stored';
-import { C, R } from '../theme';
-import { Card, Loading, Notice, SectionTitle } from './bits';
+import { C, R, themed } from '../theme';
+import { Card, Columns, Loading, Notice, SectionTitle } from './bits';
 
 const STARTER: BasketLine[] = [
   { key: 'rice_well_milled', qty: 5 },
@@ -31,9 +32,10 @@ function qtyLabel(key: string, qty: number) {
 }
 
 /** Your palengke list, priced at the markets near you. */
-export function BasketView({ place, spot, places, markets }: {
-  place: Place; spot: Spot; places: PlacesFile; markets: Market[];
+export function BasketView({ place, spot, places, markets, wide }: {
+  place: Place; spot: Spot; places: PlacesFile; markets: Market[]; wide?: boolean;
 }) {
+  const { prefs } = usePrefs();
   const [lines, setLines, ready] = useStored<BasketLine[]>(BASKET_KEY, STARTER);
   const source = foodSource(place, places.psa);
   const latest = useJson<LatestFile>(source?.kind === 'da' ? 'da/latest.json' : null);
@@ -46,8 +48,10 @@ export function BasketView({ place, spot, places, markets }: {
 
   const results = useMemo(() => {
     if (!latest.data || !lines.length) return null;
-    return basketTotals(lines, latest.data.items, activeMarkets(markets), spot.lat, spot.lng, 10).slice(0, 6);
-  }, [latest.data, lines, markets, spot]);
+    return basketTotals(lines, latest.data.items, activeMarkets(markets), spot.lat, spot.lng, {
+      maxKm: prefs.basketKm, origin: prefs.origin, favourites: prefs.favMarkets,
+    }).slice(0, 8);
+  }, [latest.data, lines, markets, spot, prefs.basketKm, prefs.origin, prefs.favMarkets]);
 
   const estimate = useMemo(() => {
     if (!summary.data) return null;
@@ -62,8 +66,8 @@ export function BasketView({ place, spot, places, markets }: {
   if (!ready) return <Loading />;
   const label = (k: string) => byKey.get(k)?.label ?? k;
 
-  return (
-    <View>
+  const list = (
+    <>
       <SectionTitle>My palengke list</SectionTitle>
       <Card>
         {lines.map((l) => {
@@ -91,10 +95,15 @@ export function BasketView({ place, spot, places, markets }: {
         </View>
       ) : null}
 
+    </>
+  );
+
+  const priced = (
+    <>
       {source?.kind === 'da' ? (
         latest.loading ? <Loading /> : results && results.length ? (
           <>
-            <SectionTitle>Cost at markets within 10 km · {latest.data ? periodLabel(latest.data.date) : ''}</SectionTitle>
+            <SectionTitle>Cost at markets within {prefs.basketKm} km{prefs.favMarkets.length ? ' + favourites' : ''} · {latest.data ? periodLabel(latest.data.date) : ''}</SectionTitle>
             <Card>
               {results.map((r, i) => {
                 const cheapest = i === 0 && !r.missing.length;
@@ -116,7 +125,7 @@ export function BasketView({ place, spot, places, markets }: {
             </Card>
             <Savings results={results} />
           </>
-        ) : lines.length ? <Notice>No DA-monitored market within 10 km reports these items.</Notice> : null
+        ) : lines.length ? <Notice>No DA-monitored market within {prefs.basketKm} km reports these items. Raise the distance or add favourite markets in Settings.</Notice> : null
       ) : estimate ? (
         <>
           <SectionTitle>Estimated cost</SectionTitle>
@@ -131,8 +140,10 @@ export function BasketView({ place, spot, places, markets }: {
           <Notice>Per-market prices are only monitored in Metro Manila for now.</Notice>
         </>
       ) : null}
-    </View>
+    </>
   );
+
+  return <Columns wide={wide} left={list} right={priced} />;
 }
 
 function Savings({ results }: { results: { total: number; missing: string[] }[] }) {
@@ -151,7 +162,7 @@ function Stepper({ onPress, label, a11y }: { onPress: () => void; label: string;
   );
 }
 
-const s = StyleSheet.create({
+const s = themed(() => ({
   line: {
     flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 16, paddingVertical: 10,
     borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: C.line,
@@ -175,4 +186,4 @@ const s = StyleSheet.create({
   resultSub: { fontSize: 13, color: C.muted, marginTop: 2, lineHeight: 18 },
   total: { fontSize: 17, fontWeight: '800', color: C.text, fontVariant: ['tabular-nums'] },
   bigTotal: { fontSize: 28, fontWeight: '800', color: C.text, fontVariant: ['tabular-nums'] },
-});
+}));

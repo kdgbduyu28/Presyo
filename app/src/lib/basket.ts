@@ -36,35 +36,46 @@ export type BasketLine = { key: string; qty: number };
 /** One row of DA's latest per-market report (see build.py da/latest.json). */
 export type LatestItem = { key?: string; origin?: string; unit: string; m: Record<string, Price> };
 
-const ORIGIN_RANK: Record<string, number> = { local: 0, '': 1, imported: 2 };
+export type OriginPref = 'local' | 'imported' | 'any';
+
+const ORIGIN_RANK: Record<OriginPref, Record<string, number>> = {
+  local: { local: 0, '': 1, imported: 2 },
+  imported: { imported: 0, '': 1, local: 2 },
+  any: {},
+};
 
 function mid(p: Price): number | null {
   if (p == null) return null;
   return typeof p === 'number' ? p : (p[0] + p[1]) / 2;
 }
 
-/** Price of `key` at a market: local beats unlabelled beats imported. */
-export function priceAt(items: LatestItem[], key: string, marketId: string): number | null {
-  const options = items
+/** Price of `key` at a market. `origin`: which variant wins when both are sold
+ *  ("local" by default: local, then unlabelled, then imported); "any" = cheapest. */
+export function priceAt(items: LatestItem[], key: string, marketId: string, origin: OriginPref = 'local'): number | null {
+  const prices = items
     .filter((it) => it.key === key && mid(it.m[marketId] ?? null) != null)
-    .sort((a, b) => (ORIGIN_RANK[a.origin ?? ''] ?? 1) - (ORIGIN_RANK[b.origin ?? ''] ?? 1));
-  return options.length ? mid(options[0].m[marketId]) : null;
+    .map((it) => ({ rank: ORIGIN_RANK[origin][it.origin ?? ''] ?? 1, p: mid(it.m[marketId]) as number }))
+    .sort((a, b) => a.rank - b.rank || a.p - b.p);
+  return prices.length ? prices[0].p : null;
 }
 
 export type MarketTotal = { market: Market; km: number; total: number; missing: string[] };
 
-/** Basket cost at markets within `maxKm`, complete baskets first, then cheapest. */
+export type BasketOptions = { maxKm?: number; origin?: OriginPref; favourites?: string[] };
+
+/** Basket cost at markets within `maxKm` (favourites always), complete baskets first, then cheapest. */
 export function basketTotals(
-  lines: BasketLine[], items: LatestItem[], markets: Market[], lat: number, lng: number, maxKm = 10,
+  lines: BasketLine[], items: LatestItem[], markets: Market[], lat: number, lng: number,
+  { maxKm = 10, origin = 'local', favourites = [] }: BasketOptions = {},
 ): MarketTotal[] {
   const out: MarketTotal[] = [];
   for (const m of markets) {
     const d = km(lat, lng, m.lat, m.lng);
-    if (d > maxKm) continue;
+    if (d > maxKm && !favourites.includes(m.id)) continue;
     let total = 0;
     const missing: string[] = [];
     for (const l of lines) {
-      const p = priceAt(items, l.key, m.id);
+      const p = priceAt(items, l.key, m.id, origin);
       if (p == null) missing.push(l.key);
       else total += p * l.qty;
     }

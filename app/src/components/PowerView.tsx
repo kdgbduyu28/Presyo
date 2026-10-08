@@ -4,8 +4,8 @@ import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 import { useJson } from '../lib/data';
 import { lastTwo, peso, periodLabel } from '../lib/format';
 import { NCR, Place, PlacesFile } from '../lib/places';
-import { useStored } from '../lib/stored';
-import { C, R } from '../theme';
+import { usePrefs } from '../lib/prefs';
+import { C, R, themed } from '../theme';
 import { Chart } from './Chart';
 import { Card, Delta, Loading, Notice, SectionTitle } from './bits';
 
@@ -20,8 +20,13 @@ const TYPE_LABEL: Record<string, string> = { PIOU: 'Private utility', EC: 'Elect
 export function PowerView({ place, places }: { place: Place; places: PlacesFile }) {
   const own = useJson<PowerFile>(`power/${place.region}.json`);
   const ncr = useJson<PowerFile>(MERALCO_REGIONS.has(place.region) && place.region !== NCR ? `power/${NCR}.json` : null);
-  const [choice, setChoice] = useStored<Record<string, string>>('presyo.utility.v1', {});
-  const [kwh, setKwh] = useState('200');
+  const { prefs, set } = usePrefs();
+  const choice = prefs.utility;
+  const [kwh, setKwhText] = useState(String(prefs.kwh));
+  const setKwh = (t: string) => {
+    setKwhText(t);
+    if (parseFloat(t) > 0) set({ kwh: parseFloat(t) }); // remembered in Settings
+  };
 
   const file = useMemo(() => {
     if (!own.data) return null;
@@ -39,7 +44,7 @@ export function PowerView({ place, places }: { place: Place; places: PlacesFile 
     .sort((a, b) => (a.last as number) - (b.last as number));
   const chosenId = choice[place.region] ?? (MERALCO_REGIONS.has(place.region) ? 'MERALCO' : null);
   const chosen = ranked.find((x) => x.u.id === chosenId);
-  const pick = (id: string) => setChoice((c) => ({ ...c, [place.region]: id }));
+  const pick = (id: string) => set((p) => ({ utility: { ...p.utility, [place.region]: id } }));
   const region = places.names[place.region] ?? '';
   const k = parseFloat(kwh);
 
@@ -99,7 +104,7 @@ export function PowerView({ place, places }: { place: Place; places: PlacesFile 
   );
 }
 
-const s = StyleSheet.create({
+const s = themed(() => ({
   du: { fontSize: 18, fontWeight: '800', color: C.text },
   duType: { fontSize: 13, color: C.muted, marginBottom: 8 },
   big: { flexDirection: 'row', alignItems: 'baseline', gap: 10 },
@@ -122,4 +127,4 @@ const s = StyleSheet.create({
   rowPrice: { fontSize: 15, fontWeight: '700', color: C.text, fontVariant: ['tabular-nums'] },
   unit: { fontSize: 12, fontWeight: '400', color: C.muted },
   source: { fontSize: 12, color: C.faint, marginHorizontal: 16, marginBottom: 24 },
-});
+}));
