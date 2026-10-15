@@ -27,6 +27,14 @@ export type Prefs = {
   origin: 'local' | 'imported' | 'any';
   basketKm: number;
   favMarkets: string[];
+  /** water concessionaire id (for cities both serve) and sewer connection */
+  waterCo: string | null;
+  sewered: boolean;
+  /** trip length + student/senior/PWD discount for the Fares tab */
+  fareKm: number;
+  fareDiscount: boolean;
+  /** currency code shown first on the Forex tab */
+  fx: string;
 };
 
 export const DEFAULT_PREFS: Prefs = {
@@ -44,6 +52,11 @@ export const DEFAULT_PREFS: Prefs = {
   origin: 'local',
   basketKm: 10,
   favMarkets: [],
+  waterCo: null,
+  sewered: false,
+  fareKm: 5,
+  fareDiscount: false,
+  fx: 'USD',
 };
 
 const PREFS_KEY = 'presyo.prefs.v1';

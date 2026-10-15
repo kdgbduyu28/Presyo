@@ -6,6 +6,8 @@
     presyo-ingest adjust         DOE weekly fuel price adjustment notices
     presyo-ingest power          DOE residential electricity rates (Google Sheet)
     presyo-ingest dti            DTI suggested retail prices (grocery SRP bulletin)
+    presyo-ingest meralco        Meralco residential bills at typical kWh levels (monthly)
+    presyo-ingest forex          BSP reference exchange rates (daily + history backfill)
     presyo-ingest markets        geocode DA markets missing coordinates
     presyo-ingest all            everything above + build
     presyo-ingest build          write app/public/data from data/
@@ -17,7 +19,7 @@ import sys
 
 def main() -> None:
     from . import build, geo
-    from .sources import da, doe, dti, lpg, power, psa
+    from .sources import da, doe, dti, forex, lpg, meralco, power, psa
 
     cmd = sys.argv[1] if len(sys.argv) > 1 else "all"
     force = "--force" in sys.argv
@@ -37,6 +39,10 @@ def main() -> None:
         power.ingest(force=force)
     elif cmd == "dti":
         dti.ingest(force=force)
+    elif cmd == "meralco":
+        meralco.ingest(force=force)
+    elif cmd == "forex":
+        forex.ingest(force=force)
     elif cmd == "markets":
         da.geocode_markets(geo.Gazetteer())
     elif cmd == "build":
@@ -56,6 +62,8 @@ def main() -> None:
             ("adjust", lambda: doe.ingest_adjustments(force=force)),
             ("power", lambda: power.ingest(force=force)),
             ("dti", lambda: dti.ingest(force=force)),
+            ("meralco", lambda: meralco.ingest(force=force)),
+            ("forex", lambda: forex.ingest(force=force)),
         ]
         failed = []
         for name, step in steps:

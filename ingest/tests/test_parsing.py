@@ -4,6 +4,8 @@ from presyo_ingest.catalog import key_for
 from presyo_ingest.geo import full_key, norm
 from presyo_ingest.sources.da import _date_from_name, _range, market_id
 from presyo_ingest.sources.doe import period_from_text
+from presyo_ingest.sources.forex import parse_bulletin
+from presyo_ingest.sources.meralco import links
 from presyo_ingest.sources.power import _month
 
 
@@ -49,3 +51,28 @@ def test_catalog_keys():
 def test_power_months():
     assert _month("Sep-26") == "2026-09"
     assert _month("Trend") is None
+
+
+def test_forex_bulletin():
+    items = [
+        {"Title": "UNITED STATES", "Unit": "DOLLAR*", "Symbol": "USD", "PHPequivalent": "62.7930", "Group": "1"},
+        {"Title": "KUWAIT", "Unit": "DINAR", "Symbol": "KWD", "PHPequivalent": "N/A", "Group": "1"},
+        {"Title": "PHILIPPINES", "Unit": "BSP Reference Rate:         PHP", "Symbol": "PHP", "PHPequivalent": "62.800", "Group": "3"},
+        {"Title": "PHILIPPINES", "Unit": "PDS Closing Rate (09-Oct-2026): PHP", "Symbol": "PHP", "PHPequivalent": "62.801", "Group": "3"},
+        {"Title": "PHILIPPINES", "Unit": "GOLD BUYING:      $", "Symbol": "USD", "PHPequivalent": "4,200.50", "Group": "3"},
+    ]
+    day, rows = parse_bulletin(items)
+    assert day == "2026-10-09"
+    got = {r["item"]: (r["price"], r["unit"]) for r in rows}
+    assert got == {"USD": (62.793, "PHP"), "BSP_REF": (62.8, "PHP"), "GOLD_USD": (4200.5, "USD")}
+    assert parse_bulletin(items[:1]) == (None, [])
+
+
+def test_meralco_links():
+    html = ('<a href="https://meralcomain.s3.ap-southeast-1.amazonaws.com/2026-08/08-2026_residential_bills.pdf">'
+            '<a href="https://meralcomain.s3.ap-southeast-1.amazonaws.com/2026-08/08-2026_rate_schedule_0.pdf">'
+            '<a href="https://meralcomain.s3.ap-southeast-1.amazonaws.com/2026-09/09-2026_residential_bills_0.pdf">')
+    assert links(html) == {
+        "2026-08": "https://meralcomain.s3.ap-southeast-1.amazonaws.com/2026-08/08-2026_residential_bills.pdf",
+        "2026-09": "https://meralcomain.s3.ap-southeast-1.amazonaws.com/2026-09/09-2026_residential_bills_0.pdf",
+    }

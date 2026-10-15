@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
+import { BillPoint, meralcoBill } from '../lib/bills';
 import { useJson } from '../lib/data';
 import { lastTwo, peso, periodLabel } from '../lib/format';
 import { NCR, Place, PlacesFile } from '../lib/places';
@@ -11,6 +12,7 @@ import { Card, Delta, Loading, Notice, SectionTitle } from './bits';
 
 type Utility = { id: string; name?: string; type?: string; s: (number | null)[] };
 type PowerFile = { periods: string[]; utilities: Utility[] };
+type MeralcoFile = { months: { month: string; url: string; regular: BillPoint[]; lifeline: BillPoint[] }[] };
 
 // Meralco's franchise also covers parts of Central Luzon and CALABARZON.
 const MERALCO_REGIONS = new Set([NCR, '030000000', '040000000']);
@@ -20,6 +22,7 @@ const TYPE_LABEL: Record<string, string> = { PIOU: 'Private utility', EC: 'Elect
 export function PowerView({ place, places }: { place: Place; places: PlacesFile }) {
   const own = useJson<PowerFile>(`power/${place.region}.json`);
   const ncr = useJson<PowerFile>(MERALCO_REGIONS.has(place.region) && place.region !== NCR ? `power/${NCR}.json` : null);
+  const meralco = useJson<MeralcoFile>(MERALCO_REGIONS.has(place.region) ? 'power/meralco.json' : null);
   const { prefs, set } = usePrefs();
   const choice = prefs.utility;
   const [kwh, setKwhText] = useState(String(prefs.kwh));
@@ -47,6 +50,10 @@ export function PowerView({ place, places }: { place: Place; places: PlacesFile 
   const pick = (id: string) => set((p) => ({ utility: { ...p.utility, [place.region]: id } }));
   const region = places.names[place.region] ?? '';
   const k = parseFloat(kwh);
+  // Meralco publishes the full bill at typical kWh levels each month: use it
+  // instead of kWh × average rate (the rate per kWh steps up at 200/300/400 kWh).
+  const mer = chosen?.u.id === 'MERALCO' ? meralco.data?.months.at(-1) : undefined;
+  const merBill = mer && k > 0 ? meralcoBill(mer.regular, k) : null;
 
   return (
     <View>
@@ -66,9 +73,14 @@ export function PowerView({ place, places }: { place: Place; places: PlacesFile 
               <TextInput value={kwh} onChangeText={setKwh} keyboardType="number-pad" style={s.input}
                 accessibilityLabel="Monthly use in kWh" selectTextOnFocus />
               <Text style={s.billLabel}>kWh  ≈</Text>
-              <Text style={s.billValue}>{k > 0 ? peso(k * (chosen.last as number)) : '—'}</Text>
+              <Text style={s.billValue}>{merBill != null ? peso(merBill) : k > 0 ? peso(k * (chosen.last as number)) : '—'}</Text>
             </View>
-            <Text style={s.caption}>Check “kWh used” on your bill. A typical home uses 150–250 kWh a month.</Text>
+            <Text style={s.caption}>
+              {merBill != null && mer
+                ? `${periodLabel(mer.month)} bill from Meralco's rate table: all charges, VAT and 0.5% franchise tax (varies by city). `
+                : ''}
+              Check “kWh used” on your bill. A typical home uses 150–250 kWh a month.
+            </Text>
             <View style={{ marginTop: 14 }}>
               <Chart periods={file.periods} values={chosen.u.s} height={130} />
             </View>

@@ -10,7 +10,11 @@ Palengke, pump and household prices near you, from Philippine government monitor
 | Fuel price adjustments | DOE prior notices | per oil company | weekly |
 | LPG (11 kg) | DOE LPG monitoring | city/town × brand | monthly |
 | Electricity | DOE (rates sheet) | per distribution utility | monthly |
+| Meralco bill by kWh | Meralco residential bills table (PDF) | Meralco franchise | monthly |
 | Grocery SRPs | DTI SRP bulletin | national | when DTI updates |
+| Exchange rates | BSP Reference Exchange Rate Bulletin | 31 currencies + BSP USD buy/sell | daily (trading days) |
+| Water | MWSS concessionaires (hand-maintained `data/static/water.json`) | Maynilad / Manila Water zones | quarterly |
+| Jeepney & bus fares | LTFRB (hand-maintained `data/static/fares.json`) | national | when LTFRB changes fares |
 
 No backend: a Python ingest turns the published PDFs/CSVs into normalized JSON,
 and an Expo (React Native + web) app reads static files.
@@ -33,6 +37,12 @@ cd app && npm install && npx expo start --web
 `CLOUDFLARE_API_TOKEN` secret and a `CLOUDFLARE_ACCOUNT_ID` variable.
 
 ## Known gaps
+
+- Water and fares are typed in by hand from MWSS-RO / LTFRB announcements: both sites
+  sit behind a Cloudflare bot challenge. Update them each quarter (water FCDA) or when
+  fares change, and bump `checked`.
+- bsp.gov.ph rejects non-browser TLS clients; the forex source uses `curl_cffi` with a
+  Chrome fingerprint.
 
 - North Luzon DOE fuel/LPG reports are scanned images: not parsed (needs OCR).
 - DOE's new site only has fuel reports from late August 2026.

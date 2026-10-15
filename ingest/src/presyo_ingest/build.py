@@ -250,6 +250,54 @@ def build() -> None:
                 for du, vals in sorted(dus.items())]})
         meta["sources"]["doe_power"] = {"latest": months[-1]}
 
+    # ---- Meralco: full residential bill at typical kWh levels, per month
+    mb = [d for d in store.read_all("meralco_bills") if d["rows"]]
+    if mb:
+        months = []
+        for d in mb:
+            pts: dict = defaultdict(list)
+            for r in sorted(d["rows"], key=lambda r: r["kwh"]):
+                pts[r["brand"]].append([r["kwh"], r["price"]])
+            months.append({"month": d["doc"]["period_start"][:7], "url": d["doc"]["url"],
+                           "regular": pts["regular"], "lifeline": pts["lifeline"]})
+        total += _write("power/meralco.json", {"months": months})
+        meta["sources"]["meralco_bills"] = {"latest": months[-1]["month"]}
+
+    # ---- BSP exchange rates: monthly history backfill + daily bulletins
+    fx_docs = store.read_all("bsp_forex")
+    if fx_docs:
+        rates: dict = defaultdict(dict)  # day -> code -> PHP
+        # history first, so a day's bulletin wins where both exist
+        for d in sorted(fx_docs, key=lambda d: not d["doc"].get("url", "").endswith(".xlsx")):
+            for r in d["rows"]:
+                if r["unit"] == "PHP" and not r["item"].startswith("BSP_"):
+                    rates[r["start"]][r["item"]] = r["price"]
+        days = sorted(rates)
+        codes = sorted({c for v in rates.values() for c in v})
+        from .sources.forex import CURRENCIES, NAMES
+        order = {code: i for i, (code, _, _) in enumerate(CURRENCIES)}
+        latest = max((d for d in fx_docs if d["doc"].get("url", "").endswith(".aspx")),
+                     key=lambda d: d["doc"]["period_start"], default=None)
+        bsp = {}
+        if latest:
+            bsp = {"date": latest["doc"]["period_start"],
+                   **{r["item"].lower(): r["price"] for r in latest["rows"]
+                      if r["item"].startswith("BSP_") or r["item"].endswith("_USD")}}
+        total += _write("forex.json", {
+            "periods": days, "bsp": bsp,
+            "currencies": [{"code": c, "name": NAMES.get(c, c), "s": [rates[d].get(c) for d in days]}
+                           for c in sorted(codes, key=lambda c: order.get(c, 99))]})
+        meta["sources"]["bsp_forex"] = {"latest": days[-1]}
+
+    # ---- hand-maintained tables (water tariffs, PUV fares)
+    for name in ("water", "fares"):
+        p = DATA / "static" / f"{name}.json"
+        if p.exists():
+            body = json.loads(p.read_text())
+            body.pop("note", None)
+            total += _write(f"{name}.json", body)
+            meta["sources"][f"{name}_table"] = {"latest": body["checked"]}
+
     # ---- DTI suggested retail prices (national)
     srp = store.read_all("dti_srp")
     if srp and srp[-1]["rows"]:

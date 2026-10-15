@@ -22,6 +22,11 @@ Planned work, roughly in priority order. Done items move to the changelog / git 
   item details in a side panel; `/` focuses search, Esc closes panels; landscape allowed.
 
 ## Data
+- **Water and fares upkeep**: quarterly check of MWSS-RO FCDA announcements (Jan/Apr/Jul/Oct)
+  and LTFRB fare orders; edit `data/static/*.json`. Possible next: provincial water districts
+  (LWUA), LRT/MRT fares, taxi/TNVS/UV Express, tricycle (set per LGU).
+- **Other Meralco-style bill tables**: VECO, Davao Light, other big utilities publish similar
+  rate schedules.
 - **North Luzon fuel & LPG**: DOE uploads scanned PDFs; add OCR (tesseract) with
   sanity checks (prices within range, brand columns from header positions).
 - **Fuel history before late Aug 2026** from legacy.doe.gov.ph.

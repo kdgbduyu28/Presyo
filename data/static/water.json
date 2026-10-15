@@ -1,0 +1,157 @@
+{
+  "note": "Hand-maintained: MWSS-RO and the concessionaires' sites block automated access (Cloudflare challenge). Update each quarter when MWSS-RO announces the FCDA (usually mid-month before the quarter). Figures from news reports quoting MWSS-RO; checked 2026-10-12.",
+  "checked": "2026-10-12",
+  "concessionaires": [
+    {
+      "id": "maynilad",
+      "name": "Maynilad",
+      "zone": "West Zone",
+      "url": "https://www.mayniladwater.com.ph/",
+      "all_in": {
+        "effective": "2026-01-01",
+        "unsewered": 67.61,
+        "sewered": 78.46,
+        "prev_unsewered": 65.76,
+        "prev_sewered": 76.31,
+        "source": "https://tribune.net.ph/2025/12/15/higher-water-tariffs-set-for-metro-manila-2"
+      },
+      "areas": {
+        "all": [
+          "137501000",
+          "137502000",
+          "137503000",
+          "137504000",
+          "137601000",
+          "137604000",
+          "137605000",
+          "137603000",
+          "042103000",
+          "042105000",
+          "042109000",
+          "042111000",
+          "042116000",
+          "042117000"
+        ],
+        "part": [
+          "133900000",
+          "137404000",
+          "137602000"
+        ]
+      },
+      "adjustments": [
+        {
+          "quarter": "2026-Q4",
+          "start": "2026-10-01",
+          "per_cum": 0.24,
+          "what": "FCDA",
+          "bill": {
+            "10": 0.67,
+            "20": 2.54,
+            "30": 5.19
+          },
+          "source": "https://www.gmanetwork.com/news/money/economy/1002012/manila-water-maynilad-customers-face-higher-tariffs-in-q4-2026/story/"
+        },
+        {
+          "quarter": "2026-Q3",
+          "start": "2026-07-01",
+          "per_cum": -0.01,
+          "what": "FCDA",
+          "bill": {
+            "10": -0.34,
+            "20": -1.29,
+            "30": -2.66
+          },
+          "source": "https://www.gmanetwork.com/news/money/companies/990189/manila-water-maynilad-rates-mwss/story/"
+        },
+        {
+          "quarter": "2026-Q2",
+          "start": "2026-04-01",
+          "per_cum": 0.09,
+          "what": "FCDA (−₱0.22 → −₱0.13/cu.m)",
+          "bill": {
+            "10": 0.27,
+            "20": 1.0,
+            "30": 2.07
+          },
+          "source": "https://www.philstar.com/headlines/2026/03/14/2514143/water-rates-go-next-month"
+        }
+      ]
+    },
+    {
+      "id": "manila_water",
+      "name": "Manila Water",
+      "zone": "East Zone",
+      "url": "https://www.manilawater.com/",
+      "all_in": {
+        "effective": "2026-01-01",
+        "unsewered": 67.98,
+        "sewered": 85.06,
+        "prev_unsewered": 60.8,
+        "prev_sewered": 76.67,
+        "source": "https://tribune.net.ph/2025/12/15/higher-water-tariffs-set-for-metro-manila-2"
+      },
+      "areas": {
+        "all": [
+          "137401000",
+          "137402000",
+          "137403000",
+          "137405000",
+          "137606000",
+          "137607000",
+          "045801000",
+          "045802000",
+          "045803000",
+          "045804000",
+          "045805000",
+          "045806000",
+          "045807000",
+          "045808000",
+          "045809000",
+          "045810000",
+          "045811000",
+          "045812000",
+          "045813000",
+          "045814000"
+        ],
+        "part": [
+          "133900000",
+          "137404000",
+          "137602000"
+        ]
+      },
+      "adjustments": [
+        {
+          "quarter": "2026-Q4",
+          "start": "2026-10-01",
+          "per_cum": 0.08,
+          "what": "FCDA (to ₱0.46/cu.m)",
+          "bill": {
+            "10": 0.34,
+            "20": 0.75,
+            "30": 1.53
+          },
+          "source": "https://www.gmanetwork.com/news/money/economy/1002012/manila-water-maynilad-customers-face-higher-tariffs-in-q4-2026/story/"
+        },
+        {
+          "quarter": "2026-Q3",
+          "start": "2026-07-01",
+          "per_cum": 0,
+          "what": "No change",
+          "source": "https://www.gmanetwork.com/news/money/companies/990189/manila-water-maynilad-rates-mwss/story/"
+        },
+        {
+          "quarter": "2026-Q2",
+          "start": "2026-04-01",
+          "per_cum": 0.04,
+          "what": "FCDA (₱0.35 → ₱0.39/cu.m)",
+          "source": "https://www.philstar.com/headlines/2026/03/14/2514143/water-rates-go-next-month",
+          "bill": {
+            "10": 0.14,
+            "20": 0.29,
+            "30": 0.58
+          }
+        }
+      ]
+    }
+  ]
+}

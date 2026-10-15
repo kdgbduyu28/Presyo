@@ -5,13 +5,16 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BasketView } from '../components/BasketView';
 import { Chips, Loading, Notice } from '../components/bits';
+import { FaresView } from '../components/FaresView';
 import { FoodView } from '../components/FoodView';
+import { ForexView } from '../components/ForexView';
 import { FuelView } from '../components/FuelView';
 import { GroceryView } from '../components/GroceryView';
 import { LocationPicker } from '../components/LocationPicker';
 import { PowerView } from '../components/PowerView';
 import { Sheet } from '../components/Sheet';
 import { TodayView } from '../components/TodayView';
+import { WaterView } from '../components/WaterView';
 import { Market, Meta, PlacesFile, useJson } from '../lib/data';
 import { periodLabel } from '../lib/format';
 import { locate, Spot, useSpot } from '../lib/location';
@@ -20,7 +23,8 @@ import { nearestPlace } from '../lib/places';
 import { usePrefs, withRecent } from '../lib/prefs';
 import { C, MAX_WIDTH, R, TAB_LABELS, themed, WIDE } from '../theme';
 
-const TABS = ['today', 'basket', 'rice', 'fuel', 'meat', 'vegetables', 'seafood', 'fruits', 'pantry', 'grocery', 'power'] as const;
+const TABS = ['today', 'basket', 'rice', 'fuel', 'meat', 'vegetables', 'seafood', 'fruits', 'pantry', 'grocery', 'power',
+  'water', 'fares', 'forex'] as const;
 type Tab = (typeof TABS)[number];
 
 // Survive the remount that a theme change or "clear data" does.
@@ -78,13 +82,20 @@ export default function Home() {
         <GroceryView />
       ) : tab === 'power' ? (
         <PowerView place={here} places={places.data!} />
+      ) : tab === 'water' ? (
+        <WaterView place={here} />
+      ) : tab === 'fares' ? (
+        <FaresView wide={wide} />
+      ) : tab === 'forex' ? (
+        <ForexView wide={wide} />
       ) : tab === 'fuel' ? (
         <FuelView place={here} spot={spot} places={places.data!} wide={wide} />
       ) : (
         <FoodView cat={tab} place={here} spot={spot} places={places.data!} markets={markets.data!} />
       )}
       <Text style={s.footer}>
-        Data from DA Bantay Presyo, PSA OpenSTAT, DOE (pump prices, LPG, price notices, electricity) and DTI (SRP)
+        Data from DA Bantay Presyo, PSA OpenSTAT, DOE (pump prices, LPG, price notices, electricity), DTI (SRP),
+        Meralco, MWSS, LTFRB and BSP (exchange rates)
         {meta.data ? ` · updated ${periodLabel(meta.data.generated_at.slice(0, 10))}` : ''}.
         Presyo is not affiliated with the government.
       </Text>
@@ -96,7 +107,7 @@ export default function Home() {
       <Text style={s.h1}>Where do you buy?</Text>
       <Text style={s.lead}>
         Presyo shows the latest government-monitored prices of rice, fuel, meat, vegetables, seafood,
-        groceries, LPG and electricity for your area.
+        groceries, LPG, electricity, water and fares for your area, plus BSP exchange rates.
       </Text>
       {places.data ? <LocationPicker places={places.data} onPick={pick} recent={prefs.recent} /> : null}
     </ScrollView>

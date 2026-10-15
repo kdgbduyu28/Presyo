@@ -59,7 +59,7 @@ const cache = new Map<string, Promise<unknown>>();
 
 // Files the home screen needs, kept on the device so the app still opens
 // (with the last prices) without a connection. Small files only.
-const OFFLINE = /^(places|markets|meta)\.json$|^(summary|fuel|lpg|power)\/|^da\/latest\.json$|^grocery\//;
+const OFFLINE = /^(places|markets|meta|forex|water|fares)\.json$|^(summary|fuel|lpg|power)\/|^da\/latest\.json$|^grocery\//;
 const OFFLINE_MAX = 250_000;
 
 async function remember(path: string, body: string) {

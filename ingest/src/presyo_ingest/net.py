@@ -45,6 +45,28 @@ def get(url: str, **kw) -> httpx.Response:
     return request("GET", url, **kw)
 
 
+def get_as_browser(url: str, headers: dict | None = None) -> bytes:
+    """GET through a Chrome TLS fingerprint. BSP's CDN (Akamai) answers 403 to
+    any non-browser client, whatever the user agent says."""
+    from curl_cffi import requests as cf
+
+    last: Exception | None = None
+    for attempt in range(4):
+        try:
+            r = cf.get(url, impersonate="chrome", headers=headers or {}, timeout=120)
+            if r.status_code == 404:
+                raise FileNotFoundError(url)
+            if r.status_code >= 400:
+                raise RuntimeError(f"{r.status_code}")
+            return r.content
+        except FileNotFoundError:
+            raise
+        except Exception as e:
+            last = e
+            time.sleep(2**attempt)
+    raise RuntimeError(f"GET {url} failed: {last}")
+
+
 def fetch_cached(url: str, name: str, refresh: bool = False) -> Path:
     """Download `url` into the cache as `name` (unless already there)."""
     path = CACHE / name

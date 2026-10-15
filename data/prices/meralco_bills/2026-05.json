@@ -1,0 +1,23 @@
+{
+ "doc": {"source": "meralco_bills", "url": "https://meralcomain.s3.ap-southeast-1.amazonaws.com/2026-05/05-2026_residential_bills.pdf", "status": "ok", "period_start": "2026-05-01", "period_end": "2026-05-28", "rate_200": 14.3345, "parser_version": 1, "parsed_at": "2026-10-12T06:56:30Z", "rows": 18},
+ "rows": [
+  {"item": "MERALCO", "spec": "100 kWh", "cat": "power", "unit": "bill", "brand": "lifeline", "kwh": 100, "area": "130000000", "start": "2026-05-01", "end": "2026-05-28", "price": 1155.57},
+  {"item": "MERALCO", "spec": "50 kWh", "cat": "power", "unit": "bill", "brand": "lifeline", "kwh": 50, "area": "130000000", "start": "2026-05-01", "end": "2026-05-28", "price": 0.0},
+  {"item": "MERALCO", "spec": "70 kWh", "cat": "power", "unit": "bill", "brand": "lifeline", "kwh": 70, "area": "130000000", "start": "2026-05-01", "end": "2026-05-28", "price": 661.92},
+  {"item": "MERALCO", "spec": "100 kWh", "cat": "power", "unit": "bill", "brand": "regular", "kwh": 100, "area": "130000000", "start": "2026-05-01", "end": "2026-05-28", "price": 1445.47},
+  {"item": "MERALCO", "spec": "1000 kWh", "cat": "power", "unit": "bill", "brand": "regular", "kwh": 1000, "area": "130000000", "start": "2026-05-01", "end": "2026-05-28", "price": 15526.33},
+  {"item": "MERALCO", "spec": "1500 kWh", "cat": "power", "unit": "bill", "brand": "regular", "kwh": 1500, "area": "130000000", "start": "2026-05-01", "end": "2026-05-28", "price": 23359.99},
+  {"item": "MERALCO", "spec": "200 kWh", "cat": "power", "unit": "bill", "brand": "regular", "kwh": 200, "area": "130000000", "start": "2026-05-01", "end": "2026-05-28", "price": 2866.9},
+  {"item": "MERALCO", "spec": "300 kWh", "cat": "power", "unit": "bill", "brand": "regular", "kwh": 300, "area": "130000000", "start": "2026-05-01", "end": "2026-05-28", "price": 4393.13},
+  {"item": "MERALCO", "spec": "3000 kWh", "cat": "power", "unit": "bill", "brand": "regular", "kwh": 3000, "area": "130000000", "start": "2026-05-01", "end": "2026-05-28", "price": 47085.93},
+  {"item": "MERALCO", "spec": "400 kWh", "cat": "power", "unit": "bill", "brand": "regular", "kwh": 400, "area": "130000000", "start": "2026-05-01", "end": "2026-05-28", "price": 5981.28},
+  {"item": "MERALCO", "spec": "50 kWh", "cat": "power", "unit": "bill", "brand": "regular", "kwh": 50, "area": "130000000", "start": "2026-05-01", "end": "2026-05-28", "price": 734.78},
+  {"item": "MERALCO", "spec": "500 kWh", "cat": "power", "unit": "bill", "brand": "regular", "kwh": 500, "area": "130000000", "start": "2026-05-01", "end": "2026-05-28", "price": 7757.71},
+  {"item": "MERALCO", "spec": "5000 kWh", "cat": "power", "unit": "bill", "brand": "regular", "kwh": 5000, "area": "130000000", "start": "2026-05-01", "end": "2026-05-28", "price": 78720.51},
+  {"item": "MERALCO", "spec": "600 kWh", "cat": "power", "unit": "bill", "brand": "regular", "kwh": 600, "area": "130000000", "start": "2026-05-01", "end": "2026-05-28", "price": 9304.42},
+  {"item": "MERALCO", "spec": "70 kWh", "cat": "power", "unit": "bill", "brand": "regular", "kwh": 70, "area": "130000000", "start": "2026-05-01", "end": "2026-05-28", "price": 1019.05},
+  {"item": "MERALCO", "spec": "700 kWh", "cat": "power", "unit": "bill", "brand": "regular", "kwh": 700, "area": "130000000", "start": "2026-05-01", "end": "2026-05-28", "price": 10856.16},
+  {"item": "MERALCO", "spec": "800 kWh", "cat": "power", "unit": "bill", "brand": "regular", "kwh": 800, "area": "130000000", "start": "2026-05-01", "end": "2026-05-28", "price": 12412.89},
+  {"item": "MERALCO", "spec": "900 kWh", "cat": "power", "unit": "bill", "brand": "regular", "kwh": 900, "area": "130000000", "start": "2026-05-01", "end": "2026-05-28", "price": 13969.62}
+ ]
+}

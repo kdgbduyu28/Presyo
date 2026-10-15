@@ -8,7 +8,8 @@ import { periodLabel } from '../lib/format';
 import { Prefs, usePrefs } from '../lib/prefs';
 import { C, MAX_WIDTH, R, TAB_LABELS, themed } from '../theme';
 
-const TAB_IDS = ['today', 'basket', 'rice', 'fuel', 'meat', 'vegetables', 'seafood', 'fruits', 'pantry', 'grocery', 'power'];
+const TAB_IDS = ['today', 'basket', 'rice', 'fuel', 'meat', 'vegetables', 'seafood', 'fruits', 'pantry', 'grocery', 'power',
+  'water', 'fares', 'forex'];
 
 const FUELS: [string, string][] = [
   ['fuel_ron91', 'RON 91'], ['fuel_ron95', 'RON 95'], ['fuel_ron97', 'RON 97'],
@@ -23,7 +24,8 @@ const SOURCE_LABEL: Record<string, string> = {
   doe_ncr: 'DOE pump prices: NCR', doe_south_luzon: 'DOE pump prices: South Luzon',
   doe_north_luzon: 'DOE pump prices: North Luzon', doe_visayas: 'DOE pump prices: Visayas',
   doe_mindanao: 'DOE pump prices: Mindanao', doe_lpg: 'DOE LPG', doe_power: 'DOE electricity rates',
-  dti_srp: 'DTI suggested retail prices',
+  dti_srp: 'DTI suggested retail prices', meralco_bills: 'Meralco bills', bsp_forex: 'BSP exchange rates',
+  water_table: 'Water rates (checked)', fares_table: 'Jeepney & bus fares (checked)',
 };
 
 export default function Settings() {

@@ -1,0 +1,20 @@
+{
+  "note": "Hand-maintained: ltfrb.gov.ph blocks automated access (Cloudflare challenge) and fare matrices are images. Fares approved by LTFRB effective 2026-03-19 (provisional), suspended, then reinstated by DOTr on 2026-09-25; drivers may charge them once the new matrix is posted in the vehicle. Modern jeepney per-km is P2.30 per TopGear (old P2.20) but P2.40 per Philstar; using P2.30. Checked 2026-10-12.",
+  "checked": "2026-10-12",
+  "effective": "2026-03-19",
+  "status": "DOTr lifted the suspension of the fare increase on Sep 25, 2026. Drivers can charge the new fares once the new fare matrix is posted inside the vehicle.",
+  "discount": {"pct": 20, "who": "Students, senior citizens and persons with disabilities"},
+  "rounding": 0.25,
+  "modes": [
+    {"id": "jeep", "name": "Jeepney (traditional)", "base": 14, "base_km": 4, "per_km": 2.0, "prev_base": 13, "prev_per_km": 1.8},
+    {"id": "jeep_modern", "name": "Modern jeepney", "base": 17, "base_km": 4, "per_km": 2.3, "prev_base": 15, "prev_per_km": 2.2},
+    {"id": "bus_city", "name": "City bus (ordinary)", "base": 15, "base_km": 5, "per_km": 2.49, "prev_base": 13, "prev_per_km": 2.25},
+    {"id": "bus_city_ac", "name": "City bus (aircon)", "base": 18, "base_km": 5, "per_km": 2.98, "prev_base": 15, "prev_per_km": 2.65},
+    {"id": "bus_prov", "name": "Provincial bus (ordinary)", "base": 12, "base_km": 5, "per_km": 2.2, "prev_base": 11, "prev_per_km": 1.9}
+  ],
+  "sources": [
+    "https://www.topgear.com.ph/news/motoring-news/ltfrb-approves-fare-adjustments-puvs-a2578-20260317",
+    "https://www.philstar.com/headlines/2026/03/18/2515089/most-fares-going-up",
+    "https://philstar.com/headlines/2026/09/26/2558947/dotr-lifts-suspension-puv-fare-hike"
+  ]
+}
