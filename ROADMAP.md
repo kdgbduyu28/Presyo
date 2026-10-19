@@ -22,6 +22,10 @@ Planned work, roughly in priority order. Done items move to the changelog / git 
   item details in a side panel; `/` focuses search, Esc closes panels; landscape allowed.
 
 ## Data
+- **Gadgets (phone prices per store)**: history starts 2026-10-19 (stores only show today's
+  price; Wayback snapshots too sparse to backfill). Next: Samsung PH official store, Abenson /
+  SM Store (bot-check pages), laptops, iPads, consoles (Datablitz is Shopify too), and
+  "tell me when it drops" alerts once alerts exist.
 - **Water and fares upkeep**: quarterly check of MWSS-RO FCDA announcements (Jan/Apr/Jul/Oct)
   and LTFRB fare orders; edit `data/static/*.json`. Possible next: provincial water districts
   (LWUA), LRT/MRT fares, taxi/TNVS/UV Express, tricycle (set per LGU).

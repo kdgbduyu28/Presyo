@@ -112,6 +112,77 @@ def _series(docs: list[dict], period_of, group_of) -> dict:
     return out
 
 
+def _build_gadgets(meta: dict) -> int:
+    """gadgets/index.json (model list, lowest price) + gadgets/<model>.json
+    (per storage: each store's current offer and its price changes)."""
+    from .sources.gadgets import CHECKED, STORES, brand_of, sort_key
+
+    checked = json.loads(CHECKED.read_text()) if CHECKED.exists() else {}
+    names: dict[str, str] = {}
+    # key -> spec -> store -> {"h": [[day, price|None], ...], "now": row|None}
+    offers: dict = defaultdict(lambda: defaultdict(dict))
+    stores = []
+    for st in STORES:
+        docs = [d for d in store.read_all(f"gadgets_{st['id']}") if d["rows"]]
+        if not docs:
+            continue
+        stores.append({k: st[k] for k in ("id", "name", "url", "official") if k in st}
+                      | {"checked": checked.get(st["id"], docs[-1]["doc"]["period_start"])})
+        listed: set = set()
+        for d in docs:
+            day = d["doc"]["period_start"]
+            now = set()
+            for r in d["rows"]:
+                names[r["key"]] = r["item"]
+                o = offers[r["key"]][r["spec"]].setdefault(st["id"], {"h": []})
+                if not o["h"] or o["h"][-1][1] != r["price"]:
+                    o["h"].append([day, r["price"]])
+                now.add((r["key"], r["spec"]))
+            for key, spec in listed - now:  # dropped from the store's site
+                h = offers[key][spec][st["id"]]["h"]
+                if h[-1][1] is not None:
+                    h.append([day, None])
+            listed = now
+        for r in docs[-1]["rows"]:
+            offers[r["key"]][r["spec"]][st["id"]]["now"] = r
+    if not stores:
+        return 0
+
+    def gb(spec: str) -> int:
+        return int(spec[:-2]) * (1024 if spec.endswith("TB") else 1)
+
+    total = 0
+    index = []
+    end = max(s["checked"] for s in stores)
+    for key in sorted(offers, key=lambda k: sort_key(names[k])):
+        variants = []
+        best = None  # lowest in-stock (or stock-unknown) price right now
+        for spec in sorted(offers[key], key=gb):
+            out = []
+            for sid, o in offers[key][spec].items():
+                r = o.get("now")
+                cur = {"price": r["price"], "url": r["url"],
+                       **{k: r[k] for k in ("was", "stock", "colors", "pre") if k in r}} if r else {}
+                out.append({"store": sid, **cur, "h": o["h"]})
+                if r and r.get("stock", True) and (best is None or r["price"] < best[0]):
+                    best = (r["price"], sid, spec)
+            out.sort(key=lambda x: (x.get("price") is None, x.get("stock") is False, x.get("price") or 0))
+            variants.append({"spec": spec, "offers": out})
+        total += _write(f"gadgets/{key}.json", {"key": key, "name": names[key], "end": end, "variants": variants})
+        listed = [v for v in variants if any("price" in o for o in v["offers"])]
+        if not listed:
+            continue
+        srp = next((o["price"] for v in listed for o in v["offers"] if o["store"] == "apple" and "price" in o), None)
+        index.append({"key": key, "name": names[key], "brand": brand_of(names[key]),
+                      "specs": [v["spec"] for v in listed],
+                      "stores": len({o["store"] for v in listed for o in v["offers"] if "price" in o}),
+                      **({"from": best[0], "from_store": best[1], "from_spec": best[2]} if best else {}),
+                      **({"srp": srp} if srp else {})})
+    total += _write("gadgets/index.json", {"stores": stores, "models": index})
+    meta["sources"]["gadgets"] = {"latest": end}
+    return total
+
+
 def build() -> None:
     if APP_DATA.exists():
         shutil.rmtree(APP_DATA)
@@ -288,6 +359,9 @@ def build() -> None:
             "currencies": [{"code": c, "name": NAMES.get(c, c), "s": [rates[d].get(c) for d in days]}
                            for c in sorted(codes, key=lambda c: order.get(c, 99))]})
         meta["sources"]["bsp_forex"] = {"latest": days[-1]}
+
+    # ---- gadgets: phone prices per store, history as price changes
+    total += _build_gadgets(meta)
 
     # ---- hand-maintained tables (water tariffs, PUV fares)
     for name in ("water", "fares"):

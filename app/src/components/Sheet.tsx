@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { Platform, Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } from 'react-native';
 import Animated, { SlideInDown, SlideInRight, SlideOutDown, SlideOutRight } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -30,10 +30,21 @@ export function Sheet({ open, onClose, title, children }: {
 }) {
   const show = useContext(Ctx);
   const body = useMemo(() => children, [children]);
+  // Only the sheet that is showing may clear the panel: a closed sheet
+  // elsewhere on screen re-runs this effect on every render of its parent.
+  const shown = useRef(false);
   useEffect(() => {
-    show(open ? { title, body, onClose } : null);
+    if (open) {
+      show({ title, body, onClose });
+      shown.current = true;
+    } else if (shown.current) {
+      show(null);
+      shown.current = false;
+    }
   }, [open, title, body, onClose, show]);
-  useEffect(() => () => show(null), [show]);
+  useEffect(() => () => {
+    if (shown.current) show(null);
+  }, [show]);
   return null;
 }
 

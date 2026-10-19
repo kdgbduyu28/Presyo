@@ -29,11 +29,17 @@ def exists(source: str, name: str) -> bool:
     return doc_path(source, name).exists()
 
 
+def normalize(rows: list[dict]) -> list[dict]:
+    """Rows as write() stores them (no nulls, stable order)."""
+    clean = [{k: v for k, v in r.items() if v is not None} for r in rows]
+    clean.sort(key=lambda r: json.dumps(r, sort_keys=True, ensure_ascii=False))
+    return clean
+
+
 def write(source: str, name: str, doc: dict, rows: list[dict]) -> None:
     path = doc_path(source, name)
     path.parent.mkdir(parents=True, exist_ok=True)
-    clean = [{k: v for k, v in r.items() if v is not None} for r in rows]
-    clean.sort(key=lambda r: json.dumps(r, sort_keys=True, ensure_ascii=False))
+    clean = normalize(rows)
     # Sources re-read every run (PSA, electricity, DTI) mostly return the
     # same data; keep the file untouched so the daily job doesn't commit
     # timestamp-only changes.

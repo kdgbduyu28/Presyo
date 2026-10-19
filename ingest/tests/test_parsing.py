@@ -76,3 +76,42 @@ def test_meralco_links():
         "2026-08": "https://meralcomain.s3.ap-southeast-1.amazonaws.com/2026-08/08-2026_residential_bills.pdf",
         "2026-09": "https://meralcomain.s3.ap-southeast-1.amazonaws.com/2026-09/09-2026_residential_bills_0.pdf",
     }
+
+
+def test_gadget_titles():
+    from presyo_ingest.sources.gadgets import apple_name, model_key, parse_title, sort_key, storage
+
+    assert parse_title("iPhone 17 Pro Max 256GB Silver") == ("iPhone 17 Pro Max", "256GB Silver", False)
+    assert parse_title("[PRE-ORDER] iPhone Duo") == ("iPhone Duo", "", True)
+    assert parse_title("iPhone\xa016 Silicone Case with MagSafe") is None
+    assert parse_title("iPhone Air MagSafe Battery") is None
+    assert parse_title("iPhone 17e") == ("iPhone 17e", "", False)
+    assert parse_title("Galaxy S24+") == ("Galaxy S24+", "", False)
+    assert parse_title("Galaxy Z Fold 6") == ("Galaxy Z Fold6", "", False)
+    assert parse_title("Galaxy Watch6 Classic") is None
+    assert storage("12GB + 256GB") == "256GB" and storage("1 tb") == "1TB" and storage("Black") is None
+    assert apple_name("iphone18promax") == "iPhone 18 Pro Max"
+    assert apple_name("iphoneair") == "iPhone Air" and apple_name("iphone17e") == "iPhone 17e"
+    assert model_key("Galaxy S24+") == "galaxy-s24-plus"
+    order = ["iPhone 17e", "iPhone Air", "Galaxy S25 Ultra", "iPhone 17", "iPhone 18 Pro", "iPhone 17 Pro Max",
+             "iPhone Duo", "iPhone 18 Pro Max"]
+    assert sorted(order, key=sort_key) == ["iPhone 18 Pro Max", "iPhone 18 Pro", "iPhone Duo", "iPhone 17 Pro Max",
+                                           "iPhone Air", "iPhone 17", "iPhone 17e", "Galaxy S25 Ultra"]
+
+
+def test_gadget_rows_collapse_colors():
+    from presyo_ingest.sources.gadgets import rows_for, shopify_variants
+
+    product = {"title": "iPhone 17", "handle": "iphone-17",
+               "options": [{"name": "Color"}, {"name": "Capacity"}],
+               "variants": [
+                   {"id": 1, "option1": "Black", "option2": "256GB", "price": "73990.00", "compare_at_price": None, "available": False},
+                   {"id": 2, "option1": "Sage", "option2": "256GB", "price": "69990.00", "compare_at_price": "73990.00", "available": True},
+                   {"id": 3, "option1": "White", "option2": "256GB", "price": "71990.00", "compare_at_price": None, "available": True},
+                   {"id": 4, "option1": "Sage", "option2": "512GB", "price": "85990.00", "compare_at_price": None, "available": False},
+               ]}
+    rows = {r["spec"]: r for r in rows_for("x", shopify_variants([product], "shop.ph"))}
+    assert rows["256GB"]["price"] == 69990 and rows["256GB"]["was"] == 73990
+    assert rows["256GB"]["colors"] == ["Sage", "White"] and rows["256GB"]["stock"] is True
+    assert rows["256GB"]["url"] == "https://shop.ph/products/iphone-17?variant=2"
+    assert rows["512GB"]["stock"] is False and rows["512GB"]["colors"] is None

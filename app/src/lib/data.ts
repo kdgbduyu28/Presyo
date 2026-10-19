@@ -53,13 +53,28 @@ export type Meta = {
   sources: Record<string, { latest: string; places?: number }>;
 };
 
+export type GadgetStore = { id: string; name: string; url: string; official?: boolean; checked: string };
+export type GadgetIndex = {
+  stores: GadgetStore[];
+  models: {
+    key: string; name: string; brand: string; specs: string[]; stores: number;
+    from?: number; from_store?: string; from_spec?: string; srp?: number;
+  }[];
+};
+/** One store's offer for a model + storage; `h` = [date, price | null (not listed)] at each change. */
+export type GadgetOffer = {
+  store: string; price?: number; was?: number; stock?: boolean; colors?: string[]; pre?: boolean; url?: string;
+  h: [string, number | null][];
+};
+export type GadgetFile = { key: string; name: string; end: string; variants: { spec: string; offers: GadgetOffer[] }[] };
+
 export type { Market, PlacesFile };
 
 const cache = new Map<string, Promise<unknown>>();
 
 // Files the home screen needs, kept on the device so the app still opens
 // (with the last prices) without a connection. Small files only.
-const OFFLINE = /^(places|markets|meta|forex|water|fares)\.json$|^(summary|fuel|lpg|power)\/|^da\/latest\.json$|^grocery\//;
+const OFFLINE = /^(places|markets|meta|forex|water|fares)\.json$|^(summary|fuel|lpg|power)\/|^da\/latest\.json$|^grocery\/|^gadgets\/index\.json$/;
 const OFFLINE_MAX = 250_000;
 
 async function remember(path: string, body: string) {

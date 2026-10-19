@@ -35,6 +35,9 @@ export type Prefs = {
   fareDiscount: boolean;
   /** currency code shown first on the Forex tab */
   fx: string;
+  /** last phone opened on the Gadgets tab, and its storage */
+  gadget: string | null;
+  gadgetSpec: string | null;
 };
 
 export const DEFAULT_PREFS: Prefs = {
@@ -57,6 +60,8 @@ export const DEFAULT_PREFS: Prefs = {
   fareKm: 5,
   fareDiscount: false,
   fx: 'USD',
+  gadget: null,
+  gadgetSpec: null,
 };
 
 const PREFS_KEY = 'presyo.prefs.v1';

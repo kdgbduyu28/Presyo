@@ -1,0 +1,25 @@
+{
+ "doc": {"source": "gadgets_apple", "url": "https://www.apple.com/ph/shop/buy-iphone", "status": "ok", "period_start": "2026-10-19", "period_end": "2026-10-19", "parser_version": 1, "parsed_at": "2026-10-19T09:07:03Z", "rows": 20},
+ "rows": [
+  {"item": "iPhone 16", "key": "iphone-16", "spec": "128GB", "brand": "apple", "cat": "gadgets", "unit": "pc", "price": 62990.0, "url": "https://www.apple.com/ph/shop/buy-iphone/iphone-16"},
+  {"item": "iPhone 17", "key": "iphone-17", "spec": "256GB", "brand": "apple", "cat": "gadgets", "unit": "pc", "price": 69990.0, "url": "https://www.apple.com/ph/shop/buy-iphone/iphone-17"},
+  {"item": "iPhone 17", "key": "iphone-17", "spec": "512GB", "brand": "apple", "cat": "gadgets", "unit": "pc", "price": 85990.0, "url": "https://www.apple.com/ph/shop/buy-iphone/iphone-17"},
+  {"item": "iPhone 17e", "key": "iphone-17e", "spec": "256GB", "brand": "apple", "cat": "gadgets", "unit": "pc", "price": 54990.0, "url": "https://www.apple.com/ph/shop/buy-iphone/iphone-17e"},
+  {"item": "iPhone 17e", "key": "iphone-17e", "spec": "512GB", "brand": "apple", "cat": "gadgets", "unit": "pc", "price": 70990.0, "url": "https://www.apple.com/ph/shop/buy-iphone/iphone-17e"},
+  {"item": "iPhone 18 Pro Max", "key": "iphone-18-pro-max", "spec": "512GB", "brand": "apple", "cat": "gadgets", "unit": "pc", "price": 115990.0, "url": "https://www.apple.com/ph/shop/buy-iphone/iphone-18-pro"},
+  {"item": "iPhone 18 Pro Max", "key": "iphone-18-pro-max", "spec": "1TB", "brand": "apple", "cat": "gadgets", "unit": "pc", "price": 147990.0, "url": "https://www.apple.com/ph/shop/buy-iphone/iphone-18-pro"},
+  {"item": "iPhone 18 Pro Max", "key": "iphone-18-pro-max", "spec": "2TB", "brand": "apple", "cat": "gadgets", "unit": "pc", "price": 194990.0, "url": "https://www.apple.com/ph/shop/buy-iphone/iphone-18-pro"},
+  {"item": "iPhone 18 Pro Max", "key": "iphone-18-pro-max", "spec": "256GB", "brand": "apple", "cat": "gadgets", "unit": "pc", "price": 99990.0, "url": "https://www.apple.com/ph/shop/buy-iphone/iphone-18-pro"},
+  {"item": "iPhone 18 Pro", "key": "iphone-18-pro", "spec": "512GB", "brand": "apple", "cat": "gadgets", "unit": "pc", "price": 110990.0, "url": "https://www.apple.com/ph/shop/buy-iphone/iphone-18-pro"},
+  {"item": "iPhone 18 Pro", "key": "iphone-18-pro", "spec": "1TB", "brand": "apple", "cat": "gadgets", "unit": "pc", "price": 142990.0, "url": "https://www.apple.com/ph/shop/buy-iphone/iphone-18-pro"},
+  {"item": "iPhone 18 Pro", "key": "iphone-18-pro", "spec": "2TB", "brand": "apple", "cat": "gadgets", "unit": "pc", "price": 189990.0, "url": "https://www.apple.com/ph/shop/buy-iphone/iphone-18-pro"},
+  {"item": "iPhone 18 Pro", "key": "iphone-18-pro", "spec": "256GB", "brand": "apple", "cat": "gadgets", "unit": "pc", "price": 94990.0, "url": "https://www.apple.com/ph/shop/buy-iphone/iphone-18-pro"},
+  {"item": "iPhone Air", "key": "iphone-air", "spec": "512GB", "brand": "apple", "cat": "gadgets", "unit": "pc", "price": 100990.0, "url": "https://www.apple.com/ph/shop/buy-iphone/iphone-air"},
+  {"item": "iPhone Air", "key": "iphone-air", "spec": "1TB", "brand": "apple", "cat": "gadgets", "unit": "pc", "price": 132990.0, "url": "https://www.apple.com/ph/shop/buy-iphone/iphone-air"},
+  {"item": "iPhone Air", "key": "iphone-air", "spec": "256GB", "brand": "apple", "cat": "gadgets", "unit": "pc", "price": 84990.0, "url": "https://www.apple.com/ph/shop/buy-iphone/iphone-air"},
+  {"item": "iPhone Duo", "key": "iphone-duo", "spec": "256GB", "brand": "apple", "cat": "gadgets", "unit": "pc", "price": 159990.0, "url": "https://www.apple.com/ph/shop/buy-iphone/iphone-duo"},
+  {"item": "iPhone Duo", "key": "iphone-duo", "spec": "512GB", "brand": "apple", "cat": "gadgets", "unit": "pc", "price": 175990.0, "url": "https://www.apple.com/ph/shop/buy-iphone/iphone-duo"},
+  {"item": "iPhone Duo", "key": "iphone-duo", "spec": "1TB", "brand": "apple", "cat": "gadgets", "unit": "pc", "price": 207990.0, "url": "https://www.apple.com/ph/shop/buy-iphone/iphone-duo"},
+  {"item": "iPhone Duo", "key": "iphone-duo", "spec": "2TB", "brand": "apple", "cat": "gadgets", "unit": "pc", "price": 254990.0, "url": "https://www.apple.com/ph/shop/buy-iphone/iphone-duo"}
+ ]
+}

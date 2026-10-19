@@ -13,6 +13,7 @@ Palengke, pump and household prices near you, from Philippine government monitor
 | Meralco bill by kWh | Meralco residential bills table (PDF) | Meralco franchise | monthly |
 | Grocery SRPs | DTI SRP bulletin | national | when DTI updates |
 | Exchange rates | BSP Reference Exchange Rate Bulletin | 31 currencies + BSP USD buy/sell | daily (trading days) |
+| Phones (iPhone, Galaxy) | Apple Store PH, Power Mac Center, Beyond the Box, iStore, Digital Walker websites | model × storage × store | checked twice a day; stored only when a price changes |
 | Water | MWSS concessionaires (hand-maintained `data/static/water.json`) | Maynilad / Manila Water zones | quarterly |
 | Jeepney & bus fares | LTFRB (hand-maintained `data/static/fares.json`) | national | when LTFRB changes fares |
 
@@ -43,6 +44,9 @@ cd app && npm install && npx expo start --web
   fares change, and bump `checked`.
 - bsp.gov.ph rejects non-browser TLS clients; the forex source uses `curl_cffi` with a
   Chrome fingerprint.
+- Gadget stores: the resellers run Shopify (open `/products.json`); Apple PH embeds prices in
+  each iPhone page. A new `data/prices/gadgets_<store>/<date>.json` is written only when that
+  store's prices or stock change; `data/gadgets-checked.json` holds the last check per store.
 
 - North Luzon DOE fuel/LPG reports are scanned images: not parsed (needs OCR).
 - DOE's new site only has fuel reports from late August 2026.
