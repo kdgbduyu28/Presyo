@@ -168,3 +168,13 @@ def test_medicine_names():
     assert split_name("5% DEXTROSE IN 0.3% SODIUM CHLORIDE 1 L bottle") == ("5% Dextrose in 0.3% Sodium Chloride", "1 L bottle")
     assert edition_date("2026_DPRI_Booklet_asofJuly29.pdf") == "2026-07-29"
     assert edition_date("MRP-MWP List 22June2026.pdf") == "2026-06-22"
+
+
+def test_gadget_offer_stats():
+    from presyo_ingest.build import _offer_stats
+
+    h = [["2026-10-01", 100.0], ["2026-10-10", 120.0], ["2026-10-18", 90.0]]
+    assert _offer_stats(h, "2026-10-20") == {"drop": 30.0, "since": "2026-10-18", "low30": True}
+    # two days of history: a drop, but no "30-day low" claim yet
+    assert _offer_stats([["2026-10-19", 120.0], ["2026-10-20", 90.0]], "2026-10-20") == {"drop": 30.0, "since": "2026-10-20"}
+    assert _offer_stats([["2026-10-01", 90.0], ["2026-10-20", None]], "2026-10-20") == {}

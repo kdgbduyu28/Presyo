@@ -125,8 +125,11 @@ def _offer_stats(h: list, end: str) -> dict:
         out.update(drop=round(h[-2][1] - cur, 2), since=h[-1][0])
     start = (date.fromisoformat(end) - timedelta(days=30)).isoformat()
     window = [p for i, (d, p) in enumerate(h) if p is not None and (i + 1 == len(h) or h[i + 1][0] > start)]
-    if max(window) > cur and cur <= min(window):
-        out["low30"] = True  # cheapest it has been in 30 days, and it was dearer in that time
+    # cheapest it has been in 30 days, it was dearer in that time, and we have
+    # watched it for at least two weeks (a 2-day-old history proves nothing)
+    tracked = (date.fromisoformat(end) - date.fromisoformat(h[0][0])).days
+    if tracked >= 14 and max(window) > cur and cur <= min(window):
+        out["low30"] = True
     return out
 
 
@@ -235,7 +238,7 @@ def _build_gadgets(meta: dict) -> int:
         if not listed:
             continue
         srp = next((o["price"] for v in listed for o in v["offers"] if o["store"] == "apple" and "price" in o), None)
-        low30 = best and any(o.get("low30") and o.get("price") == best[0]
+        low30 = best and any(o.get("low30") and o.get("price") == best[0] and o.get("stock") is not False
                              for v in listed for o in v["offers"] if v["spec"] == best[2])
         top = max(o["price"] for v in listed for o in v["offers"] if "price" in o)
         index.append({"key": key, "name": name, "cat": cat, "make": make_of(name),

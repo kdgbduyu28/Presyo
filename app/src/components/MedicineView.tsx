@@ -33,9 +33,12 @@ export function MedicineView() {
     if (mode === 'mrp') return items.filter((it) => it.mrp != null);
     if (mode === 'common') {
       // single-ingredient medicines, in the order of the list above
+      // single-ingredient medicines in the order above; what a botika sells
+      // (tablets, capsules, syrups) before hospital forms (vials, IV bags)
       const rank = (it: MedicineItem) => COMMON.findIndex((c) => norm(it.name).startsWith(c));
+      const hospital = (it: MedicineItem) => (/vial|ampule|infusion|injection|\bbag\b|irrigation/i.test(it.desc ?? '') ? 1 : 0);
       return items.filter((it) => !it.name.includes('+') && rank(it) >= 0)
-        .sort((a, b) => rank(a) - rank(b));
+        .sort((a, b) => rank(a) - rank(b) || hospital(a) - hospital(b));
     }
     return items;
   }, [data, q, mode]);
