@@ -5,6 +5,7 @@ nearest place on-device, then fetches one small file per source.
 """
 
 import json
+import re
 import shutil
 from collections import defaultdict
 from datetime import datetime, timezone
@@ -112,13 +113,45 @@ def _series(docs: list[dict], period_of, group_of) -> dict:
     return out
 
 
+def _offer_stats(h: list, end: str) -> dict:
+    """Deal numbers for one store's price history: the last drop and the 30-day range."""
+    from datetime import date, timedelta
+
+    cur = h[-1][1] if h else None
+    if cur is None:
+        return {}
+    out: dict = {}
+    if len(h) >= 2 and h[-2][1] is not None and h[-2][1] > cur:
+        out.update(drop=round(h[-2][1] - cur, 2), since=h[-1][0])
+    start = (date.fromisoformat(end) - timedelta(days=30)).isoformat()
+    window = [p for i, (d, p) in enumerate(h) if p is not None and (i + 1 == len(h) or h[i + 1][0] > start)]
+    if max(window) > cur and cur <= min(window):
+        out["low30"] = True  # cheapest it has been in 30 days, and it was dearer in that time
+    return out
+
+
+def _fx_latest() -> dict[str, tuple[float, str]]:
+    """{currency: (PHP per unit, date)} from the newest BSP rates."""
+    rates: dict[str, tuple[float, str]] = {}
+    for d in store.read_all("bsp_forex"):
+        for r in d["rows"]:
+            if r["unit"] == "PHP" and not r["item"].startswith("BSP_"):
+                if r["item"] not in rates or r["start"] >= rates[r["item"]][1]:
+                    rates[r["item"]] = (r["price"], r["start"])
+    return rates
+
+
 def _build_gadgets(meta: dict) -> int:
-    """gadgets/index.json (model list, lowest price) + gadgets/<model>.json
-    (per storage: each store's current offer and its price changes)."""
-    from .sources.gadgets import CHECKED, STORES, brand_of, sort_key
+    """gadgets/index.json (categories, models with lowest price and deals) +
+    gadgets/<model>.json (per variant: each store's offer, price changes and
+    Apple's price abroad in pesos)."""
+    from datetime import date, timedelta
+
+    from .sources.gadgets import ABROAD, CATEGORIES, CHECKED, STORES, make_of, sort_key
 
     checked = json.loads(CHECKED.read_text()) if CHECKED.exists() else {}
     names: dict[str, str] = {}
+    cats: dict[str, str] = {}
     # key -> spec -> store -> {"h": [[day, price|None], ...], "now": row|None}
     offers: dict = defaultdict(lambda: defaultdict(dict))
     stores = []
@@ -126,7 +159,7 @@ def _build_gadgets(meta: dict) -> int:
         docs = [d for d in store.read_all(f"gadgets_{st['id']}") if d["rows"]]
         if not docs:
             continue
-        stores.append({k: st[k] for k in ("id", "name", "url", "official") if k in st}
+        stores.append({k: st[k] for k in ("id", "name", "url", "official", "slot") if k in st}
                       | {"checked": checked.get(st["id"], docs[-1]["doc"]["period_start"])})
         listed: set = set()
         for d in docs:
@@ -134,6 +167,7 @@ def _build_gadgets(meta: dict) -> int:
             now = set()
             for r in d["rows"]:
                 names[r["key"]] = r["item"]
+                cats[r["key"]] = r.get("cat") if r.get("cat") != "gadgets" else "phones"
                 o = offers[r["key"]][r["spec"]].setdefault(st["id"], {"h": []})
                 if not o["h"] or o["h"][-1][1] != r["price"]:
                     o["h"].append([day, r["price"]])
@@ -147,40 +181,128 @@ def _build_gadgets(meta: dict) -> int:
             offers[r["key"]][r["spec"]][st["id"]]["now"] = r
     if not stores:
         return 0
+    end = max(s["checked"] for s in stores)
 
-    def gb(spec: str) -> int:
-        return int(spec[:-2]) * (1024 if spec.endswith("TB") else 1)
+    # Apple abroad: latest prices, converted at BSP's latest reference rate
+    fx = _fx_latest()
+    abroad: dict = defaultdict(lambda: defaultdict(list))  # key -> spec -> [{cc, cur, price, php}]
+    countries = []
+    for c in ABROAD:
+        docs = [d for d in store.read_all(f"gadgets_abroad_{c['cc'].lower()}") if d["rows"]]
+        if not docs or c["cur"] not in fx:
+            continue
+        rate, rate_day = fx[c["cur"]]
+        countries.append({**c, "rate": rate, "rate_date": rate_day,
+                          "checked": checked.get(f"abroad_{c['cc'].lower()}", docs[-1]["doc"]["period_start"])})
+        for r in docs[-1]["rows"]:
+            abroad[r["key"]][r["spec"]].append({"cc": c["cc"], "price": r["price"],
+                                                "php": round(r["price"] * rate), "url": r["url"]})
+
+    def size_order(spec: str) -> tuple:
+        m = re.match(r"(\d+)(GB|TB|mm)", spec)
+        n = int(m.group(1)) * (1024 if m.group(2) == "TB" else 1) if m else 0
+        return (n, spec)
 
     total = 0
     index = []
-    end = max(s["checked"] for s in stores)
-    for key in sorted(offers, key=lambda k: sort_key(names[k])):
+    for key in offers:
         variants = []
         best = None  # lowest in-stock (or stock-unknown) price right now
-        for spec in sorted(offers[key], key=gb):
+        deal = None  # biggest recent drop among in-stock offers
+        recent = (date.fromisoformat(end) - timedelta(days=14)).isoformat()
+        for spec in sorted(offers[key], key=size_order):
             out = []
             for sid, o in offers[key][spec].items():
                 r = o.get("now")
                 cur = {"price": r["price"], "url": r["url"],
-                       **{k: r[k] for k in ("was", "stock", "colors", "pre") if k in r}} if r else {}
-                out.append({"store": sid, **cur, "h": o["h"]})
-                if r and r.get("stock", True) and (best is None or r["price"] < best[0]):
-                    best = (r["price"], sid, spec)
+                       **{k: r[k] for k in ("was", "stock", "colors", "pre", "note") if k in r}} if r else {}
+                stats = _offer_stats(o["h"], end) if r else {}
+                out.append({"store": sid, **cur, **stats, "h": o["h"]})
+                if r and r.get("stock", True):
+                    if best is None or r["price"] < best[0]:
+                        best = (r["price"], sid, spec)
+                    if stats.get("drop") and stats["since"] >= recent:
+                        pct = stats["drop"] / (r["price"] + stats["drop"])
+                        if deal is None or pct > deal["pct"]:
+                            deal = {"pct": round(pct, 4), "drop": stats["drop"], "store": sid, "spec": spec,
+                                    "since": stats["since"], "price": r["price"]}
             out.sort(key=lambda x: (x.get("price") is None, x.get("stock") is False, x.get("price") or 0))
-            variants.append({"spec": spec, "offers": out})
-        total += _write(f"gadgets/{key}.json", {"key": key, "name": names[key], "end": end, "variants": variants})
+            variants.append({"spec": spec, "offers": out,
+                             **({"abroad": abroad[key][spec]} if abroad.get(key, {}).get(spec) else {})})
+        name, cat = names[key], cats[key]
+        total += _write(f"gadgets/{key}.json", {"key": key, "name": name, "cat": cat, "end": end, "variants": variants})
         listed = [v for v in variants if any("price" in o for o in v["offers"])]
         if not listed:
             continue
         srp = next((o["price"] for v in listed for o in v["offers"] if o["store"] == "apple" and "price" in o), None)
-        index.append({"key": key, "name": names[key], "brand": brand_of(names[key]),
+        low30 = best and any(o.get("low30") and o.get("price") == best[0]
+                             for v in listed for o in v["offers"] if v["spec"] == best[2])
+        top = max(o["price"] for v in listed for o in v["offers"] if "price" in o)
+        index.append({"key": key, "name": name, "cat": cat, "make": make_of(name),
                       "specs": [v["spec"] for v in listed],
                       "stores": len({o["store"] for v in listed for o in v["offers"] if "price" in o}),
                       **({"from": best[0], "from_store": best[1], "from_spec": best[2]} if best else {}),
-                      **({"srp": srp} if srp else {})})
-    total += _write("gadgets/index.json", {"stores": stores, "models": index})
+                      **({"srp": srp} if srp else {}), **({"deal": deal} if deal else {}),
+                      **({"low30": True} if low30 else {}), "_top": top})
+
+    makes = ["Apple", "Samsung", "Sony", "Nintendo", "Microsoft", "Valve"]
+
+    def order(m: dict) -> tuple:
+        if m["cat"] == "phones":
+            return (0, sort_key(m["name"]))
+        if m["cat"] == "games":
+            return (0, (m["name"].lower(),))
+        mk = makes.index(m["make"]) if m["make"] in makes else len(makes)
+        return (mk, (-m["_top"], m["name"]))
+
+    index.sort(key=lambda m: ([c for c, _ in CATEGORIES].index(m["cat"]), order(m)))
+    for m in index:
+        del m["_top"]
+    deals = sorted((m for m in index if "deal" in m), key=lambda m: -m["deal"]["pct"])[:12]
+    total += _write("gadgets/index.json", {
+        "stores": stores, "end": end, "countries": countries,
+        "categories": [{"id": c, "label": label, "count": sum(1 for m in index if m["cat"] == c)}
+                       for c, label in CATEGORIES if any(m["cat"] == c for m in index)],
+        "models": index,
+        "deals": [m["key"] for m in deals],
+    })
     meta["sources"]["gadgets"] = {"latest": end}
     return total
+
+
+def _norm_drug(s: str) -> str:
+    return re.sub(r"[^a-z0-9.%+]+", " ", (s or "").lower()).strip()
+
+
+def _build_medicine(meta: dict) -> int:
+    """medicine.json: one row per medicine (generic + strength/form) with the
+    DPRI lowest/median/highest and, where regulated, the MRP; plus the change
+    in median since the previous booklet."""
+    dpri = [d for d in store.read_all("doh_dpri") if d["rows"]]
+    mrp = [d for d in store.read_all("doh_mrp") if d["rows"]]
+    if not dpri and not mrp:
+        return 0
+    latest = dpri[-1] if dpri else None
+    prev = {(_norm_drug(r["item"]), _norm_drug(r.get("spec"))): r["price"] for r in (dpri[-2]["rows"] if len(dpri) > 1 else [])}
+    items: dict = {}
+    for r in latest["rows"] if latest else []:
+        k = (_norm_drug(r["item"]), _norm_drug(r.get("spec")))
+        p = prev.get(k)
+        items[k] = {"name": r["item"], **({"desc": r["spec"]} if r.get("spec") else {}),
+                    "lo": r.get("min"), "med": r["price"], "hi": r.get("max"),
+                    **({"prev": p} if p is not None and p != r["price"] else {})}
+    for r in mrp[-1]["rows"] if mrp else []:
+        k = (_norm_drug(r["item"]), _norm_drug(r.get("spec")))
+        it = items.setdefault(k, {"name": r["item"], **({"desc": r["spec"]} if r.get("spec") else {})})
+        it["mrp"] = r["price"]
+        if r.get("brand"):
+            it["use"] = r["brand"]
+    rows = sorted(items.values(), key=lambda x: (x["name"].lower(), x.get("desc") or ""))
+    body = {"dpri": {"date": latest["doc"]["period_start"], "url": latest["doc"]["url"]} if latest else None,
+            "mrp": {"date": mrp[-1]["doc"]["period_start"], "url": mrp[-1]["doc"]["url"]} if mrp else None,
+            "items": [{k: v for k, v in r.items() if v is not None} for r in rows]}
+    meta["sources"]["doh_dpri"] = {"latest": body["dpri"]["date"] if latest else body["mrp"]["date"]}
+    return _write("medicine.json", body)
 
 
 def build() -> None:
@@ -362,6 +484,9 @@ def build() -> None:
 
     # ---- gadgets: phone prices per store, history as price changes
     total += _build_gadgets(meta)
+
+    # ---- medicine: DOH reference prices (latest booklet) + legal maximum retail prices
+    total += _build_medicine(meta)
 
     # ---- hand-maintained tables (water tariffs, PUV fares)
     for name in ("water", "fares"):

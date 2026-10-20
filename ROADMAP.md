@@ -22,10 +22,11 @@ Planned work, roughly in priority order. Done items move to the changelog / git 
   item details in a side panel; `/` focuses search, Esc closes panels; landscape allowed.
 
 ## Data
-- **Gadgets (phone prices per store)**: history starts 2026-10-19 (stores only show today's
-  price; Wayback snapshots too sparse to backfill). Next: Samsung PH official store, Abenson /
-  SM Store (bot-check pages), laptops, iPads, consoles (Datablitz is Shopify too), and
-  "tell me when it drops" alerts once alerts exist.
+- **Gadgets**: history starts 2026-10-19 (stores only show today's price). Next: Xiaomi / realme /
+  OPPO official stores, Abenson and SM Store (bot-check pages), Apple's own Mac/Watch/AirPods
+  prices (different page format), Samsung tablets and watches.
+- **Medicine**: older DPRI booklets (June 2026 and earlier) use a different table layout and
+  parse to nothing; a text-based parser would add history across editions.
 - **Water and fares upkeep**: quarterly check of MWSS-RO FCDA announcements (Jan/Apr/Jul/Oct)
   and LTFRB fare orders; edit `data/static/*.json`. Possible next: provincial water districts
   (LWUA), LRT/MRT fares, taxi/TNVS/UV Express, tricycle (set per LGU).
@@ -39,8 +40,9 @@ Planned work, roughly in priority order. Done items move to the changelog / git 
 - **More DTI bulletins**: school supplies, Noche Buena, construction materials (seasonal).
 
 ## Features
-- **Price alerts** ("tell me when rice drops below ₱45"): needs push notifications and a
-  small backend (Supabase + Expo push) — the first thing that would need an account.
+- **Push price alerts**: alerts work on-device now (set a target on a gadget or food item; Today
+  shows a banner once it's met). Notifications while the app is closed need a small backend
+  (Supabase + Expo push / web push) — the first thing that would need an account.
 - **Market map** with prices on pins.
 - **Share as image** (price card for Facebook groups) instead of text only.
 - **Basket history**: what your usual list cost each week.

@@ -38,6 +38,9 @@ export type Prefs = {
   /** last phone opened on the Gadgets tab, and its storage */
   gadget: string | null;
   gadgetSpec: string | null;
+  gadgetCat: string;
+  /** price alerts: item key (or "g:<model>|<variant>") -> alert when the price is at or below this */
+  alerts: Record<string, number>;
 };
 
 export const DEFAULT_PREFS: Prefs = {
@@ -62,6 +65,8 @@ export const DEFAULT_PREFS: Prefs = {
   fx: 'USD',
   gadget: null,
   gadgetSpec: null,
+  gadgetCat: 'phones',
+  alerts: {},
 };
 
 const PREFS_KEY = 'presyo.prefs.v1';

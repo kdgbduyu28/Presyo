@@ -9,6 +9,7 @@ import { placeName, shortName } from '../lib/names';
 import { usePrefs } from '../lib/prefs';
 import { useWatch } from '../lib/watch';
 import { C, themed } from '../theme';
+import { AlertControl } from './AlertControl';
 import { Chart } from './Chart';
 import { Card, Chips, Delta, Loading, Notice, PriceRow, SectionTitle, ShareButton, StarButton } from './bits';
 import { Sheet } from './Sheet';
@@ -212,6 +213,11 @@ export function ItemDetail({ item, periods, cadence, compare }: {
       <View style={{ marginTop: 12 }}>
         <Chart periods={periods.slice(from)} values={values.slice(from)} />
       </View>
+      {item.key ? (
+        <View style={{ marginTop: 16 }}>
+          <AlertControl id={item.key} current={last} unit={UNIT_LABEL[item.unit]} />
+        </View>
+      ) : null}
       {compare && item.key ? <NearbyMarkets item={item} {...compare} /> : null}
       <ShareButton text={`${titleOf(item)}: ${pesoPrice(item.s[lastIdx] ?? null)}${UNIT_LABEL[item.unit] ?? ''}`
         + (lastIdx >= 0 ? ` (${periodLabel(periods[lastIdx])})` : '') + ' — via Presyo'} />

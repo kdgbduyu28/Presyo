@@ -12,6 +12,7 @@ import { FuelView } from '../components/FuelView';
 import { GadgetsView } from '../components/GadgetsView';
 import { GroceryView } from '../components/GroceryView';
 import { LocationPicker } from '../components/LocationPicker';
+import { MedicineView } from '../components/MedicineView';
 import { PowerView } from '../components/PowerView';
 import { Sheet } from '../components/Sheet';
 import { TodayView } from '../components/TodayView';
@@ -25,7 +26,7 @@ import { usePrefs, withRecent } from '../lib/prefs';
 import { C, MAX_WIDTH, R, TAB_LABELS, themed, WIDE } from '../theme';
 
 const TABS = ['today', 'basket', 'rice', 'fuel', 'meat', 'vegetables', 'seafood', 'fruits', 'pantry', 'grocery', 'power',
-  'water', 'fares', 'forex', 'gadgets'] as const;
+  'water', 'fares', 'forex', 'gadgets', 'medicine'] as const;
 type Tab = (typeof TABS)[number];
 
 // Survive the remount that a theme change or "clear data" does.
@@ -91,6 +92,8 @@ export default function Home() {
         <ForexView wide={wide} />
       ) : tab === 'gadgets' ? (
         <GadgetsView wide={wide} />
+      ) : tab === 'medicine' ? (
+        <MedicineView />
       ) : tab === 'fuel' ? (
         <FuelView place={here} spot={spot} places={places.data!} wide={wide} />
       ) : (
@@ -98,7 +101,7 @@ export default function Home() {
       )}
       <Text style={s.footer}>
         Data from DA Bantay Presyo, PSA OpenSTAT, DOE (pump prices, LPG, price notices, electricity), DTI (SRP),
-        Meralco, MWSS, LTFRB, BSP (exchange rates) and store websites (gadgets)
+        Meralco, MWSS, LTFRB, BSP (exchange rates), DOH (medicine) and store websites (gadgets)
         {meta.data ? ` · updated ${periodLabel(meta.data.generated_at.slice(0, 10))}` : ''}.
         Presyo is not affiliated with the government.
       </Text>
@@ -110,7 +113,7 @@ export default function Home() {
       <Text style={s.h1}>Where do you buy?</Text>
       <Text style={s.lead}>
         Presyo shows the latest government-monitored prices of rice, fuel, meat, vegetables, seafood,
-        groceries, LPG, electricity, water and fares for your area, plus BSP exchange rates and phone prices across stores.
+        groceries, LPG, electricity, water and fares for your area, plus exchange rates, medicine reference prices and gadget prices across stores.
       </Text>
       {places.data ? <LocationPicker places={places.data} onPick={pick} recent={prefs.recent} /> : null}
     </ScrollView>

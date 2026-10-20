@@ -53,20 +53,43 @@ export type Meta = {
   sources: Record<string, { latest: string; places?: number }>;
 };
 
-export type GadgetStore = { id: string; name: string; url: string; official?: boolean; checked: string };
+export type GadgetStore = { id: string; name: string; url: string; official?: boolean; checked: string; slot: number };
+export type GadgetDeal = { pct: number; drop: number; store: string; spec: string; since: string; price: number };
+export type GadgetModel = {
+  key: string; name: string; cat: string; make: string; specs: string[]; stores: number;
+  from?: number; from_store?: string; from_spec?: string; srp?: number; deal?: GadgetDeal; low30?: boolean;
+};
+export type GadgetCountry = {
+  cc: string; name: string; cur: string; note: string; rate: number; rate_date: string; checked: string;
+};
 export type GadgetIndex = {
   stores: GadgetStore[];
-  models: {
-    key: string; name: string; brand: string; specs: string[]; stores: number;
-    from?: number; from_store?: string; from_spec?: string; srp?: number;
-  }[];
+  end: string;
+  countries: GadgetCountry[];
+  categories: { id: string; label: string; count: number }[];
+  models: GadgetModel[];
+  /** model keys with the biggest recent price drops */
+  deals: string[];
 };
-/** One store's offer for a model + storage; `h` = [date, price | null (not listed)] at each change. */
+/** One store's offer for a model + variant; `h` = [date, price | null (not listed)] at each change. */
 export type GadgetOffer = {
   store: string; price?: number; was?: number; stock?: boolean; colors?: string[]; pre?: boolean; url?: string;
+  note?: string; drop?: number; since?: string; low30?: boolean;
   h: [string, number | null][];
 };
-export type GadgetFile = { key: string; name: string; end: string; variants: { spec: string; offers: GadgetOffer[] }[] };
+export type GadgetVariant = {
+  spec: string; offers: GadgetOffer[]; abroad?: { cc: string; price: number; php: number; url: string }[];
+};
+export type GadgetFile = { key: string; name: string; cat: string; end: string; variants: GadgetVariant[] };
+
+export type MedicineItem = {
+  name: string; desc?: string; lo?: number; med?: number; hi?: number; prev?: number; mrp?: number; use?: string;
+};
+export type MedicineFile = {
+  dpri: { date: string; url: string } | null;
+  mrp: { date: string; url: string } | null;
+  items: MedicineItem[];
+};
 
 export type { Market, PlacesFile };
 
@@ -74,7 +97,7 @@ const cache = new Map<string, Promise<unknown>>();
 
 // Files the home screen needs, kept on the device so the app still opens
 // (with the last prices) without a connection. Small files only.
-const OFFLINE = /^(places|markets|meta|forex|water|fares)\.json$|^(summary|fuel|lpg|power)\/|^da\/latest\.json$|^grocery\/|^gadgets\/index\.json$/;
+const OFFLINE = /^(places|markets|meta|forex|water|fares)\.json$|^(summary|fuel|lpg|power)\/|^da\/latest\.json$|^grocery\/|^gadgets\/index\.json$|^medicine\.json$/;
 const OFFLINE_MAX = 250_000;
 
 async function remember(path: string, body: string) {

@@ -115,3 +115,56 @@ def test_gadget_rows_collapse_colors():
     assert rows["256GB"]["colors"] == ["Sage", "White"] and rows["256GB"]["stock"] is True
     assert rows["256GB"]["url"] == "https://shop.ph/products/iphone-17?variant=2"
     assert rows["512GB"]["stock"] is False and rows["512GB"]["colors"] is None
+
+
+def test_gadget_categories():
+    from presyo_ingest.sources.gadgets import apple_ipad_name, classify, console, game, mac_detail, variant_spec
+
+    assert classify("11-inch iPad Air Wi-Fi + Cellular 128GB - Blue (M4)") == ("tablets", "iPad Air 11-inch (M4)", False)
+    assert classify("iPad mini A17 Pro 7th Gen") == ("tablets", "iPad mini (A17 Pro)", False)
+    assert classify("Magic Keyboard for iPad Pro 13-inch (M5)") is None
+    assert classify("13-inch MacBook Air: Apple M5 chip with 10-core CPU and 10-core GPU, 1TB SSD - Midnight") == \
+        ("laptops", "MacBook Air 13-inch (M5)", False)
+    assert classify("Apple Watch Series 11 GPS Aluminum Case Sport Band") == ("watches", "Apple Watch Series 11", False)
+    assert classify("Apple Watch SE 3 GPS 40mm Midnight Aluminium Case with Midnight Sport Band - M/L")[1] == "Apple Watch SE 3"
+    assert classify("AirPods 4 with Active Noise Cancellation")[1] == "AirPods 4 with ANC"
+    assert classify("AirPods Pro (2nd generation) with MagSafe Case (USB_C)")[1] == "AirPods Pro 2"
+    assert variant_spec("tablets", "iPad Air 256GB Wi-Fi + Cellular") == "256GB Wi-Fi + Cellular"
+    assert variant_spec("laptops", "M5 chip 10-core GPU 16GB unified memory 512GB SSD") == "512GB SSD"
+    assert mac_detail("M5 chip with 10‑core CPU and 10‑core GPU, 16GB, 512GB SSD") == "16GB · 10-core GPU"
+    assert variant_spec("watches", "Series 11 GPS + Cellular 46mm Titanium") == "46mm GPS + Cellular Titanium"
+    assert apple_ipad_name("ipadpro11_m5_2025") == "iPad Pro 11-inch (M5)"
+    assert apple_ipad_name("ipadmini_a17pro_2024") == "iPad mini (A17 Pro)"
+    assert apple_ipad_name("ipada16_2025") == "iPad (A16)"
+    assert console("Sony Playstation PS5 Pro Console Digital Version 2TB") == ("PlayStation 5 Pro", "Digital")
+    assert console("Nintendo Switch 2 Console Mario Kart World Bundle") == ("Nintendo Switch 2", "Mario Kart World bundle")
+    assert console("Steam Deck OLED (512GB, 1TB)", "512GB NVME SSD") == ("Steam Deck OLED", "512GB")
+    assert console("Retroid Pocket 5 Handheld Retro Gaming System") is None
+    assert game("PS5 Ghost of Yotei (Asian)") == ("Ghost of Yotei", "PS5 · Asian")
+    assert game("Nintendo Switch 2 Absolum (US) (Eng/FR)") == ("Absolum", "Switch 2 · US")
+    assert game("PS5 Edge of Memories Pre-Order Downpayment") is None
+
+
+def test_samsung_variants():
+    from presyo_ingest.sources.gadgets import samsung_variants
+
+    products = [
+        {"fmyMarketingName": "Galaxy S26 Ultra (Samsung.com only)", "modelList": [
+            {"price": 96990, "promotionPrice": 89990, "stockStatusText": "inStock", "pdpUrl": "/ph/x/",
+             "fmyChipList": [{"fmyChipName": "Black"}, {"fmyChipName": "12GB/256GB"}]},
+            {"price": None, "promotionPrice": None, "fmyChipList": [{"fmyChipName": "White"}, {"fmyChipName": "16GB/1TB"}]},
+        ]},
+        {"fmyMarketingName": "Galaxy S26+ 256GB & Buds4 Pro Silver pack", "modelList": []},
+    ]
+    (v,) = samsung_variants(products)
+    assert (v["model"], v["spec"], v["price"], v["was"], v["available"]) == ("Galaxy S26 Ultra", "256GB", 89990, 96990, True)
+
+
+def test_medicine_names():
+    from presyo_ingest.sources.dpri import edition_date, split_name
+
+    assert split_name("CAPTOPRIL 25 mg tablet") == ("Captopril", "25 mg tablet")
+    assert split_name("0.9% SODIUM CHLORIDE 1 L bag") == ("0.9% Sodium Chloride", "1 L bag")
+    assert split_name("5% DEXTROSE IN 0.3% SODIUM CHLORIDE 1 L bottle") == ("5% Dextrose in 0.3% Sodium Chloride", "1 L bottle")
+    assert edition_date("2026_DPRI_Booklet_asofJuly29.pdf") == "2026-07-29"
+    assert edition_date("MRP-MWP List 22June2026.pdf") == "2026-06-22"

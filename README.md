@@ -13,7 +13,9 @@ Palengke, pump and household prices near you, from Philippine government monitor
 | Meralco bill by kWh | Meralco residential bills table (PDF) | Meralco franchise | monthly |
 | Grocery SRPs | DTI SRP bulletin | national | when DTI updates |
 | Exchange rates | BSP Reference Exchange Rate Bulletin | 31 currencies + BSP USD buy/sell | daily (trading days) |
-| Phones (iPhone, Galaxy) | Apple Store PH, Power Mac Center, Beyond the Box, iStore, Digital Walker websites | model × storage × store | checked twice a day; stored only when a price changes |
+| Gadgets: phones, iPads, Macs, Apple Watch, AirPods, consoles, new games | Apple Store PH, Samsung PH, Power Mac Center, Beyond the Box, iStore, Digital Walker, Datablitz websites | model × variant × store | checked twice a day; stored only when a price changes |
+| Apple prices abroad (iPhone, iPad) | Apple Store US, JP, SG, HK, AE, SA (converted at the BSP rate) | model × variant × country | checked twice a day |
+| Medicine | DOH Drug Price Reference Index + MRP/MWP list (PDFs) | national, per unit | when DOH publishes |
 | Water | MWSS concessionaires (hand-maintained `data/static/water.json`) | Maynilad / Manila Water zones | quarterly |
 | Jeepney & bus fares | LTFRB (hand-maintained `data/static/fares.json`) | national | when LTFRB changes fares |
 
@@ -44,8 +46,10 @@ cd app && npm install && npx expo start --web
   fares change, and bump `checked`.
 - bsp.gov.ph rejects non-browser TLS clients; the forex source uses `curl_cffi` with a
   Chrome fingerprint.
-- Gadget stores: the resellers run Shopify (open `/products.json`); Apple PH embeds prices in
-  each iPhone page. A new `data/prices/gadgets_<store>/<date>.json` is written only when that
+- Gadget stores: the resellers and Datablitz run Shopify (open `/products.json`; Datablitz only its
+  console collections and newest games); Apple embeds prices in each iPhone/iPad page in every
+  country; Samsung PH has an open product-finder API. dpri.doh.gov.ph needs the Chrome TLS
+  fingerprint like BSP. A new `data/prices/gadgets_<store>/<date>.json` is written only when that
   store's prices or stock change; `data/gadgets-checked.json` holds the last check per store.
 
 - North Luzon DOE fuel/LPG reports are scanned images: not parsed (needs OCR).

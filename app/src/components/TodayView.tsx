@@ -13,6 +13,7 @@ import { C, TAB_LABELS, themed } from '../theme';
 import { Card, Columns, Loading, Notice, PriceRow, SectionTitle } from './bits';
 import { AdjustmentBanner, useLatestAdjustment, useLpg } from './FuelExtras';
 import { Search } from './Search';
+import { TodayGadgets } from './TodayGadgets';
 
 const GROUPS = ['rice', 'meat', 'seafood', 'vegetables', 'fruits', 'pantry'] as const;
 
@@ -63,6 +64,7 @@ export function TodayView({ place, spot, places, markets, onOpenTab, wide }: {
   const left = (
     <>
       <Search source={source} spot={spot} markets={markets} />
+      <TodayGadgets food={items} onOpenTab={onOpenTab} />
       {adjustment ? <AdjustmentBanner week={adjustment} /> : null}
 
       {fuel || lpg ? (

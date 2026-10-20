@@ -8,7 +8,8 @@
     presyo-ingest dti            DTI suggested retail prices (grocery SRP bulletin)
     presyo-ingest meralco        Meralco residential bills at typical kWh levels (monthly)
     presyo-ingest forex          BSP reference exchange rates (daily + history backfill)
-    presyo-ingest gadgets        phone prices at Apple Store PH and PH resellers
+    presyo-ingest gadgets        phones, tablets, Macs, consoles... at PH stores (+ Apple abroad)
+    presyo-ingest medicine       DOH Drug Price Reference Index + maximum retail prices
     presyo-ingest markets        geocode DA markets missing coordinates
     presyo-ingest all            everything above + build
     presyo-ingest build          write app/public/data from data/
@@ -20,7 +21,7 @@ import sys
 
 def main() -> None:
     from . import build, geo
-    from .sources import da, doe, dti, forex, gadgets, lpg, meralco, power, psa
+    from .sources import da, doe, dpri, dti, forex, gadgets, lpg, meralco, power, psa
 
     cmd = sys.argv[1] if len(sys.argv) > 1 else "all"
     force = "--force" in sys.argv
@@ -46,6 +47,8 @@ def main() -> None:
         forex.ingest(force=force)
     elif cmd == "gadgets":
         gadgets.ingest(force=force)
+    elif cmd == "medicine":
+        dpri.ingest(force=force)
     elif cmd == "markets":
         da.geocode_markets(geo.Gazetteer())
     elif cmd == "build":
@@ -68,6 +71,7 @@ def main() -> None:
             ("meralco", lambda: meralco.ingest(force=force)),
             ("forex", lambda: forex.ingest(force=force)),
             ("gadgets", lambda: gadgets.ingest(force=force)),
+            ("medicine", lambda: dpri.ingest(force=force)),
         ]
         failed = []
         for name, step in steps:

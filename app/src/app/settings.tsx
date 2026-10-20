@@ -9,7 +9,7 @@ import { Prefs, usePrefs } from '../lib/prefs';
 import { C, MAX_WIDTH, R, TAB_LABELS, themed } from '../theme';
 
 const TAB_IDS = ['today', 'basket', 'rice', 'fuel', 'meat', 'vegetables', 'seafood', 'fruits', 'pantry', 'grocery', 'power',
-  'water', 'fares', 'forex', 'gadgets'];
+  'water', 'fares', 'forex', 'gadgets', 'medicine'];
 
 const FUELS: [string, string][] = [
   ['fuel_ron91', 'RON 91'], ['fuel_ron95', 'RON 95'], ['fuel_ron97', 'RON 97'],
@@ -26,6 +26,7 @@ const SOURCE_LABEL: Record<string, string> = {
   doe_mindanao: 'DOE pump prices: Mindanao', doe_lpg: 'DOE LPG', doe_power: 'DOE electricity rates',
   dti_srp: 'DTI suggested retail prices', meralco_bills: 'Meralco bills', bsp_forex: 'BSP exchange rates',
   gadgets: 'Gadget store prices',
+  doh_dpri: 'DOH medicine prices',
   water_table: 'Water rates (checked)', fares_table: 'Jeepney & bus fares (checked)',
 };
 

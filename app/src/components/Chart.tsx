@@ -145,7 +145,8 @@ export function StepChart({ start, end, series, height = 180 }: {
   const d1 = Math.max(day(end), d0 + 1);
   const X = (iso: string) => AXIS + ((day(iso) - d0) / (d1 - d0)) * plotW;
   const Y = (v: number) => pad + (1 - (v - lo) / (hi - lo)) * (height - pad * 2);
-  const ticks = [hi - margin, (hi + lo) / 2, lo + margin];
+  // one flat line (a single store, no change yet) gets one tick, not three equal ones
+  const ticks = [...new Set([hi - margin, (hi + lo) / 2, lo + margin].map((t) => Math.round(t)))];
   const xEnd = AXIS + plotW;
 
   const pathOf = (h: [string, number | null][]) => {

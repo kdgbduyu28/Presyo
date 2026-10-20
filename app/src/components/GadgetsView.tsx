@@ -1,23 +1,28 @@
 import { useMemo, useState } from 'react';
 import { Linking, Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { GadgetFile, GadgetIndex, GadgetOffer, GadgetStore, useJson } from '../lib/data';
+import { GadgetFile, GadgetIndex, GadgetModel, GadgetOffer, GadgetStore, useJson } from '../lib/data';
 import { peso, periodLabel } from '../lib/format';
+import { abroadRows, bestOffer, gadgetId, installment, money } from '../lib/gadgets';
 import { usePrefs } from '../lib/prefs';
+import { useWatch } from '../lib/watch';
 import { C, R, themed } from '../theme';
+import { AlertControl } from './AlertControl';
 import { StepChart } from './Chart';
 import { Card, Chips, Columns, Loading, Notice, SectionTitle } from './bits';
 import { Sheet } from './Sheet';
 
-const whole = (n: number) => peso(n).replace(/\.00$/, '');
+export const whole = (n: number) => peso(n).replace(/\.00$/, '');
 
-/** Series color by the store's fixed position in the store list (never by rank). */
-function storeColor(stores: GadgetStore[], id: string) {
-  const i = stores.findIndex((s) => s.id === id);
-  return [C.s1, C.s2, C.s3, C.s4, C.s5][i] ?? C.muted;
+/** Series color by the store's fixed slot (never by rank), so a store keeps its color. */
+export function storeColor(stores: GadgetStore[], id: string) {
+  const slot = stores.find((s) => s.id === id)?.slot ?? 0;
+  return [C.s1, C.s2, C.s3, C.s4, C.s5, C.s6, C.s7, C.s8][slot - 1] ?? C.muted;
 }
 
-/** Phone prices at the Apple Store and PH resellers, per storage, with history. */
+const pct = (x: number) => `${Math.round(x * 100)}%`;
+
+/** Phones, tablets, Macs, watches, AirPods, consoles and new games across PH stores, with history. */
 export function GadgetsView({ wide }: { wide?: boolean }) {
   const idx = useJson<GadgetIndex>('gadgets/index.json');
   const { prefs, set } = usePrefs();
@@ -25,91 +30,108 @@ export function GadgetsView({ wide }: { wide?: boolean }) {
 
   if (idx.loading) return <Loading />;
   if (!idx.data?.models.length) return <Notice tone="warn">Gadget prices aren't available right now.</Notice>;
-  const { models, stores } = idx.data;
-  const selected = models.find((m) => m.key === prefs.gadget) ?? models[0];
-  const pick = (key: string) => {
-    set({ gadget: key });
+  const data = idx.data;
+  const { models, stores, categories } = data;
+  const cat = categories.some((c) => c.id === prefs.gadgetCat) ? prefs.gadgetCat : categories[0].id;
+  const inCat = models.filter((m) => m.cat === cat);
+  const selected = inCat.find((m) => m.key === prefs.gadget) ?? inCat[0];
+  const pick = (m: GadgetModel) => {
+    set({ gadget: m.key, gadgetCat: m.cat });
     if (!wide) setOpen(true);
   };
-  const checked = stores.reduce((a, st) => (st.checked > a ? st.checked : a), '');
-  const brands = [...new Set(models.map((m) => m.brand))];
+  const storeName = (id?: string) => stores.find((st) => st.id === id)?.name ?? id ?? '';
+  const deals = data.deals.map((k) => models.find((m) => m.key === k)).filter((m): m is GadgetModel => !!m);
+  const groupOf = (m: GadgetModel) => (cat === 'games' ? m.specs[0]?.split(' · ')[0] ?? '' : m.make);
+  const groups = [...new Set(inCat.map(groupOf))];
+
+  const modelRow = (m: GadgetModel) => {
+    const on = wide && m.key === selected?.key;
+    const below = m.srp && m.from && m.from < m.srp ? m.srp - m.from : 0;
+    const badge = m.deal
+      ? `▼ ${pct(m.deal.pct)} at ${storeName(m.deal.store)}`
+      : m.low30 ? 'Lowest in 30 days' : below ? `${whole(below)} below Apple` : null;
+    return (
+      <Pressable key={m.key} onPress={() => pick(m)}
+        style={({ pressed }) => [s.row, (pressed || on) && { backgroundColor: on ? C.primarySoft : C.bg }]}
+        accessibilityRole="button" accessibilityState={{ selected: on }}
+        accessibilityLabel={`${m.name}, ${m.from ? `from ${whole(m.from)}` : 'out of stock'}${badge ? `, ${badge}` : ''}`}>
+        <View style={{ flex: 1 }}>
+          <Text style={[s.name, on && { color: C.primary }]} numberOfLines={2}>{m.name}</Text>
+          <Text style={s.sub} numberOfLines={1}>
+            {m.cat === 'games' ? m.specs.join(', ') : m.specs.length > 1 ? `${m.specs.length} versions` : m.specs[0]}
+            {' · '}{m.stores} {m.stores === 1 ? 'store' : 'stores'}
+          </Text>
+        </View>
+        <View style={{ alignItems: 'flex-end', maxWidth: '50%' }}>
+          {m.from ? (
+            <>
+              <Text style={s.price}><Text style={s.from}>from </Text>{whole(m.from)}</Text>
+              <Text style={[s.sub, badge ? s.good : null]} numberOfLines={1}>{badge ?? storeName(m.from_store)}</Text>
+            </>
+          ) : <Text style={s.sub}>Out of stock</Text>}
+        </View>
+      </Pressable>
+    );
+  };
 
   const list = (
     <>
-      {brands.map((brand) => (
-        <View key={brand}>
-          <SectionTitle>{brand === 'Apple' ? 'iPhone' : brand}</SectionTitle>
-          <Card>
-            {models.filter((m) => m.brand === brand).map((m) => {
-              const on = wide && m.key === selected.key;
-              const below = m.srp && m.from && m.from < m.srp ? m.srp - m.from : 0;
-              return (
-                <Pressable key={m.key} onPress={() => pick(m.key)}
-                  style={({ pressed }) => [s.row, (pressed || on) && { backgroundColor: on ? C.primarySoft : C.bg }]}
-                  accessibilityRole="button" accessibilityState={{ selected: on }}
-                  accessibilityLabel={`${m.name}, ${m.from ? `from ${whole(m.from)}` : 'out of stock'}`}>
-                  <View style={{ flex: 1 }}>
-                    <Text style={[s.name, on && { color: C.primary }]}>{m.name}</Text>
-                    <Text style={s.sub} numberOfLines={1}>
-                      {m.specs.length > 1 ? `${m.specs[0]}–${m.specs[m.specs.length - 1]}` : m.specs[0]}
-                      {' · '}{m.stores} {m.stores === 1 ? 'store' : 'stores'}
-                    </Text>
-                  </View>
-                  <View style={{ alignItems: 'flex-end' }}>
-                    {m.from ? (
-                      <>
-                        <Text style={s.price}><Text style={s.from}>from </Text>{whole(m.from)}</Text>
-                        <Text style={[s.sub, below ? { color: C.down, fontWeight: '600' } : null]} numberOfLines={1}>
-                          {below ? `${whole(below)} below Apple` : stores.find((st) => st.id === m.from_store)?.name}
-                        </Text>
-                      </>
-                    ) : (
-                      <Text style={s.sub}>Out of stock</Text>
-                    )}
-                  </View>
-                </Pressable>
-              );
-            })}
-          </Card>
+      <Chips options={categories.map((c) => ({ id: c.id, label: c.label }))} value={cat}
+        onChange={(id) => set({ gadgetCat: id })} />
+      {deals.length ? (
+        <>
+          <SectionTitle>Price drops, last 2 weeks</SectionTitle>
+          <Card>{deals.slice(0, 5).map(modelRow)}</Card>
+        </>
+      ) : null}
+      {groups.map((g) => (
+        <View key={g}>
+          <SectionTitle>{cat === 'phones' && g === 'Apple' ? 'iPhone' : g}</SectionTitle>
+          <Card>{inCat.filter((m) => groupOf(m) === g).map(modelRow)}</Card>
         </View>
       ))}
       <Text style={s.source}>
-        Prices from the Apple Store PH, Power Mac Center, Beyond the Box, iStore and Digital Walker websites,
-        checked twice a day{checked ? ` (last ${periodLabel(checked)})` : ''}. “From” is the lowest price of a phone
-        in stock. Presyo is not affiliated with these stores.
+        Prices from the stores’ own websites ({stores.map((st) => st.name).join(', ')}), checked twice a day
+        (last {periodLabel(data.end)}). “From” is the lowest price of one in stock. Presyo is not affiliated with
+        these stores.
       </Text>
     </>
   );
 
-  const detail = <GadgetDetail modelKey={selected.key} stores={stores} />;
+  const detail = selected ? <GadgetDetail modelKey={selected.key} index={data} /> : null;
 
   if (wide) {
     return (
-      <Columns wide left={list} right={
+      <Columns wide left={list} right={selected ? (
         <>
           <SectionTitle>{selected.name}</SectionTitle>
           <Card style={{ padding: 16 }}>{detail}</Card>
         </>
-      } />
+      ) : null} />
     );
   }
   return (
     <View>
       {list}
-      <Sheet open={open} onClose={() => setOpen(false)} title={selected.name}>{detail}</Sheet>
+      <Sheet open={open} onClose={() => setOpen(false)} title={selected?.name}>{detail}</Sheet>
     </View>
   );
 }
 
-function GadgetDetail({ modelKey, stores }: { modelKey: string; stores: GadgetStore[] }) {
+const MONTHS = [3, 6, 12, 24] as const;
+
+export function GadgetDetail({ modelKey, index }: { modelKey: string; index: GadgetIndex }) {
   const file = useJson<GadgetFile>(`gadgets/${modelKey}.json`);
   const { prefs, set } = usePrefs();
+  const watch = useWatch();
+  const [months, setMonths] = useState<(typeof MONTHS)[number]>(12);
+  const { stores, countries } = index;
 
   const lowest = useMemo(() => {
     const out: Record<string, number> = {};
     for (const v of file.data?.variants ?? []) {
-      const ps = v.offers.filter((o) => o.price != null && o.stock !== false).map((o) => o.price as number);
-      if (ps.length) out[v.spec] = Math.min(...ps);
+      const b = bestOffer(v);
+      if (b?.price != null) out[v.spec] = b.price;
     }
     return out;
   }, [file.data]);
@@ -118,13 +140,16 @@ function GadgetDetail({ modelKey, stores }: { modelKey: string; stores: GadgetSt
   if (!file.data) return <Notice tone="warn">Couldn't load prices ({file.error}).</Notice>;
   const { variants, end } = file.data;
   const variant = variants.find((v) => v.spec === prefs.gadgetSpec) ?? variants[0];
-  const best = lowest[variant.spec];
+  const best = bestOffer(variant);
   const apple = variant.offers.find((o) => o.store === 'apple' && o.price != null)?.price;
   const storeName = (id: string) => stores.find((st) => st.id === id)?.name ?? id;
   const series = variant.offers.filter((o) => o.h.length).map((o) => ({
     id: o.store, label: storeName(o.store), color: storeColor(stores, o.store), h: o.h,
   }));
   const start = series.reduce((a, sr) => (sr.h[0][0] < a ? sr.h[0][0] : a), end);
+  const id = gadgetId(modelKey, variant.spec);
+  const starred = watch.has(id);
+  const abroad = abroadRows(variant, countries, apple ?? best?.price ?? null);
 
   return (
     <View>
@@ -136,12 +161,69 @@ function GadgetDetail({ modelKey, stores }: { modelKey: string; stores: GadgetSt
         </View>
       ) : null}
 
+      <View style={s.actionsRow}>
+        <Pressable onPress={() => watch.toggle(id)} style={[s.star, starred && s.starOn]} hitSlop={6}
+          accessibilityRole="button" accessibilityState={{ selected: starred }}>
+          <Text style={[s.starText, starred && { color: C.onPrimary }]}>{starred ? '★ On Today' : '☆ Show on Today'}</Text>
+        </Pressable>
+      </View>
+      <View style={{ marginBottom: 12 }}>
+        <AlertControl id={id} current={best?.price ?? null} />
+      </View>
+
       <Text style={s.h}>Prices now · {variant.spec}</Text>
       {variant.offers.map((o) => (
         <OfferRow key={o.store} offer={o} name={storeName(o.store)} color={storeColor(stores, o.store)}
-          official={!!stores.find((st) => st.id === o.store)?.official} lowest={o.price != null && o.price === best && o.stock !== false}
-          apple={apple} />
+          official={!!stores.find((st) => st.id === o.store)?.official}
+          lowest={!!best && o.store === best.store} apple={apple} />
       ))}
+
+      {best?.price ? (
+        <>
+          <Text style={[s.h, { marginTop: 20 }]}>Installment</Text>
+          <View style={s.monthRow}>
+            {MONTHS.map((n) => (
+              <Pressable key={n} onPress={() => setMonths(n)} style={[s.month, months === n && s.monthOn]}
+                accessibilityRole="button" accessibilityState={{ selected: months === n }}>
+                <Text style={[s.monthText, months === n && s.monthTextOn]}>{n} mo</Text>
+              </Pressable>
+            ))}
+          </View>
+          <Text style={s.instBig}>{whole(installment(best.price, months))}<Text style={s.from}> /month × {months}</Text></Text>
+          <Text style={s.caption}>
+            At 0% on {whole(best.price)} ({storeName(best.store)}). Many credit cards offer 0% at these stores for
+            up to 24 months; with a 1%/month add-on it’s {whole(installment(best.price, months, 0.01))}/month.
+          </Text>
+        </>
+      ) : null}
+
+      {abroad.length ? (
+        <>
+          <Text style={[s.h, { marginTop: 20 }]}>Apple Store abroad · {variant.spec}</Text>
+          {abroad.map((r) => (
+            <Pressable key={r.country.cc} onPress={() => Linking.openURL(r.url).catch(() => {})} style={s.offer}
+              accessibilityRole="link">
+              <View style={{ flex: 1 }}>
+                <Text style={s.store}>{r.country.name}</Text>
+                <Text style={s.sub} numberOfLines={2}>{money(r.price, r.country.cur)} · {r.country.note}</Text>
+              </View>
+              <View style={{ alignItems: 'flex-end' }}>
+                <Text style={s.price}>≈ {whole(r.php)}</Text>
+                {r.vsPh != null && Math.abs(r.vsPh) >= 0.005 ? (
+                  <Text style={[s.sub, { color: r.vsPh > 0 ? C.down : C.up }]}>
+                    {pct(Math.abs(r.vsPh))} {r.vsPh > 0 ? 'cheaper' : 'dearer'}
+                  </Text>
+                ) : null}
+              </View>
+            </Pressable>
+          ))}
+          <Text style={s.caption}>
+            In pesos at BSP’s reference rate ({periodLabel(abroad[0].country.rate_date)}), compared with{' '}
+            {apple ? 'Apple PH' : 'the lowest PH price'}. Cards add 1–3% on foreign purchases; check that the model
+            works on PH networks before buying abroad.
+          </Text>
+        </>
+      ) : null}
 
       <Text style={[s.h, { marginTop: 20 }]}>Price history · {variant.spec}</Text>
       <StepChart start={start} end={end} series={series} />
@@ -180,8 +262,14 @@ function OfferRow({ offer: o, name, color, official, lowest, apple }: {
           <Text style={s.store}>{name}</Text>
           {official ? <Text style={s.badge}>Official</Text> : null}
           {lowest ? <Text style={[s.badge, s.badgeBest]}>Lowest</Text> : null}
+          {o.low30 ? <Text style={[s.badge, s.badgeBest]}>30-day low</Text> : null}
         </View>
-        <Text style={[s.sub, o.stock === false || !listed ? { color: C.faint } : null]} numberOfLines={2}>{status}</Text>
+        <Text style={[s.sub, o.stock === false || !listed ? { color: C.faint } : null]} numberOfLines={2}>
+          {status}{o.note ? ` · ${o.note}` : ''}
+        </Text>
+        {o.drop && o.since ? (
+          <Text style={[s.sub, s.good]}>▼ {whole(o.drop)} on {periodLabel(o.since)}</Text>
+        ) : null}
       </View>
       <View style={{ alignItems: 'flex-end' }}>
         {listed ? (
@@ -208,6 +296,7 @@ const s = themed(() => ({
   },
   name: { fontSize: 15, fontWeight: '700', color: C.text },
   sub: { fontSize: 12, color: C.muted, marginTop: 1 },
+  good: { color: C.down, fontWeight: '600' },
   from: { fontSize: 12, fontWeight: '400', color: C.muted },
   price: { fontSize: 16, fontWeight: '700', color: C.text, fontVariant: ['tabular-nums'] },
   was: { textDecorationLine: 'line-through' },
@@ -227,4 +316,14 @@ const s = themed(() => ({
   chev: { fontSize: 20, color: C.faint, marginLeft: 2 },
   caption: { color: C.muted, fontSize: 12, marginTop: 8, lineHeight: 17 },
   source: { fontSize: 12, color: C.faint, marginHorizontal: 16, marginBottom: 24, lineHeight: 17 },
+  actionsRow: { flexDirection: 'row', gap: 8, marginBottom: 10 },
+  star: { borderWidth: 1, borderColor: C.line, borderRadius: R.pill, paddingHorizontal: 12, paddingVertical: 6 },
+  starOn: { backgroundColor: C.star, borderColor: C.star },
+  starText: { fontSize: 13, fontWeight: '600', color: C.text },
+  monthRow: { flexDirection: 'row', gap: 6, marginBottom: 8 },
+  month: { paddingHorizontal: 12, paddingVertical: 5, borderRadius: R.pill, borderWidth: 1, borderColor: C.line },
+  monthOn: { backgroundColor: C.text, borderColor: C.text },
+  monthText: { fontSize: 13, fontWeight: '600', color: C.muted },
+  monthTextOn: { color: C.bg },
+  instBig: { fontSize: 24, fontWeight: '800', color: C.text, fontVariant: ['tabular-nums'] },
 }));

@@ -22,7 +22,8 @@ const light = {
   star: '#D97706',
   overlay: 'rgba(0,0,0,0.45)',
   // categorical series (store lines), fixed order; validated vs the card surface
-  s1: '#2a78d6', s2: '#eb6834', s3: '#1baf7a', s4: '#eda100', s5: '#e87ba4',
+  s1: '#2a78d6', s2: '#eb6834', s3: '#1baf7a', s4: '#eda100', s5: '#e87ba4', s6: '#008300', s7: '#6250d6',
+  s8: '#e34948',
 };
 
 export type Palette = typeof light;
@@ -46,7 +47,8 @@ const dark: Palette = {
   warnBg: '#2A2210',
   star: '#FBBF24',
   overlay: 'rgba(0,0,0,0.6)',
-  s1: '#3987e5', s2: '#d95926', s3: '#199e70', s4: '#c98500', s5: '#d55181',
+  s1: '#3987e5', s2: '#d95926', s3: '#199e70', s4: '#c98500', s5: '#d55181', s6: '#008300', s7: '#9085e9',
+  s8: '#e66767',
 };
 
 const palettes: Record<Scheme, Palette> = { light, dark };
@@ -92,6 +94,7 @@ export const TAB_LABELS: Record<string, string> = {
   fares: 'Fares',
   forex: 'Forex',
   gadgets: 'Gadgets',
+  medicine: 'Medicine',
   rice: 'Rice',
   fuel: 'Fuel',
   meat: 'Meat & Eggs',
