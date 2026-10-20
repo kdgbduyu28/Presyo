@@ -1,12 +1,14 @@
 import { router } from 'expo-router';
 import { ReactNode, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
+import { Linking, Pressable, ScrollView, StyleSheet, Switch, Text, TextInput, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Market, Meta, useJson } from '../lib/data';
 import { periodLabel } from '../lib/format';
 import { Prefs, usePrefs } from '../lib/prefs';
 import { C, MAX_WIDTH, R, TAB_LABELS, themed } from '../theme';
+
+const CONTACT_EMAIL = 'timothyborja28@gmail.com';
 
 const TAB_IDS = ['today', 'basket', 'rice', 'fuel', 'meat', 'vegetables', 'seafood', 'fruits', 'pantry', 'grocery', 'power',
   'water', 'fares', 'forex', 'gadgets', 'medicine'];
@@ -156,6 +158,17 @@ export default function Settings() {
               Removes your location, starred items, basket, settings and offline copy from this device.
               Nothing is stored anywhere else.
             </Text>
+          </Section>
+
+          <Section title="Contact">
+            <Pressable onPress={() => Linking.openURL(`mailto:${CONTACT_EMAIL}?subject=Presyo`).catch(() => {})}
+              style={[s.row, { borderBottomWidth: 0 }]} accessibilityRole="link">
+              <View style={{ flex: 1 }}>
+                <Text style={s.label}>Contact me</Text>
+                <Text style={s.rowHint}>Wrong price, missing item or an idea? {CONTACT_EMAIL}</Text>
+              </View>
+              <Text style={s.link}>Email ›</Text>
+            </Pressable>
           </Section>
 
           <Text style={s.about}>
