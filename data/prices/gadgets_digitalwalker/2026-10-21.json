@@ -1,0 +1,9 @@
+{
+ "doc": {"source": "gadgets_digitalwalker", "url": "https://digitalwalker.ph", "status": "ok", "period_start": "2026-10-21", "period_end": "2026-10-21", "parser_version": 1, "parsed_at": "2026-10-21T08:59:52Z", "rows": 4},
+ "rows": [
+  {"item": "Galaxy S25 Ultra", "key": "galaxy-s25-ultra", "spec": "512GB", "brand": "digitalwalker", "cat": "phones", "unit": "pc", "price": 73990.0, "was": 93990.0, "stock": true, "colors": ["Titanium Black", "Titanium Gray", "Titanium Silverblue"], "url": "https://digitalwalker.ph/products/samsung-galaxy-s25-ultra?variant=46244833198300"},
+  {"item": "Galaxy S25 Ultra", "key": "galaxy-s25-ultra", "spec": "1TB", "brand": "digitalwalker", "cat": "phones", "unit": "pc", "price": 110990.0, "stock": false, "url": "https://digitalwalker.ph/products/samsung-galaxy-s25-ultra?variant=46244833231068"},
+  {"item": "Galaxy S25 Ultra", "key": "galaxy-s25-ultra", "spec": "256GB", "brand": "digitalwalker", "cat": "phones", "unit": "pc", "price": 64990.0, "was": 84990.0, "stock": false, "url": "https://digitalwalker.ph/products/samsung-galaxy-s25-ultra?variant=46244833165532"},
+  {"item": "Galaxy Z Fold6", "key": "galaxy-z-fold6", "spec": "256GB", "brand": "digitalwalker", "cat": "phones", "unit": "pc", "price": 60990.0, "was": 105990.0, "stock": false, "url": "https://digitalwalker.ph/products/galaxy-z-fold6?variant=47235135930588"}
+ ]
+}
