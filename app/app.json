@@ -3,8 +3,9 @@
     "name": "Presyo",
     "slug": "presyo",
     "scheme": "presyo",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "orientation": "default",
+    "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true,
@@ -12,11 +13,21 @@
     },
     "android": {
       "package": "ph.presyo.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#15803D",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
       "predictiveBackGestureEnabled": false
     },
     "web": {
       "bundler": "metro",
-      "output": "single"
+      "output": "single",
+      "favicon": "./assets/favicon.png",
+      "name": "Presyo",
+      "shortName": "Presyo",
+      "themeColor": "#15803D",
+      "backgroundColor": "#F5F5F0"
     },
     "plugins": [
       "expo-router",
