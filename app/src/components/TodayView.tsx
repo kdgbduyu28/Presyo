@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
+import { pickVariant } from '../lib/basket';
 import { FuelFile, Market, SummaryFile, SummaryItem, useJson } from '../lib/data';
 import { peso, periodLabel, value } from '../lib/format';
 import type { Spot } from '../lib/location';
@@ -31,7 +32,8 @@ export function TodayView({ place, spot, places, markets, onOpenTab, wide }: {
   const lpg = useLpg(place, spot, places);
   const sinceLast = useSinceLastVisit(scope, summary.data?.items);
 
-  const items = summary.data?.items ?? [];
+  const items = useMemo(() => (summary.data?.items ?? []).map((it) => pickVariant(it, prefs.origin)),
+    [summary.data, prefs.origin]);
   const mine = items.filter((it) => watch.has(it.key));
   const where = source?.kind === 'da'
     ? 'Metro Manila average (DA, daily)'
@@ -44,7 +46,7 @@ export function TodayView({ place, spot, places, markets, onOpenTab, wide }: {
         key={it.key}
         title={it.item}
         subtitle={[
-          it.origin === 'imported' ? 'Imported' : null,
+          it.origin === 'imported' && !/imported/i.test(it.item) ? 'Imported' : null,
           delta ? `${delta > 0 ? '▲' : '▼'} ${peso(Math.abs(delta))} since your last visit` : null,
         ].filter(Boolean).join(' · ') || undefined}
         starred={watch.has(it.key)}

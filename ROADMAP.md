@@ -6,8 +6,7 @@ Planned work, roughly in priority order. Done items move to the changelog / git 
 
 - **Language**: English / Filipino for labels and headings (and Filipino item names where
   DA/PSA give them), as a Settings option.
-- **Variant preferences on Today**: the Today card shows one variant per item (local first);
-  respect Settings → "Local or imported" there too (Basket and lists already do).
+- **Variant preferences on Today**: done 2026-10-28 (summary rows carry `variants`; Today follows Settings → local / imported / cheapest).
 
 ## Done (2026-10-08)
 

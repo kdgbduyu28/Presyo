@@ -39,6 +39,8 @@ export type AdjustFile = { weeks: AdjustWeek[] };
 export type SummaryItem = {
   key: string; item: string; unit: string; cat: string; origin?: string;
   last: Price; period: string; prev?: Price; prev_period?: string; spark: Price[];
+  /** other origins of the same item (the top-level one is local first) */
+  variants?: Omit<SummaryItem, 'variants'>[];
 };
 export type SummaryFile = { source: 'psa' | 'da_index'; items: SummaryItem[] };
 

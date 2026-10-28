@@ -29,7 +29,7 @@ _ORIGIN_RANK = {"local": 0, None: 1, "imported": 2}
 def _headline(series: dict) -> list[dict]:
     """[{key, item, unit, origin, last, prev, period, prev_period, spark}] from a _series body."""
     periods = series["periods"]
-    best: dict[str, dict] = {}
+    found: dict[str, list[dict]] = {}
     for it in series["items"]:
         k = it.get("key")
         if k not in HEADLINE:
@@ -37,21 +37,28 @@ def _headline(series: dict) -> list[dict]:
         idx = [i for i, v in enumerate(it["s"]) if v is not None]
         if not idx or idx[-1] < len(periods) - 14:  # not reported lately
             continue
-        cur = best.get(k)
-        if cur is None or _ORIGIN_RANK.get(it.get("origin"), 1) < _ORIGIN_RANK.get(cur.get("origin"), 1):
-            best[k] = it
-    out = []
-    for k in HEADLINE:
-        it = best.get(k)
-        if not it:
-            continue
+        found.setdefault(k, []).append(it)
+
+    def row(k: str, it: dict) -> dict:
         idx = [i for i, v in enumerate(it["s"]) if v is not None]
         last, prev = idx[-1], (idx[-2] if len(idx) > 1 else None)
-        out.append({"key": k, "item": it["item"], "unit": it["unit"], "cat": it["cat"],
-                    **({"origin": it["origin"]} if it.get("origin") else {}),
-                    "last": it["s"][last], "period": periods[last],
-                    **({"prev": it["s"][prev], "prev_period": periods[prev]} if prev is not None else {}),
-                    "spark": it["s"][-30:]})
+        return {"key": k, "item": it["item"], "unit": it["unit"], "cat": it["cat"],
+                **({"origin": it["origin"]} if it.get("origin") else {}),
+                "last": it["s"][last], "period": periods[last],
+                **({"prev": it["s"][prev], "prev_period": periods[prev]} if prev is not None else {}),
+                "spark": it["s"][-30:]}
+
+    out = []
+    for k in HEADLINE:
+        its = sorted(found.get(k, []), key=lambda it: _ORIGIN_RANK.get(it.get("origin"), 1))
+        if not its:
+            continue
+        r = row(k, its[0])
+        # The other variants ride along so the app can honour Settings → local / imported / cheapest.
+        others = [row(k, it) for it in its[1:] if it.get("origin") != its[0].get("origin")]
+        if others:
+            r["variants"] = others
+        out.append(r)
     return out
 
 

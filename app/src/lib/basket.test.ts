@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { basketFromAverages, basketTotals, priceAt, type LatestItem } from './basket.ts';
+import { basketFromAverages, basketTotals, pickVariant, priceAt, type LatestItem } from './basket.ts';
 
 const items: LatestItem[] = [
   { key: 'rice_well_milled', origin: 'imported', unit: 'kg', m: { a: 46, b: 47 } },
@@ -40,4 +40,15 @@ test('origin preference and favourites', () => {
 
 test('basketFromAverages', () => {
   assert.deepEqual(basketFromAverages([{ key: 'x', qty: 2 }, { key: 'y', qty: 1 }], { x: 10 }), { total: 20, missing: ['y'] });
+});
+
+test('pickVariant follows the local / imported / cheapest setting', () => {
+  const rice = { key: 'rice', origin: 'local', last: 50,
+    variants: [{ key: 'rice', origin: 'imported', last: 46 }] };
+  assert.equal(pickVariant(rice, 'local').last, 50);
+  assert.equal(pickVariant(rice, 'imported').last, 46);
+  assert.equal(pickVariant(rice, 'any').last, 46);
+  assert.equal(pickVariant(rice, 'imported').variants, undefined);
+  const egg = { key: 'egg', last: 8 };
+  assert.equal(pickVariant(egg, 'imported'), egg);
 });

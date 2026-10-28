@@ -59,7 +59,20 @@ export function priceAt(items: LatestItem[], key: string, marketId: string, orig
   return prices.length ? prices[0].p : null;
 }
 
-export type MarketTotal = { market: Market; km: number; total: number; missing: string[] };
+/** The Today card's row for an item: the variant `origin` prefers (same order as priceAt).
+ *  The summary's top-level row is local first; the others are in `variants`. */
+export function pickVariant<T extends { origin?: string; last: Price; variants?: Omit<T, 'variants'>[] }>(
+  it: T, origin: OriginPref,
+): T {
+  if (!it.variants?.length) return it;
+  const { variants, ...top } = it;
+  const all = [top, ...variants] as T[];
+  const p = (x: T) => mid(x.last) ?? Infinity;
+  return all.map((x) => ({ x, rank: ORIGIN_RANK[origin][x.origin ?? ''] ?? 1 }))
+    .sort((a, b) => a.rank - b.rank || p(a.x) - p(b.x))[0].x;
+}
+
+export type MarketTotal ={ market: Market; km: number; total: number; missing: string[] };
 
 export type BasketOptions = { maxKm?: number; origin?: OriginPref; favourites?: string[] };
 
