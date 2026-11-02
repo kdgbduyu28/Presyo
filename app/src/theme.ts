@@ -54,6 +54,9 @@ const dark: Palette = {
 };
 
 const palettes: Record<Scheme, Palette> = { light, dark };
+
+/** Both palettes, for drawing outside the app's theme (the share image is always light). */
+export const PALETTES: Readonly<Record<Scheme, Palette>> = palettes;
 let current: Scheme = 'light';
 
 /** Switch palettes. The root layout calls this and remounts the tree, so

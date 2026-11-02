@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import { LatestFile, SeriesFile, SeriesItem, useJson } from '../lib/data';
-import { lastTwo, peso, pesoPrice, periodLabel, Price, UNIT_LABEL, value } from '../lib/format';
+import { change, lastTwo, peso, pesoPrice, periodLabel, Price, UNIT_LABEL, value } from '../lib/format';
 import { activeMarkets, foodSource, km, Market, nearestMarkets, Place, PlacesFile } from '../lib/places';
 import type { Spot } from '../lib/location';
 import { placeName, shortName } from '../lib/names';
@@ -14,6 +14,7 @@ import { C, themed } from '../theme';
 import { AlertControl } from './AlertControl';
 import { Chart } from './Chart';
 import { Card, Chips, Delta, Loading, Notice, PriceRow, SectionTitle, ShareButton, StarButton } from './bits';
+import { ShareImageButton } from './ShareImage';
 import { Sheet } from './Sheet';
 
 const RECENT = 30; // periods shown in row sparklines
@@ -153,7 +154,7 @@ function ItemList({ file, cat, sourceLine, cadence, emptyHint, compare }: {
       </Card>
       <Text style={s.source}>{sourceLine}</Text>
       <Sheet open={open != null} onClose={() => setOpen(null)} title={open ? titleOf(open) : ''}>
-        {open ? <ItemDetail item={open} periods={file.periods} cadence={cadence} compare={compare} /> : null}
+        {open ? <ItemDetail item={open} periods={file.periods} cadence={cadence} compare={compare} where={sourceLine} /> : null}
       </Sheet>
     </View>
   );
@@ -170,8 +171,10 @@ const RANGES = [
   { id: 'all', label: '2026', days: 0 },
 ] as const;
 
-export function ItemDetail({ item, periods, cadence, compare }: {
+export function ItemDetail({ item, periods, cadence, compare, where }: {
   item: SeriesItem; periods: string[]; cadence: 'day' | 'month'; compare?: { spot: Spot; markets: Market[] };
+  /** source line for the share image */
+  where?: string;
 }) {
   const { last, prev, lastIdx } = lastTwo(item.s);
   const [range, setRange] = useState<(typeof RANGES)[number]['id']>(cadence === 'day' ? '3M' : 'all');
@@ -185,6 +188,8 @@ export function ItemDetail({ item, periods, cadence, compare }: {
   }, [range, periods, lastIdx]);
   const values = item.s.map(value);
   const egg = item.unit === 'pc' && /egg/i.test(item.item) && last != null;
+  const shareText = `${titleOf(item)}: ${pesoPrice(item.s[lastIdx] ?? null)}${UNIT_LABEL[item.unit] ?? ''}`
+    + (lastIdx >= 0 ? ` (${periodLabel(periods[lastIdx])})` : '') + ' — via Presyo';
   return (
     <View>
       <View style={s.detailHead}>
@@ -220,8 +225,14 @@ export function ItemDetail({ item, periods, cadence, compare }: {
         </View>
       ) : null}
       {compare && item.key ? <NearbyMarkets item={item} {...compare} /> : null}
-      <ShareButton text={`${titleOf(item)}: ${pesoPrice(item.s[lastIdx] ?? null)}${UNIT_LABEL[item.unit] ?? ''}`
-        + (lastIdx >= 0 ? ` (${periodLabel(periods[lastIdx])})` : '') + ' — via Presyo'} />
+      <View style={s.shares}>
+        <ShareImageButton text={shareText} card={{
+          title: titleOf(item), price: pesoPrice(item.s[lastIdx] ?? null), unit: UNIT_LABEL[item.unit] ?? '',
+          change: change(last, prev), changeLabel: cadence === 'day' ? t('vs previous report') : t('vs previous month'), noChange: t('no change'),
+          where: where ?? '', date: lastIdx >= 0 ? periodLabel(periods[lastIdx]) : '', values: values.slice(from),
+        }} />
+        <ShareButton text={shareText} />
+      </View>
     </View>
   );
 }
@@ -271,6 +282,7 @@ const s = themed(() => ({
   bigUnit: { fontSize: 15, fontWeight: '400', color: C.muted },
   caption: { color: C.muted, fontSize: 13, marginTop: 2 },
   h3: { fontSize: 15, fontWeight: '700', color: C.text, marginBottom: 6 },
+  shares: { flexDirection: 'row', gap: 24, flexWrap: 'wrap' },
   cmpRow: {
     flexDirection: 'row', alignItems: 'center', gap: 8, paddingVertical: 8,
     borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: C.line,

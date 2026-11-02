@@ -74,6 +74,11 @@ export const fil: Record<string, string> = {
   'Remove from my items': 'Alisin sa mga item ko',
   'My item': 'Item ko',
   'Share this price': 'I-share ang presyong ito',
+  'Share as image': 'I-share bilang larawan',
+  'Save as image': 'I-save bilang larawan',
+  'Making image…': 'Ginagawa ang larawan…',
+  'vs previous report': 'mula sa nakaraang ulat',
+  'vs previous month': 'mula sa nakaraang buwan',
 
   // Search
   'Search any price: galunggong, sibuyas, kape…': 'Hanapin ang presyo: galunggong, sibuyas, kape…',

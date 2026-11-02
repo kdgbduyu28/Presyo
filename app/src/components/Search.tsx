@@ -106,7 +106,8 @@ export function Search({ source, spot, markets }: { source: FoodSource | null; s
       <Sheet open={open != null} onClose={() => setOpen(null)} title={open ? titleOf(open.item) : ''}>
         {open ? (
           <ItemDetail item={open.item} periods={open.periods}
-            cadence={source?.kind === 'da' ? 'day' : 'month'} compare={da ? { spot, markets } : undefined} />
+            cadence={source?.kind === 'da' ? 'day' : 'month'} compare={da ? { spot, markets } : undefined}
+            where={da ? `${t('Metro Manila average')} · DA Bantay Presyo` : 'PSA'} />
         ) : null}
       </Sheet>
     </View>

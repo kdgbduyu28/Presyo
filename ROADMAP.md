@@ -45,7 +45,9 @@ Planned work, roughly in priority order. Done items move to the changelog / git 
   shows a banner once it's met). Notifications while the app is closed need a small backend
   (Supabase + Expo push / web push) — the first thing that would need an account.
 - **Market map** with prices on pins.
-- **Share as image** (price card for Facebook groups) instead of text only.
+- **Share as image**: done on web 2026-11-02 (item detail → "Share as image" / "Save as image": a 1080×1080
+  PNG card from `src/lib/card.ts`, shared as a file on phones, downloaded on desktop). Native builds still
+  share text; an image there needs `expo-sharing` + `expo-file-system` (or `react-native-view-shot`).
 - **Basket history**: what your usual list cost each week.
 - **Compare two places** (e.g. home vs. work city).
 
