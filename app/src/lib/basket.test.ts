@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { basketFromAverages, basketTotals, pickVariant, priceAt, type LatestItem } from './basket.ts';
+import { basketFromAverages, basketHistory, basketTotals, pickVariant, priceAt, weekOf, type LatestItem } from './basket.ts';
 
 const items: LatestItem[] = [
   { key: 'rice_well_milled', origin: 'imported', unit: 'kg', m: { a: 46, b: 47 } },
@@ -51,4 +51,30 @@ test('pickVariant follows the local / imported / cheapest setting', () => {
   assert.equal(pickVariant(rice, 'imported').variants, undefined);
   const egg = { key: 'egg', last: 8 };
   assert.equal(pickVariant(egg, 'imported'), egg);
+});
+
+test('weekOf: Monday of the week', () => {
+  assert.equal(weekOf('2026-10-19'), '2026-10-19'); // Monday
+  assert.equal(weekOf('2026-10-25'), '2026-10-19'); // Sunday
+  assert.equal(weekOf('2026-10-22'), '2026-10-19');
+});
+
+test('basketHistory: last report of each week, gaps carried over, variant rule', () => {
+  const periods = ['2026-10-12', '2026-10-14', '2026-10-19', '2026-10-21', '2026-10-26'];
+  const hist = [
+    { key: 'rice', origin: 'local', s: [50, 51, null, 52, 53] },
+    { key: 'rice', origin: 'imported', s: [45, 45, 45, 45, 45] },
+    { key: 'egg', s: [8, null, null, null, 9] },
+  ];
+  const lines = [{ key: 'rice', qty: 2 }, { key: 'egg', qty: 10 }];
+  assert.deepEqual(basketHistory(lines, hist, periods), [
+    { period: '2026-10-12', total: 51 * 2 + 80, missing: [] },
+    { period: '2026-10-19', total: 52 * 2 + 80, missing: [] }, // egg carried from Oct 12
+    { period: '2026-10-26', total: 53 * 2 + 90, missing: [] },
+  ]);
+  assert.equal(basketHistory(lines, hist, periods, { origin: 'imported' })[0].total, 45 * 2 + 80);
+  assert.equal(basketHistory(lines, hist, periods, { count: 1 }).length, 1);
+  // months (PSA) and items with no history
+  const months = basketHistory([...lines, { key: 'fish', qty: 1 }], hist.slice(0, 1), ['2026-08', '2026-09'], { by: 'month' });
+  assert.deepEqual(months.map((p) => [p.period, p.total, p.missing]), [['2026-08', 100, ['egg', 'fish']], ['2026-09', 102, ['egg', 'fish']]]);
 });

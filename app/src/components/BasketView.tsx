@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 
-import { BASKET_ITEMS, BasketLine, basketFromAverages, basketTotals } from '../lib/basket';
-import { LatestFile, Market, SummaryFile, useJson } from '../lib/data';
+import { BASKET_ITEMS, BasketLine, basketFromAverages, basketHistory, basketTotals, OriginPref } from '../lib/basket';
+import { LatestFile, Market, SeriesFile, SummaryFile, useJson } from '../lib/data';
 import { peso, periodLabel, value } from '../lib/format';
 import type { Spot } from '../lib/location';
 import { placeName } from '../lib/names';
@@ -97,6 +97,7 @@ export function BasketView({ place, spot, places, markets, wide }: {
         </View>
       ) : null}
 
+      <BasketHistory lines={lines} source={source} origin={prefs.origin} />
     </>
   );
 
@@ -148,6 +149,76 @@ export function BasketView({ place, spot, places, markets, wide }: {
   return <Columns wide={wide} left={list} right={priced} />;
 }
 
+const DA_CATS = ['rice', 'meat', 'seafood', 'vegetables', 'fruits', 'pantry'] as const;
+
+/** What the list cost each week (Metro Manila, DA daily averages) or month (PSA elsewhere). */
+function BasketHistory({ lines, source, origin }: {
+  lines: BasketLine[]; source: ReturnType<typeof foodSource>; origin: OriginPref;
+}) {
+  const da = source?.kind === 'da';
+  const cats = new Set(lines.map((l) => byKey.get(l.key)?.cat));
+  // fixed hook count: one per DA category, null when the list doesn't need it
+  const files = [
+    ...DA_CATS.map((c) => useJson<SeriesFile>(da && cats.has(c) ? `da/index-${c}.json` : null)),
+    useJson<SeriesFile>(source?.kind === 'psa' ? `psa/${source.code}.json` : null),
+  ];
+  const loading = files.some((f) => f.loading);
+  const points = useMemo(() => {
+    const loaded = files.filter((f) => f.data).map((f) => f.data!);
+    if (loading || !loaded.length || !lines.length) return [];
+    // the DA category files share one daily calendar; merge them onto it
+    const periods = [...new Set(loaded.flatMap((f) => f.periods))].sort();
+    const items = loaded.flatMap((f) => {
+      const at = f.periods.map((p) => periods.indexOf(p));
+      return f.items.map((it) => {
+        const s = new Array(periods.length).fill(null);
+        it.s.forEach((v, i) => (s[at[i]] = v));
+        return { key: it.key, origin: it.origin, s };
+      });
+    });
+    return basketHistory(lines, items, periods, { origin, by: da ? 'week' : 'month', count: da ? 12 : 9 });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, lines, origin, da, ...files.map((f) => f.data)]);
+
+  if (loading) return <Loading />;
+  if (points.length < 2) return null;
+  const totals = points.map((p) => p.total);
+  const lo = Math.min(...totals) * 0.95;
+  const hi = Math.max(...totals);
+  const last = points[points.length - 1];
+  const back = points[Math.max(0, points.length - 5)];
+  const diff = last.total - back.total;
+  const missing = [...new Set(points.flatMap((p) => p.missing))];
+  const vars = {
+    amount: peso(Math.abs(diff)),
+    when: da ? t('{n} weeks ago', { n: points.length - 1 - points.indexOf(back) }) : periodLabel(back.period),
+  };
+  return (
+    <>
+      <SectionTitle>{da ? t('What your list cost each week') : t('What your list cost each month')}</SectionTitle>
+      <Card style={{ paddingVertical: 8 }}>
+        {points.map((p, i) => (
+          <View key={p.period} style={s.hist}>
+            <Text style={s.histLabel}>{da ? periodLabel(p.period) : periodLabel(p.period).replace(/ \d{4}$/, '')}</Text>
+            <View style={s.barTrack}>
+              <View style={[s.bar, { width: `${Math.max(4, ((p.total - lo) / (hi - lo || 1)) * 100)}%` },
+                i === points.length - 1 && { backgroundColor: C.primary }]} />
+            </View>
+            <Text style={s.histTotal}>{peso(p.total)}</Text>
+          </View>
+        ))}
+      </Card>
+      <Text style={s.histNote}>
+        {Math.abs(diff) < 1 ? t('About the same as {when}', vars)
+          : diff > 0 ? t('{amount} more than {when}', vars) : t('{amount} less than {when}', vars)}
+        {' · '}
+        {da ? t('Metro Manila average prices (DA), last report of each week.') : t('Average prices (PSA), by month.')}
+        {missing.length ? ` ${t('Not included: {items}.', { items: missing.map((k) => itemName(byKey.get(k)?.label ?? k)).join(', ') })}` : ''}
+      </Text>
+    </>
+  );
+}
+
 function Savings({ results }: { results: { total: number; missing: string[] }[] }) {
   const complete = results.filter((r) => !r.missing.length);
   if (complete.length < 2) return null;
@@ -187,5 +258,11 @@ const s = themed(() => ({
   resultName: { fontSize: 15, fontWeight: '600', color: C.text },
   resultSub: { fontSize: 13, color: C.muted, marginTop: 2, lineHeight: 18 },
   total: { fontSize: 17, fontWeight: '800', color: C.text, fontVariant: ['tabular-nums'] },
+  hist: { flexDirection: 'row', alignItems: 'center', gap: 10, paddingHorizontal: 16, paddingVertical: 5 },
+  histLabel: { width: 56, fontSize: 13, color: C.muted, fontVariant: ['tabular-nums'] },
+  barTrack: { flex: 1, height: 10, borderRadius: R.pill, backgroundColor: C.bg, overflow: 'hidden' },
+  bar: { height: 10, borderRadius: R.pill, backgroundColor: C.faint },
+  histTotal: { width: 88, textAlign: 'right', fontSize: 14, fontWeight: '600', color: C.text, fontVariant: ['tabular-nums'] },
+  histNote: { fontSize: 12, color: C.muted, marginHorizontal: 16, marginBottom: 16, lineHeight: 17 },
   bigTotal: { fontSize: 28, fontWeight: '800', color: C.text, fontVariant: ['tabular-nums'] },
 }));

@@ -48,7 +48,9 @@ Planned work, roughly in priority order. Done items move to the changelog / git 
 - **Share as image**: done on web 2026-11-02 (item detail → "Share as image" / "Save as image": a 1080×1080
   PNG card from `src/lib/card.ts`, shared as a file on phones, downloaded on desktop). Native builds still
   share text; an image there needs `expo-sharing` + `expo-file-system` (or `react-native-view-shot`).
-- **Basket history**: what your usual list cost each week.
+- **Basket history**: done 2026-11-02. Basket shows what the list cost each week (Metro Manila: DA daily
+  averages, last report of each week) or month (PSA elsewhere), from the history files the app already has
+  (`basketHistory` in `src/lib/basket.ts`). It reprices today's list; it doesn't remember past lists.
 - **Compare two places** (e.g. home vs. work city).
 
 ## Infra

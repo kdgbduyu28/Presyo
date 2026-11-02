@@ -133,6 +133,15 @@ export const fil: Record<string, string> = {
   'Buying at the cheapest market saves about {amount} vs. the dearest one listed.':
     'Makakatipid ka ng mga {amount} kung sa pinakamurang palengke ka mamimili kaysa sa pinakamahal sa listahan.',
 
+  'What your list cost each week': 'Halaga ng listahan mo bawat linggo',
+  'What your list cost each month': 'Halaga ng listahan mo bawat buwan',
+  '{amount} more than {when}': 'Mas mahal ng {amount} kaysa {when}',
+  '{amount} less than {when}': 'Mas mura ng {amount} kaysa {when}',
+  'About the same as {when}': 'Halos pareho noong {when}',
+  '{n} weeks ago': '{n} linggo na ang nakaraan',
+  'Metro Manila average prices (DA), last report of each week.': 'Average na presyo sa Metro Manila (DA), huling ulat bawat linggo.',
+  'Average prices (PSA), by month.': 'Average na presyo (PSA), bawat buwan.',
+
   // Settings
   Language: 'Wika',
   'Labels and headings. Market items use their Filipino names where DA and PSA give them.':

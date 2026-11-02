@@ -5,30 +5,32 @@ import { km, type Market } from './places.ts';
 
 type Price = number | [number, number] | null;
 
-export type BasketItem = { key: string; label: string; unit: 'kg' | 'pc' | 'bottle'; step: number; start: number };
+export type BasketItem = {
+  key: string; cat: string; label: string; unit: 'kg' | 'pc' | 'bottle'; step: number; start: number;
+};
 
 /** Items the DA tracks per market (and PSA per province), in list order. */
 export const BASKET_ITEMS: BasketItem[] = [
-  { key: 'rice_well_milled', label: 'Rice, well-milled', unit: 'kg', step: 1, start: 5 },
-  { key: 'rice_regular', label: 'Rice, regular-milled', unit: 'kg', step: 1, start: 5 },
-  { key: 'rice_premium', label: 'Rice, premium', unit: 'kg', step: 1, start: 5 },
-  { key: 'pork_liempo', label: 'Pork liempo', unit: 'kg', step: 0.5, start: 1 },
-  { key: 'pork_kasim', label: 'Pork kasim', unit: 'kg', step: 0.5, start: 1 },
-  { key: 'chicken_whole', label: 'Whole chicken', unit: 'kg', step: 0.5, start: 1 },
-  { key: 'egg_medium', label: 'Eggs (medium)', unit: 'pc', step: 6, start: 30 },
-  { key: 'galunggong', label: 'Galunggong', unit: 'kg', step: 0.5, start: 1 },
-  { key: 'bangus', label: 'Bangus', unit: 'kg', step: 0.5, start: 1 },
-  { key: 'tilapia', label: 'Tilapia', unit: 'kg', step: 0.5, start: 1 },
-  { key: 'tomato', label: 'Tomato', unit: 'kg', step: 0.25, start: 0.5 },
-  { key: 'onion_red', label: 'Red onion', unit: 'kg', step: 0.25, start: 0.25 },
-  { key: 'garlic', label: 'Garlic', unit: 'kg', step: 0.25, start: 0.25 },
-  { key: 'cabbage', label: 'Cabbage', unit: 'kg', step: 0.5, start: 1 },
-  { key: 'carrots', label: 'Carrots', unit: 'kg', step: 0.25, start: 0.5 },
-  { key: 'potato', label: 'Potato', unit: 'kg', step: 0.25, start: 0.5 },
-  { key: 'ampalaya', label: 'Ampalaya', unit: 'kg', step: 0.25, start: 0.5 },
-  { key: 'pechay', label: 'Pechay', unit: 'kg', step: 0.25, start: 0.5 },
-  { key: 'calamansi', label: 'Calamansi', unit: 'kg', step: 0.25, start: 0.25 },
-  { key: 'sugar_refined', label: 'Sugar, refined', unit: 'kg', step: 0.5, start: 1 },
+  { key: 'rice_well_milled', cat: 'rice', label: 'Rice, well-milled', unit: 'kg', step: 1, start: 5 },
+  { key: 'rice_regular', cat: 'rice', label: 'Rice, regular-milled', unit: 'kg', step: 1, start: 5 },
+  { key: 'rice_premium', cat: 'rice', label: 'Rice, premium', unit: 'kg', step: 1, start: 5 },
+  { key: 'pork_liempo', cat: 'meat', label: 'Pork liempo', unit: 'kg', step: 0.5, start: 1 },
+  { key: 'pork_kasim', cat: 'meat', label: 'Pork kasim', unit: 'kg', step: 0.5, start: 1 },
+  { key: 'chicken_whole', cat: 'meat', label: 'Whole chicken', unit: 'kg', step: 0.5, start: 1 },
+  { key: 'egg_medium', cat: 'meat', label: 'Eggs (medium)', unit: 'pc', step: 6, start: 30 },
+  { key: 'galunggong', cat: 'seafood', label: 'Galunggong', unit: 'kg', step: 0.5, start: 1 },
+  { key: 'bangus', cat: 'seafood', label: 'Bangus', unit: 'kg', step: 0.5, start: 1 },
+  { key: 'tilapia', cat: 'seafood', label: 'Tilapia', unit: 'kg', step: 0.5, start: 1 },
+  { key: 'tomato', cat: 'vegetables', label: 'Tomato', unit: 'kg', step: 0.25, start: 0.5 },
+  { key: 'onion_red', cat: 'vegetables', label: 'Red onion', unit: 'kg', step: 0.25, start: 0.25 },
+  { key: 'garlic', cat: 'vegetables', label: 'Garlic', unit: 'kg', step: 0.25, start: 0.25 },
+  { key: 'cabbage', cat: 'vegetables', label: 'Cabbage', unit: 'kg', step: 0.5, start: 1 },
+  { key: 'carrots', cat: 'vegetables', label: 'Carrots', unit: 'kg', step: 0.25, start: 0.5 },
+  { key: 'potato', cat: 'vegetables', label: 'Potato', unit: 'kg', step: 0.25, start: 0.5 },
+  { key: 'ampalaya', cat: 'vegetables', label: 'Ampalaya', unit: 'kg', step: 0.25, start: 0.5 },
+  { key: 'pechay', cat: 'vegetables', label: 'Pechay', unit: 'kg', step: 0.25, start: 0.5 },
+  { key: 'calamansi', cat: 'fruits', label: 'Calamansi', unit: 'kg', step: 0.25, start: 0.25 },
+  { key: 'sugar_refined', cat: 'pantry', label: 'Sugar, refined', unit: 'kg', step: 0.5, start: 1 },
 ];
 
 export type BasketLine = { key: string; qty: number };
@@ -108,4 +110,45 @@ export function basketFromAverages(lines: BasketLine[], prices: Record<string, n
     else total += p * l.qty;
   }
   return { total, missing };
+}
+
+/** One price series from the DA/PSA history files (da/index-<cat>.json, psa/<code>.json). */
+export type HistoryItem = { key?: string; origin?: string; s: Price[] };
+
+export type BasketPoint = { period: string; total: number; missing: string[] };
+
+/** Monday of the week of an ISO date, e.g. "2026-10-22" -> "2026-10-19". */
+export function weekOf(date: string): string {
+  const d = new Date(`${date}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() - ((d.getUTCDay() + 6) % 7));
+  return d.toISOString().slice(0, 10);
+}
+
+/** What the list cost each week (daily DA averages) or month (PSA): the price on the
+ *  last report of each period, carrying an item's last known price over gaps. Same
+ *  variant rule as the market totals. The last `count` periods, oldest first. */
+export function basketHistory(
+  lines: BasketLine[], items: HistoryItem[], periods: string[],
+  { origin = 'local', by = 'week', count = 12 }: { origin?: OriginPref; by?: 'week' | 'month'; count?: number } = {},
+): BasketPoint[] {
+  const byKey = new Map<string, HistoryItem[]>();
+  for (const it of items) if (it.key) byKey.set(it.key, [...(byKey.get(it.key) ?? []), it]);
+  const known: Record<string, number> = {};
+  const out: BasketPoint[] = [];
+  for (let i = 0; i < periods.length; i++) {
+    for (const l of lines) {
+      const best = (byKey.get(l.key) ?? [])
+        .map((it) => ({ rank: ORIGIN_RANK[origin][it.origin ?? ''] ?? 1, p: mid(it.s[i] ?? null) }))
+        .filter((x): x is { rank: number; p: number } => x.p != null)
+        .sort((a, b) => a.rank - b.rank || a.p - b.p)[0];
+      if (best) known[l.key] = best.p;
+    }
+    const bucket = by === 'week' ? weekOf(periods[i]) : periods[i].slice(0, 7);
+    // only the last report of a bucket counts
+    if (i + 1 < periods.length && (by === 'week' ? weekOf(periods[i + 1]) : periods[i + 1].slice(0, 7)) === bucket) continue;
+    const missing = lines.filter((l) => known[l.key] == null).map((l) => l.key);
+    if (missing.length === lines.length) continue;
+    out.push({ period: bucket, total: lines.reduce((sum, l) => sum + (known[l.key] ?? 0) * l.qty, 0), missing });
+  }
+  return out.slice(-count);
 }
