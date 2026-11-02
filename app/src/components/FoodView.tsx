@@ -8,6 +8,8 @@ import type { Spot } from '../lib/location';
 import { placeName, shortName } from '../lib/names';
 import { usePrefs } from '../lib/prefs';
 import { useWatch } from '../lib/watch';
+import { t } from '../i18n';
+import { itemName } from '../i18n/items';
 import { C, themed } from '../theme';
 import { AlertControl } from './AlertControl';
 import { Chart } from './Chart';
@@ -21,7 +23,7 @@ export function FoodView({ cat, place, spot, places, markets }: {
 }) {
   const source = foodSource(place, places.psa);
   if (!source) {
-    return <Notice tone="warn">No food price data covers {placeName(place, places)} yet.</Notice>;
+    return <Notice tone="warn">{t('No food price data covers {place} yet.', { place: placeName(place, places) })}</Notice>;
   }
   if (source.kind === 'da') return <DaView cat={cat} spot={spot} markets={markets} places={places} />;
   return <PsaView cat={cat} code={source.code} level={source.level} places={places} place={place} />;
@@ -47,23 +49,23 @@ function DaView({ cat, spot, markets, places }: { cat: string; spot: Spot; marke
     ...near.map(({ market: m, km: d }) => ({
       id: m.id,
       label: m.name.split('/')[0],
-      hint: `${prefs.favMarkets.includes(m.id) ? '★ ' : ''}${m.approx ? `in ${cityOf(m, places)}` : `${d < 10 ? d.toFixed(1) : Math.round(d)} km away`}`,
+      hint: `${prefs.favMarkets.includes(m.id) ? '★ ' : ''}${m.approx ? t('in {city}', { city: cityOf(m, places) }) : t('{km} km away', { km: d < 10 ? d.toFixed(1) : Math.round(d) })}`,
     })),
-    { id: 'ncr', label: 'Metro Manila average', hint: 'all items · 34 markets' },
+    { id: 'ncr', label: t('Metro Manila average'), hint: t('all items · {n} markets', { n: 34 }) },
   ];
 
   return (
     <View>
       <Chips options={options} value={scope} onChange={setScope} />
-      {loading ? <Loading /> : error ? <Notice tone="warn">Couldn't load prices ({error}).</Notice> : data ? (
+      {loading ? <Loading /> : error ? <Notice tone="warn">{t("Couldn't load prices ({error}).", { error: error })}</Notice> : data ? (
         <ItemList
           file={data}
           cat={cat}
           sourceLine={scope === 'ncr'
-            ? 'Prevailing price across NCR wet markets · DA Bantay Presyo'
-            : `${market?.name.split('/')[0]} · DA Bantay Presyo daily monitoring`}
+            ? t('Prevailing price across NCR wet markets · DA Bantay Presyo')
+            : `${market?.name.split('/')[0]} · ${t('DA Bantay Presyo daily monitoring')}`}
           cadence="day"
-          emptyHint={scope === 'ncr' ? undefined : 'DA tracks fewer items per market. Try “Metro Manila average” for the full list.'}
+          emptyHint={scope === 'ncr' ? undefined : t('DA tracks fewer items per market. Try “Metro Manila average” for the full list.')}
           compare={scope === 'ncr' ? undefined : { spot, markets }}
         />
       ) : null}
@@ -83,16 +85,15 @@ function PsaView({ cat, code, level, places, place }: {
 }) {
   const { data, loading, error } = useJson<SeriesFile>(`psa/${code}.json`);
   const area = level === 'city' ? placeName(place, places, { short: true }) : places.names[code] ?? code;
-  const what = level === 'city' ? 'city' : level === 'province' ? 'province' : 'region';
+  const what = level === 'city' ? t('city') : level === 'province' ? t('province') : t('region');
   if (loading) return <Loading />;
-  if (error || !data) return <Notice tone="warn">Couldn't load prices ({error}).</Notice>;
+  if (error || !data) return <Notice tone="warn">{t("Couldn't load prices ({error}).", { error: error ?? '' })}</Notice>;
   return (
     <View>
       <Notice>
-        Average retail prices for {area} {what} from the Philippine Statistics Authority. They're
-        published monthly, about a month late. Prices at your own palengke may differ.
+        {t("Average retail prices for {area} {what} from the Philippine Statistics Authority. They're published monthly, about a month late. Prices at your own palengke may differ.", { area, what })}
       </Notice>
-      <ItemList file={data} cat={cat} sourceLine={`${area} ${what} average · PSA`} cadence="month" />
+      <ItemList file={data} cat={cat} sourceLine={`${t('{area} {what} average', { area, what })} · PSA`} cadence="month" />
     </View>
   );
 }
@@ -124,21 +125,21 @@ function ItemList({ file, cat, sourceLine, cadence, emptyHint, compare }: {
   const asOf = latestIdx >= 0 ? file.periods[latestIdx] : null;
 
   if (!items.length) {
-    return <Notice>{emptyHint ?? 'No prices reported for this category recently.'}</Notice>;
+    return <Notice>{emptyHint ?? t('No prices reported for this category recently.')}</Notice>;
   }
   return (
     <View>
-      <SectionTitle>{asOf ? `${cadence === 'day' ? 'As of' : 'For'} ${periodLabel(asOf)}` : ''}</SectionTitle>
+      <SectionTitle>{asOf ? (cadence === 'day' ? t('As of {date}', { date: periodLabel(asOf) }) : t('For {date}', { date: periodLabel(asOf) })) : ''}</SectionTitle>
       <Card>
         {items.map((it) => {
           const { last, prev, lastIdx } = lastTwo(it.s);
           return (
             <PriceRow
               key={`${it.item}|${it.spec}|${it.origin}`}
-              title={it.item}
-              subtitle={[it.spec, lastIdx !== latestIdx && lastIdx >= 0 ? `as of ${periodLabel(file.periods[lastIdx])}` : null]
+              title={itemName(it.item)}
+              subtitle={[it.spec, lastIdx !== latestIdx && lastIdx >= 0 ? t('as of {date}', { date: periodLabel(file.periods[lastIdx]) }) : null]
                 .filter(Boolean).join(' · ') || undefined}
-              badge={it.origin === 'imported' ? 'Imported' : it.origin === 'local' ? 'Local' : undefined}
+              badge={it.origin === 'imported' ? t('Imported') : it.origin === 'local' ? t('Local') : undefined}
               starred={watch.has(it.key)}
               price={it.s[lastIdx] ?? null}
               unit={it.unit}
@@ -159,8 +160,8 @@ function ItemList({ file, cat, sourceLine, cadence, emptyHint, compare }: {
 }
 
 export function titleOf(it: SeriesItem) {
-  const origin = it.origin === 'imported' ? ' (imported)' : it.origin === 'local' ? ' (local)' : '';
-  return `${it.item}${origin}`;
+  const origin = it.origin === 'imported' ? ` (${t('imported')})` : it.origin === 'local' ? ` (${t('local')})` : '';
+  return `${itemName(it.item)}${origin}`;
 }
 
 const RANGES = [
@@ -193,9 +194,9 @@ export function ItemDetail({ item, periods, cadence, compare }: {
             <Text style={s.bigPrice}>{pesoPrice(item.s[lastIdx] ?? null)}<Text style={s.bigUnit}>{UNIT_LABEL[item.unit]}</Text></Text>
             <Delta last={last} prev={prev} />
           </View>
-          {egg ? <Text style={s.tray}>≈ {peso((last as number) * 30)} per tray of 30</Text> : null}
+          {egg ? <Text style={s.tray}>≈ {t('{amount} per tray of 30', { amount: peso((last as number) * 30) })}</Text> : null}
           <Text style={s.caption}>
-            {lastIdx >= 0 ? `${periodLabel(periods[lastIdx])} · change vs previous ${cadence === 'day' ? 'report' : 'month'}` : ''}
+            {lastIdx >= 0 ? `${periodLabel(periods[lastIdx])} · ${cadence === 'day' ? t('change vs previous report') : t('change vs previous month')}` : ''}
           </Text>
         </View>
         <StarButton itemKey={item.key} />
@@ -241,13 +242,13 @@ function NearbyMarkets({ item, spot, markets }: { item: SeriesItem; spot: Spot; 
   if (rows.length < 2) return null;
   return (
     <View style={{ marginTop: 20 }}>
-      <Text style={s.h3}>Within 8 km · {periodLabel(data.date)}</Text>
+      <Text style={s.h3}>{t('Within {km} km', { km: 8 })} · {periodLabel(data.date)}</Text>
       {rows.map((r, i) => (
         <View key={r.m.id} style={s.cmpRow}>
           <Text style={[s.cmpName, i === 0 && { color: C.down, fontWeight: '700' }]} numberOfLines={1}>
             {r.m.name.split('/')[0]}
           </Text>
-          <Text style={s.cmpKm}>{r.m.approx ? 'approx.' : `${r.d.toFixed(1)} km`}</Text>
+          <Text style={s.cmpKm}>{r.m.approx ? t('approx.') : `${r.d.toFixed(1)} km`}</Text>
           <Text style={[s.cmpPrice, i === 0 && { color: C.down }]}>{pesoPrice(r.p)}</Text>
         </View>
       ))}

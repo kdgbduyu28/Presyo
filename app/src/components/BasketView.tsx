@@ -9,6 +9,8 @@ import { placeName } from '../lib/names';
 import { activeMarkets, foodSource, Place, PlacesFile } from '../lib/places';
 import { usePrefs } from '../lib/prefs';
 import { BASKET_KEY, useStored } from '../lib/stored';
+import { t } from '../i18n';
+import { itemName } from '../i18n/items';
 import { C, R, themed } from '../theme';
 import { Card, Columns, Loading, Notice, SectionTitle } from './bits';
 
@@ -27,7 +29,7 @@ const byKey = new Map(BASKET_ITEMS.map((b) => [b.key, b]));
 function qtyLabel(key: string, qty: number) {
   const it = byKey.get(key);
   if (!it) return String(qty);
-  if (it.unit === 'pc') return `${qty} pcs${qty % 30 === 0 ? ` (${qty / 30} tray${qty > 30 ? 's' : ''})` : ''}`;
+  if (it.unit === 'pc') return `${qty} ${t('pcs')}${qty % 30 === 0 ? ` (${qty / 30} ${qty > 30 ? t('trays') : t('tray')})` : ''}`;
   return `${+qty.toFixed(2)} ${it.unit}`;
 }
 
@@ -64,32 +66,32 @@ export function BasketView({ place, spot, places, markets, wide }: {
   }, [summary.data, lines]);
 
   if (!ready) return <Loading />;
-  const label = (k: string) => byKey.get(k)?.label ?? k;
+  const label = (k: string) => itemName(byKey.get(k)?.label ?? k);
 
   const list = (
     <>
-      <SectionTitle>My palengke list</SectionTitle>
+      <SectionTitle>{t('My palengke list')}</SectionTitle>
       <Card>
         {lines.map((l) => {
           const it = byKey.get(l.key);
           if (!it) return null;
           return (
             <View key={l.key} style={s.line}>
-              <Text style={s.lineName} numberOfLines={1}>{it.label}</Text>
-              <Stepper onPress={() => setQty(l.key, +(l.qty - it.step).toFixed(2))} label="−" a11y={`Less ${it.label}`} />
+              <Text style={s.lineName} numberOfLines={1}>{label(l.key)}</Text>
+              <Stepper onPress={() => setQty(l.key, +(l.qty - it.step).toFixed(2))} label="−" a11y={t('Less {item}', { item: label(l.key) })} />
               <Text style={s.qty}>{qtyLabel(l.key, l.qty)}</Text>
-              <Stepper onPress={() => setQty(l.key, +(l.qty + it.step).toFixed(2))} label="+" a11y={`More ${it.label}`} />
+              <Stepper onPress={() => setQty(l.key, +(l.qty + it.step).toFixed(2))} label="+" a11y={t('More {item}', { item: label(l.key) })} />
             </View>
           );
         })}
-        {!lines.length ? <Text style={s.empty}>Your list is empty. Add items below.</Text> : null}
+        {!lines.length ? <Text style={s.empty}>{t('Your list is empty. Add items below.')}</Text> : null}
       </Card>
       {available.length ? (
         <View style={s.addWrap}>
           {available.map((b) => (
             <Pressable key={b.key} onPress={() => add(b.key)} style={s.add} accessibilityRole="button"
-              accessibilityLabel={`Add ${b.label}`}>
-              <Text style={s.addText}>+ {b.label}</Text>
+              accessibilityLabel={t('Add {item}', { item: label(b.key) })}>
+              <Text style={s.addText}>+ {label(b.key)}</Text>
             </Pressable>
           ))}
         </View>
@@ -103,7 +105,7 @@ export function BasketView({ place, spot, places, markets, wide }: {
       {source?.kind === 'da' ? (
         latest.loading ? <Loading /> : results && results.length ? (
           <>
-            <SectionTitle>Cost at markets within {prefs.basketKm} km{prefs.favMarkets.length ? ' + favourites' : ''} · {latest.data ? periodLabel(latest.data.date) : ''}</SectionTitle>
+            <SectionTitle>{t('Cost at markets within {km} km', { km: prefs.basketKm })}{prefs.favMarkets.length ? ` + ${t('favourites')}` : ''} · {latest.data ? periodLabel(latest.data.date) : ''}</SectionTitle>
             <Card>
               {results.map((r, i) => {
                 const cheapest = i === 0 && !r.missing.length;
@@ -114,8 +116,8 @@ export function BasketView({ place, spot, places, markets, wide }: {
                         {cheapest ? '✓ ' : ''}{r.market.name.split('/')[0]}
                       </Text>
                       <Text style={s.resultSub}>
-                        {r.market.approx ? 'location approx.' : `${r.km.toFixed(1)} km`}
-                        {r.missing.length ? ` · no price for ${r.missing.map(label).join(', ')}` : ''}
+                        {r.market.approx ? t('location approx.') : `${r.km.toFixed(1)} km`}
+                        {r.missing.length ? ` · ${t('no price for {items}', { items: r.missing.map(label).join(', ') })}` : ''}
                       </Text>
                     </View>
                     <Text style={[s.total, cheapest && { color: C.down }]}>{peso(r.total)}</Text>
@@ -125,19 +127,19 @@ export function BasketView({ place, spot, places, markets, wide }: {
             </Card>
             <Savings results={results} />
           </>
-        ) : lines.length ? <Notice>No DA-monitored market within {prefs.basketKm} km reports these items. Raise the distance or add favourite markets in Settings.</Notice> : null
+        ) : lines.length ? <Notice>{t('No DA-monitored market within {km} km reports these items. Raise the distance or add favourite markets in Settings.', { km: prefs.basketKm })}</Notice> : null
       ) : estimate ? (
         <>
-          <SectionTitle>Estimated cost</SectionTitle>
+          <SectionTitle>{t('Estimated cost')}</SectionTitle>
           <Card style={{ padding: 16 }}>
             <Text style={s.bigTotal}>{peso(estimate.total)}</Text>
             <Text style={s.resultSub}>
-              At {source?.kind === 'psa' && source.level !== 'city' ? places.names[source.code] : placeName(place, places, { short: true })} average
-              prices (PSA{estimate.period ? `, ${periodLabel(estimate.period)}` : ''}).
-              {estimate.missing.length ? ` Not included: ${estimate.missing.map(label).join(', ')}.` : ''}
+              {t('At {area} average prices', { area: source?.kind === 'psa' && source.level !== 'city' ? places.names[source.code] : placeName(place, places, { short: true }) })}
+              {' '}(PSA{estimate.period ? `, ${periodLabel(estimate.period)}` : ''}).
+              {estimate.missing.length ? ` ${t('Not included: {items}.', { items: estimate.missing.map(label).join(', ') })}` : ''}
             </Text>
           </Card>
-          <Notice>Per-market prices are only monitored in Metro Manila for now.</Notice>
+          <Notice>{t('Per-market prices are only monitored in Metro Manila for now.')}</Notice>
         </>
       ) : null}
     </>
@@ -151,7 +153,7 @@ function Savings({ results }: { results: { total: number; missing: string[] }[] 
   if (complete.length < 2) return null;
   const diff = complete[complete.length - 1].total - complete[0].total;
   if (diff < 1) return null;
-  return <Notice>Buying at the cheapest market saves about {peso(diff)} vs. the dearest one listed.</Notice>;
+  return <Notice>{t('Buying at the cheapest market saves about {amount} vs. the dearest one listed.', { amount: peso(diff) })}</Notice>;
 }
 
 function Stepper({ onPress, label, a11y }: { onPress: () => void; label: string; a11y: string }) {

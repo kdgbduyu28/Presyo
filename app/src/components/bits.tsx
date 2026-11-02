@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { ActivityIndicator, Platform, Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-native';
 
+import { t } from '../i18n';
 import { change, pesoPrice, Price, scale, UNIT_LABEL } from '../lib/format';
 import { usePrefs } from '../lib/prefs';
 import { useWatch } from '../lib/watch';
@@ -11,7 +12,7 @@ import { Sparkline } from './Chart';
 export function Delta({ last, prev, small }: { last: number | null; prev: number | null; small?: boolean }) {
   const c = change(last, prev);
   if (c == null || Math.abs(c) < 0.0005) {
-    return <Text style={[s.delta, { color: C.faint }, small && s.small]}>{c == null ? '' : 'no change'}</Text>;
+    return <Text style={[s.delta, { color: C.faint }, small && s.small]}>{c == null ? '' : t('no change')}</Text>;
   }
   const up = c > 0;
   return (
@@ -69,8 +70,8 @@ export function StarButton({ itemKey }: { itemKey?: string }) {
   return (
     <Pressable onPress={() => watch.toggle(itemKey)} style={[s.starBtn, on && s.starBtnOn]} hitSlop={8}
       accessibilityRole="button" accessibilityState={{ selected: on }}
-      accessibilityLabel={on ? 'Remove from my items' : 'Add to my items'}>
-      <Text style={[s.starBtnText, on && { color: C.onPrimary }]}>{on ? '★ My item' : '☆ Add to my items'}</Text>
+      accessibilityLabel={on ? t('Remove from my items') : t('Add to my items')}>
+      <Text style={[s.starBtnText, on && { color: C.onPrimary }]}>{on ? `★ ${t('My item')}` : `☆ ${t('Add to my items')}`}</Text>
     </Pressable>
   );
 }
@@ -82,7 +83,7 @@ export function ShareButton({ text }: { text: string }) {
   return (
     <Pressable onPress={() => Share.share({ message: text }).catch(() => {})} style={s.share}
       accessibilityRole="button">
-      <Text style={s.shareText}>Share this price</Text>
+      <Text style={s.shareText}>{t('Share this price')}</Text>
     </Pressable>
   );
 }

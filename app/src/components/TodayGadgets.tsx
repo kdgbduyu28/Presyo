@@ -6,6 +6,7 @@ import { value } from '../lib/format';
 import { bestOffer, metAlerts, parseGadgetId } from '../lib/gadgets';
 import { usePrefs } from '../lib/prefs';
 import { useWatch } from '../lib/watch';
+import { t } from '../i18n';
 import { C, themed } from '../theme';
 import { Card, SectionTitle } from './bits';
 import { whole } from './GadgetsView';
@@ -77,12 +78,12 @@ export function TodayGadgets({ food, onOpenTab }: { food: SummaryItem[]; onOpenT
     <>
       {Object.keys(met).length ? (
         <View style={s.alert}>
-          <Text style={s.alertTitle}>🔔 Price alert{Object.keys(met).length > 1 ? 's' : ''}</Text>
+          <Text style={s.alertTitle}>🔔 {Object.keys(met).length > 1 ? t('Price alerts') : t('Price alert')}</Text>
           {Object.entries(met).map(([id, price]) => (
             <Pressable key={id} onPress={() => open(id)} accessibilityRole="button">
               <Text style={s.alertText}>
-                <Text style={s.bold}>{labelOf(id)}</Text> is {whole(price)} — at or below your {whole(prefs.alerts[id])}
-                {' '}target ›
+                <Text style={s.bold}>{labelOf(id)}</Text>{' '}
+                {t('is {price} — at or below your {target} target', { price: whole(price), target: whole(prefs.alerts[id]) })} ›
               </Text>
             </Pressable>
           ))}
@@ -91,7 +92,7 @@ export function TodayGadgets({ food, onOpenTab }: { food: SummaryItem[]; onOpenT
 
       {mine.length ? (
         <>
-          <SectionTitle>My gadgets</SectionTitle>
+          <SectionTitle>{t('My gadgets')}</SectionTitle>
           <Card>
             {mine.map((p) => (
               <Pressable key={p.id} onPress={() => open(p.id)} style={({ pressed }) => [s.row, pressed && { backgroundColor: C.bg }]}
@@ -101,7 +102,7 @@ export function TodayGadgets({ food, onOpenTab }: { food: SummaryItem[]; onOpenT
                   <Text style={s.sub}>{p.spec}{p.store ? ` · ${storeName(p.store)}` : ''}</Text>
                 </View>
                 <View style={{ alignItems: 'flex-end' }}>
-                  <Text style={s.price}>{p.price != null ? whole(p.price) : 'Out of stock'}</Text>
+                  <Text style={s.price}>{p.price != null ? whole(p.price) : t('Out of stock')}</Text>
                   {p.drop ? <Text style={[s.sub, s.good]}>▼ {whole(p.drop)}</Text> : null}
                   {prefs.alerts[p.id] ? <Text style={s.sub}>🔔 {whole(prefs.alerts[p.id])}</Text> : null}
                 </View>
@@ -113,7 +114,7 @@ export function TodayGadgets({ food, onOpenTab }: { food: SummaryItem[]; onOpenT
 
       {deals.length ? (
         <>
-          <SectionTitle>Gadget price drops</SectionTitle>
+          <SectionTitle>{t('Gadget price drops')}</SectionTitle>
           <Card>
             {deals.map((m) => (
               <Pressable key={m.key} onPress={() => { set({ gadget: m.key, gadgetSpec: m.deal!.spec, gadgetCat: m.cat }); onOpenTab('gadgets'); }}

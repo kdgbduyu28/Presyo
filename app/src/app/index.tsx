@@ -23,7 +23,8 @@ import { locate, Spot, useSpot } from '../lib/location';
 import { placeName } from '../lib/names';
 import { nearestPlace } from '../lib/places';
 import { usePrefs, withRecent } from '../lib/prefs';
-import { C, MAX_WIDTH, R, TAB_LABELS, themed, WIDE } from '../theme';
+import { t } from '../i18n';
+import { C, MAX_WIDTH, R, tabLabel, themed, WIDE } from '../theme';
 
 const TABS = ['today', 'basket', 'rice', 'fuel', 'meat', 'vegetables', 'seafood', 'fruits', 'pantry', 'grocery', 'power',
   'water', 'fares', 'forex', 'gadgets', 'medicine'] as const;
@@ -39,14 +40,14 @@ export default function Home() {
   const wide = width >= WIDE;
   const { prefs, set } = usePrefs();
   const [spot, setSpot] = useSpot();
-  const tabs = TABS.filter((t) => t === 'today' || !prefs.hiddenTabs.includes(t));
+  const tabs = TABS.filter((id) => id === 'today' || !prefs.hiddenTabs.includes(id));
   const start = (tabs as readonly string[]).includes(prefs.startTab) ? (prefs.startTab as Tab) : 'today';
   const [tabState, setTab] = useState<Tab>(lastTab ?? start);
   const tab = tabs.includes(tabState) ? tabState : 'today';
   const scroller = useRef<ScrollView>(null);
-  const openTab = (t: string) => {
-    lastTab = t as Tab;
-    setTab(t as Tab);
+  const openTab = (id: string) => {
+    lastTab = id as Tab;
+    setTab(id as Tab);
     scroller.current?.scrollTo({ y: 0, animated: false });
   };
   const [picking, setPicking] = useState(false);
@@ -100,34 +101,32 @@ export default function Home() {
         <FoodView cat={tab} place={here} spot={spot} places={places.data!} markets={markets.data!} />
       )}
       <Text style={s.footer}>
-        Data from DA Bantay Presyo, PSA OpenSTAT, DOE (pump prices, LPG, price notices, electricity), DTI (SRP),
-        Meralco, MWSS, LTFRB, BSP (exchange rates), DOH (medicine) and store websites (gadgets)
-        {meta.data ? ` · updated ${periodLabel(meta.data.generated_at.slice(0, 10))}` : ''}.
-        Presyo is not affiliated with the government.
+        {t('Data from DA Bantay Presyo, PSA OpenSTAT, DOE (pump prices, LPG, price notices, electricity), DTI (SRP), Meralco, MWSS, LTFRB, BSP (exchange rates), DOH (medicine) and store websites (gadgets)')}
+        {meta.data ? ` · ${t('updated {date}', { date: periodLabel(meta.data.generated_at.slice(0, 10)) })}` : ''}.{' '}
+        {t('Presyo is not affiliated with the government.')}
       </Text>
     </ScrollView>
   ) : null;
 
   const onboarding = (
     <ScrollView contentContainerStyle={s.onboard}>
-      <Text style={s.h1}>Where do you buy?</Text>
+      <Text style={s.h1}>{t('Where do you buy?')}</Text>
       <Text style={s.lead}>
-        Presyo shows the latest government-monitored prices of rice, fuel, meat, vegetables, seafood,
-        groceries, LPG, electricity, water and fares for your area, plus exchange rates, medicine reference prices and gadget prices across stores.
+        {t('Presyo shows the latest government-monitored prices of rice, fuel, meat, vegetables, seafood, groceries, LPG, electricity, water and fares for your area, plus exchange rates, medicine reference prices and gadget prices across stores.')}
       </Text>
       {places.data ? <LocationPicker places={places.data} onPick={pick} recent={prefs.recent} /> : null}
     </ScrollView>
   );
 
   const body = !ready
-    ? (places.error ? <Notice tone="warn">Couldn't load data: {places.error}</Notice> : <Loading />)
+    ? (places.error ? <Notice tone="warn">{t("Couldn't load data: {error}", { error: places.error })}</Notice> : <Loading />)
     : content ?? onboarding;
 
   const locationButton = here && places.data ? (
     <Pressable onPress={() => setPicking(true)} style={[s.loc, wide && s.locWide]} accessibilityRole="button"
-      accessibilityLabel={`Location: ${placeName(here, places.data)}. Change`}>
+      accessibilityLabel={t('Location: {place}. Change', { place: placeName(here, places.data) })}>
       <Text style={s.locText} numberOfLines={1}>📍 {placeName(here, places.data, { short: true })}</Text>
-      <Text style={s.locChange}>Change</Text>
+      <Text style={s.locChange}>{t('Change')}</Text>
     </Pressable>
   ) : null;
 
@@ -138,22 +137,22 @@ export default function Home() {
         <View style={s.wideRow}>
           <View style={s.sidebar}>
             <Text style={s.brand}>Presyo</Text>
-            <Text style={s.tagline}>Palengke & pump prices near you</Text>
+            <Text style={s.tagline}>{t('Palengke & pump prices near you')}</Text>
             <View style={{ height: 16 }} />
             {locationButton}
             <View style={{ height: 12 }} />
-            {content ? tabs.map((t) => {
-              const on = t === tab;
+            {content ? tabs.map((id) => {
+              const on = id === tab;
               return (
-                <Pressable key={t} onPress={() => openTab(t)} style={[s.nav, on && s.navOn]}
+                <Pressable key={id} onPress={() => openTab(id)} style={[s.nav, on && s.navOn]}
                   accessibilityRole="button" accessibilityState={{ selected: on }}>
-                  <Text style={[s.navText, on && s.navTextOn]}>{TAB_LABELS[t]}</Text>
+                  <Text style={[s.navText, on && s.navTextOn]}>{tabLabel(id)}</Text>
                 </Pressable>
               );
             }) : null}
             <View style={{ flex: 1 }} />
             <Pressable onPress={() => router.push('/settings')} style={s.nav} accessibilityRole="button">
-              <Text style={s.navText}>⚙︎  Settings</Text>
+              <Text style={s.navText}>⚙︎  {t('Settings')}</Text>
             </Pressable>
           </View>
           <View style={s.wideMain}>{body}</View>
@@ -163,23 +162,23 @@ export default function Home() {
           <View style={s.header}>
             <View style={{ flex: 1 }}>
               <Text style={s.brand}>Presyo</Text>
-              <Text style={s.tagline}>Palengke & pump prices near you</Text>
+              <Text style={s.tagline}>{t('Palengke & pump prices near you')}</Text>
             </View>
             {locationButton}
             <Pressable onPress={() => router.push('/settings')} style={s.gear} hitSlop={8}
-              accessibilityRole="button" accessibilityLabel="Settings">
+              accessibilityRole="button" accessibilityLabel={t('Settings')}>
               <Text style={s.gearText}>⚙︎</Text>
             </Pressable>
           </View>
           {content ? (
-            <Chips options={tabs.map((t) => ({ id: t, label: TAB_LABELS[t] }))} value={tab} onChange={openTab} />
+            <Chips options={tabs.map((id) => ({ id, label: tabLabel(id) }))} value={tab} onChange={openTab} />
           ) : null}
           {body}
         </View>
       )}
 
       {places.data ? (
-        <Sheet open={picking} onClose={() => setPicking(false)} title="Change location">
+        <Sheet open={picking} onClose={() => setPicking(false)} title={t('Change location')}>
           <LocationPicker places={places.data} onPick={pick} recent={prefs.recent} />
         </Sheet>
       ) : null}

@@ -1,0 +1,198 @@
+// Filipino translations, keyed by the English text shown in the app.
+// Words people already say in Taglish at the palengke or pump (kg, LPG, RON,
+// SRP, basket, medium) stay as they are. {name} placeholders are filled in by t().
+
+export const fil: Record<string, string> = {
+  // Home and navigation
+  'Palengke & pump prices near you': 'Presyo sa palengke at gasolinahan malapit sa iyo',
+  Settings: 'Mga Setting',
+  Back: 'Bumalik',
+  Change: 'Palitan',
+  'Change location': 'Palitan ang lokasyon',
+  'Location: {place}. Change': 'Lokasyon: {place}. Palitan',
+  'Where do you buy?': 'Saan ka namimili?',
+  'Presyo shows the latest government-monitored prices of rice, fuel, meat, vegetables, seafood, groceries, LPG, electricity, water and fares for your area, plus exchange rates, medicine reference prices and gadget prices across stores.':
+    'Ipinapakita ng Presyo ang pinakabagong presyong binabantayan ng gobyerno para sa bigas, gasolina, karne, gulay, isda, grocery, LPG, kuryente, tubig at pamasahe sa lugar mo, pati palitan ng pera, reference price ng gamot at presyo ng gadget sa iba\'t ibang tindahan.',
+  "Couldn't load data: {error}": 'Hindi ma-load ang data: {error}',
+  'Data from DA Bantay Presyo, PSA OpenSTAT, DOE (pump prices, LPG, price notices, electricity), DTI (SRP), Meralco, MWSS, LTFRB, BSP (exchange rates), DOH (medicine) and store websites (gadgets)':
+    'Data mula sa DA Bantay Presyo, PSA OpenSTAT, DOE (presyo sa pump, LPG, abiso sa presyo, kuryente), DTI (SRP), Meralco, MWSS, LTFRB, BSP (palitan ng pera), DOH (gamot) at mga website ng tindahan (gadget)',
+  'updated {date}': 'na-update noong {date}',
+  'Presyo is not affiliated with the government.': 'Hindi kaanib ng gobyerno ang Presyo.',
+
+  // Tabs
+  Today: 'Ngayon',
+  Basket: 'Basket',
+  Rice: 'Bigas',
+  Fuel: 'Gasolina',
+  'Meat & Eggs': 'Karne at Itlog',
+  Vegetables: 'Gulay',
+  Seafood: 'Isda at Lamang-dagat',
+  Fruits: 'Prutas',
+  Pantry: 'Pantry',
+  'Grocery SRP': 'Grocery SRP',
+  Electricity: 'Kuryente',
+  Water: 'Tubig',
+  Fares: 'Pamasahe',
+  Forex: 'Palitan ng Pera',
+  Gadgets: 'Gadgets',
+  Medicine: 'Gamot',
+
+  // Today
+  'Fuel & cooking gas': 'Gasolina at LPG',
+  'LPG, 11 kg tank': 'LPG, 11 kg na tangke',
+  'Gasoline RON {n}': 'Gasolina RON {n}',
+  Diesel: 'Diesel',
+  'Diesel Plus': 'Diesel Plus',
+  'My items': 'Mga item ko',
+  'Tip: open any item and tap “☆ Add to my items” to pin it here.':
+    'Tip: buksan ang kahit anong item at i-tap ang “☆ Idagdag sa mga item ko” para lumabas ito rito.',
+  'No food price data covers {place} yet.': 'Wala pang presyo ng pagkain para sa {place}.',
+  'Metro Manila average (DA, daily)': 'Average sa Metro Manila (DA, araw-araw)',
+  '{area} average (PSA, monthly)': 'Average sa {area} (PSA, buwanan)',
+  'latest {date}. Tap an item for the full list.': 'pinakabago {date}. I-tap ang item para sa buong listahan.',
+  '{amount} since your last visit': '{amount} mula noong huling bisita mo',
+  Imported: 'Imported',
+  Local: 'Lokal',
+  imported: 'imported',
+  local: 'lokal',
+
+  // Today: gadgets and pump price changes
+  'Price alert': 'Abiso sa presyo',
+  'Price alerts': 'Mga abiso sa presyo',
+  'is {price} — at or below your {target} target': 'ay {price} na — pasok sa target mong {target}',
+  'My gadgets': 'Mga gadget ko',
+  'Out of stock': 'Ubos na',
+  'Gadget price drops': 'Bumabang presyo ng gadget',
+  'Pump price changes · week of {dates}': 'Galaw ng presyo sa pump · linggo ng {dates}',
+  Gasoline: 'Gasolina',
+  Kerosene: 'Gaas',
+  'Per liter, typical across {n} oil companies (DOE prior notices).': 'Bawat litro, karaniwan sa {n} oil company (abiso ng DOE).',
+
+  // Rows and buttons
+  'no change': 'walang pagbabago',
+  'Add to my items': 'Idagdag sa mga item ko',
+  'Remove from my items': 'Alisin sa mga item ko',
+  'My item': 'Item ko',
+  'Share this price': 'I-share ang presyong ito',
+
+  // Search
+  'Search any price: galunggong, sibuyas, kape…': 'Hanapin ang presyo: galunggong, sibuyas, kape…',
+  'Search prices': 'Maghanap ng presyo',
+  'No matches for “{q}”.': 'Walang tugma para sa “{q}”.',
+
+  // Food lists
+  'Metro Manila average': 'Average sa Metro Manila',
+  'all items · {n} markets': 'lahat ng item · {n} palengke',
+  'in {city}': 'sa {city}',
+  '{km} km away': '{km} km ang layo',
+  "Couldn't load prices ({error}).": 'Hindi ma-load ang presyo ({error}).',
+  'Prevailing price across NCR wet markets · DA Bantay Presyo': 'Karaniwang presyo sa mga palengke ng NCR · DA Bantay Presyo',
+  'DA Bantay Presyo daily monitoring': 'araw-araw na monitoring ng DA Bantay Presyo',
+  'DA tracks fewer items per market. Try “Metro Manila average” for the full list.':
+    'Mas kaunti ang item na binabantayan ng DA bawat palengke. Subukan ang “Average sa Metro Manila” para sa buong listahan.',
+  city: 'lungsod',
+  province: 'lalawigan',
+  region: 'rehiyon',
+  "Average retail prices for {area} {what} from the Philippine Statistics Authority. They're published monthly, about a month late. Prices at your own palengke may differ.":
+    'Average na presyo sa {what} ng {area} mula sa Philippine Statistics Authority. Buwanan itong inilalabas, mga isang buwang huli. Maaaring iba ang presyo sa palengke mo.',
+  '{area} {what} average': 'Average sa {what} ng {area}',
+  'No prices reported for this category recently.': 'Walang naiulat na presyo sa kategoryang ito kamakailan.',
+  'As of {date}': 'Noong {date}',
+  'For {date}': 'Para sa {date}',
+  'as of {date}': 'noong {date}',
+  '{amount} per tray of 30': '{amount} bawat tray (30 piraso)',
+  'change vs previous report': 'pagbabago mula sa nakaraang ulat',
+  'change vs previous month': 'pagbabago mula sa nakaraang buwan',
+  'Within {km} km': 'Sa loob ng {km} km',
+  'approx.': 'tantiya',
+
+  // Basket
+  'My palengke list': 'Listahan ko sa palengke',
+  pcs: 'piraso',
+  tray: 'tray',
+  trays: 'tray',
+  'Less {item}': 'Bawasan ang {item}',
+  'More {item}': 'Dagdagan ang {item}',
+  'Add {item}': 'Idagdag ang {item}',
+  'Your list is empty. Add items below.': 'Wala pang laman ang listahan mo. Magdagdag sa ibaba.',
+  'Cost at markets within {km} km': 'Halaga sa mga palengke sa loob ng {km} km',
+  favourites: 'mga paborito',
+  'location approx.': 'tantiyang lokasyon',
+  'no price for {items}': 'walang presyo ng {items}',
+  'No DA-monitored market within {km} km reports these items. Raise the distance or add favourite markets in Settings.':
+    'Walang palengkeng binabantayan ng DA sa loob ng {km} km na may presyo ng mga ito. Lakihan ang layo o magdagdag ng paboritong palengke sa Mga Setting.',
+  'Estimated cost': 'Tantiyang halaga',
+  'At {area} average prices': 'Sa average na presyo sa {area}',
+  'Not included: {items}.': 'Hindi kasama: {items}.',
+  'Per-market prices are only monitored in Metro Manila for now.': 'Sa Metro Manila lang muna may presyo bawat palengke.',
+  'Buying at the cheapest market saves about {amount} vs. the dearest one listed.':
+    'Makakatipid ka ng mga {amount} kung sa pinakamurang palengke ka mamimili kaysa sa pinakamahal sa listahan.',
+
+  // Settings
+  Language: 'Wika',
+  'Labels and headings. Market items use their Filipino names where DA and PSA give them.':
+    'Mga label at heading. Filipino ang pangalan ng mga paninda kapag mayroon ang DA at PSA.',
+  Appearance: 'Itsura',
+  'Follow phone': 'Gaya ng phone',
+  Light: 'Maliwanag',
+  Dark: 'Madilim',
+  Location: 'Lokasyon',
+  'Use GPS every time I open Presyo': 'Gamitin ang GPS tuwing bubuksan ang Presyo',
+  "Only after you've used “Use my location” once. Otherwise your chosen city stays.":
+    'Kapag nagamit mo na ang “Use my location” kahit minsan. Kung hindi, mananatili ang lungsod na pinili mo.',
+  'Recent places: {list}': 'Mga huling lugar: {list}',
+  Clear: 'Burahin',
+  'Start on': 'Unang bubuksan',
+  Tabs: 'Mga tab',
+  'Hide the tabs you never use.': 'Itago ang mga tab na hindi mo ginagamit.',
+  'Show {tab} tab': 'Ipakita ang tab na {tab}',
+  'Your fuel shows first on Today; mileage fills the trip calculator.':
+    'Una sa Ngayon ang gasolina mo; ang mileage ay para sa trip calculator.',
+  'Mileage (km per liter)': 'Mileage (km bawat litro)',
+  'Pick your utility in the Electricity tab.': 'Piliin ang utility mo sa tab na Kuryente.',
+  'Usual monthly use (kWh)': 'Karaniwang gamit bawat buwan (kWh)',
+  'LPG brand': 'Brand ng LPG',
+  "Today shows this brand's price when DOE lists it near you.":
+    'Ipapakita sa Ngayon ang presyo ng brand na ito kapag nakalista ito sa DOE malapit sa iyo.',
+  'Any (common price)': 'Kahit ano (karaniwang presyo)',
+  Eggs: 'Itlog',
+  'Per piece': 'Bawat piraso',
+  'Per tray (30)': 'Bawat tray (30)',
+  'Local or imported': 'Lokal o imported',
+  'Used for the Basket and to list your choice first.': 'Para sa Basket at para mauna sa listahan ang pinili mo.',
+  Cheapest: 'Pinakamura',
+  'Markets within this distance are compared; favourites always are.':
+    'Ikinukumpara ang mga palengke sa loob ng layong ito; laging kasama ang mga paborito.',
+  'Favourite markets (Metro Manila)': 'Mga paboritong palengke (Metro Manila)',
+  'Favourite {market}': 'Paborito: {market}',
+  Data: 'Data',
+  'Tap again to erase everything': 'I-tap ulit para burahin lahat',
+  'Clear saved data': 'Burahin ang naka-save na data',
+  'Removes your location, starred items, basket, settings and offline copy from this device. Nothing is stored anywhere else.':
+    'Buburahin sa device na ito ang lokasyon, mga naka-star na item, basket, setting at offline na kopya. Wala kaming iniimbak sa ibang lugar.',
+  Contact: 'Makipag-ugnayan',
+  'Contact me': 'Kontakin ako',
+  'Wrong price, missing item or an idea?': 'Maling presyo, kulang na item o may mungkahi?',
+  Email: 'Email',
+  'Presyo shows prices published by DA (Bantay Presyo), PSA (OpenSTAT), DOE and DTI. It is not affiliated with the government. Data updates twice a day.':
+    'Ipinapakita ng Presyo ang mga presyong inilalabas ng DA (Bantay Presyo), PSA (OpenSTAT), DOE at DTI. Hindi ito kaanib ng gobyerno. Dalawang beses sa isang araw nag-a-update ang data.',
+
+  // Settings → Data: sources
+  'DA daily price index (NCR)': 'Araw-araw na price index ng DA (NCR)',
+  'DA per-market prices (NCR)': 'Presyo ng DA bawat palengke (NCR)',
+  'PSA regional retail prices': 'Retail na presyo ng PSA bawat rehiyon',
+  'DOE pump prices: NCR': 'Presyo sa pump ng DOE: NCR',
+  'DOE pump prices: South Luzon': 'Presyo sa pump ng DOE: South Luzon',
+  'DOE pump prices: North Luzon': 'Presyo sa pump ng DOE: North Luzon',
+  'DOE pump prices: Visayas': 'Presyo sa pump ng DOE: Visayas',
+  'DOE pump prices: Mindanao': 'Presyo sa pump ng DOE: Mindanao',
+  'DOE LPG': 'LPG ng DOE',
+  'DOE electricity rates': 'Singil sa kuryente ng DOE',
+  'DTI suggested retail prices': 'Suggested retail price ng DTI',
+  'Meralco bills': 'Bill ng Meralco',
+  'BSP exchange rates': 'Palitan ng pera ng BSP',
+  'Gadget store prices': 'Presyo ng gadget sa mga tindahan',
+  'DOH medicine prices': 'Presyo ng gamot ng DOH',
+  'Water rates (checked)': 'Singil sa tubig (sinuri)',
+  'Jeepney & bus fares (checked)': 'Pamasahe sa jeep at bus (sinuri)',
+};

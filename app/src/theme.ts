@@ -1,5 +1,7 @@
 import { StyleSheet } from 'react-native';
 
+import { t } from './i18n';
+
 export type Scheme = 'light' | 'dark';
 
 const light = {
@@ -101,3 +103,6 @@ export const TAB_LABELS: Record<string, string> = {
   vegetables: 'Vegetables',
   seafood: 'Seafood',
 };
+
+/** Tab name in the current language. */
+export const tabLabel = (id: string) => t(TAB_LABELS[id] ?? id);

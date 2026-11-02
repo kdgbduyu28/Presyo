@@ -10,7 +10,9 @@ import { foodSource, fuelArea, Place, PlacesFile } from '../lib/places';
 import { SEEN_KEY, useStored } from '../lib/stored';
 import { usePrefs } from '../lib/prefs';
 import { useWatch } from '../lib/watch';
-import { C, TAB_LABELS, themed } from '../theme';
+import { itemName } from '../i18n/items';
+import { t } from '../i18n';
+import { C, tabLabel, themed } from '../theme';
 import { Card, Columns, Loading, Notice, PriceRow, SectionTitle } from './bits';
 import { AdjustmentBanner, useLatestAdjustment, useLpg } from './FuelExtras';
 import { Search } from './Search';
@@ -36,18 +38,18 @@ export function TodayView({ place, spot, places, markets, onOpenTab, wide }: {
     [summary.data, prefs.origin]);
   const mine = items.filter((it) => watch.has(it.key));
   const where = source?.kind === 'da'
-    ? 'Metro Manila average (DA, daily)'
-    : source ? `${source.level === 'city' ? placeName(place, places, { short: true }) : places.names[source.code]} average (PSA, monthly)` : '';
+    ? t('Metro Manila average (DA, daily)')
+    : source ? t('{area} average (PSA, monthly)', { area: source.level === 'city' ? placeName(place, places, { short: true }) : places.names[source.code] }) : '';
 
   const row = (it: SummaryItem) => {
     const delta = sinceLast[it.key];
     return (
       <PriceRow
         key={it.key}
-        title={it.item}
+        title={itemName(it.item)}
         subtitle={[
-          it.origin === 'imported' && !/imported/i.test(it.item) ? 'Imported' : null,
-          delta ? `${delta > 0 ? '▲' : '▼'} ${peso(Math.abs(delta))} since your last visit` : null,
+          it.origin === 'imported' && !/imported/i.test(it.item) ? t('Imported') : null,
+          delta ? `${delta > 0 ? '▲' : '▼'} ${t('{amount} since your last visit', { amount: peso(Math.abs(delta)) })}` : null,
         ].filter(Boolean).join(' · ') || undefined}
         starred={watch.has(it.key)}
         price={it.last}
@@ -71,7 +73,7 @@ export function TodayView({ place, spot, places, markets, onOpenTab, wide }: {
 
       {fuel || lpg ? (
         <>
-          <SectionTitle>Fuel & cooking gas</SectionTitle>
+          <SectionTitle>{t('Fuel & cooking gas')}</SectionTitle>
           <Card>
             {fuel?.rows.map((f) => (
               <PriceRow key={f.key} title={f.label} subtitle={fuel.where} price={f.price} unit="L"
@@ -79,7 +81,7 @@ export function TodayView({ place, spot, places, markets, onOpenTab, wide }: {
             ))}
             {lpg ? (
               <PriceRow
-                title={lpgBrand ? `LPG, 11 kg · ${lpgBrand.brand}` : 'LPG, 11 kg tank'}
+                title={lpgBrand ? `LPG, 11 kg · ${lpgBrand.brand}` : t('LPG, 11 kg tank')}
                 subtitle={`${placeName(lpg.area.place, places, { short: true })} · ${periodLabel(lpg.month.start.slice(0, 7))}`}
                 price={lpgBrand ? lpgBrand.p : lpg.summary.main} unit="tank" last={null} prev={null}
                 onPress={() => onOpenTab('fuel')} />
@@ -90,17 +92,17 @@ export function TodayView({ place, spot, places, markets, onOpenTab, wide }: {
 
       {mine.length ? (
         <>
-          <SectionTitle>My items</SectionTitle>
+          <SectionTitle>{t('My items')}</SectionTitle>
           <Card>{mine.map(row)}</Card>
         </>
       ) : items.length ? (
-        <Notice>Tip: open any item and tap “☆ Add to my items” to pin it here.</Notice>
+        <Notice>{t('Tip: open any item and tap “☆ Add to my items” to pin it here.')}</Notice>
       ) : null}
     </>
   );
 
   const right = summary.loading ? <Loading /> : !items.length ? (
-    <Notice tone="warn">No food price data covers {placeName(place, places)} yet.</Notice>
+    <Notice tone="warn">{t('No food price data covers {place} yet.', { place: placeName(place, places) })}</Notice>
   ) : (
     <>
       {GROUPS.map((g) => {
@@ -108,13 +110,13 @@ export function TodayView({ place, spot, places, markets, onOpenTab, wide }: {
         if (!list.length) return null;
         return (
           <View key={g}>
-            <SectionTitle>{TAB_LABELS[g]}</SectionTitle>
+            <SectionTitle>{tabLabel(g)}</SectionTitle>
             <Card>{list.map(row)}</Card>
           </View>
         );
       })}
       <Text style={s.source}>
-        {where} · latest {periodLabel(items[0].period)}. Tap an item for the full list.
+        {where} · {t('latest {date}. Tap an item for the full list.', { date: periodLabel(items[0].period) })}
       </Text>
     </>
   );
@@ -140,7 +142,7 @@ function useFuelHeadline(place: Place, spot: Spot, places: PlacesFile, preferred
     const prev = weeks[weeks.length - 2];
     const keys = [preferred, ...['fuel_ron91', 'fuel_diesel'].filter((k) => k !== preferred)].slice(0, 2);
     const rows = keys
-      .map((key) => ({ key, label: FUEL_LABEL[key] ?? key, price: pick(latest, key), prev: pick(prev, key) }))
+      .map((key) => ({ key, label: t(FUEL_LABEL[key] ?? key), price: pick(latest, key), prev: pick(prev, key) }))
       .filter((r) => r.price != null);
     const where = `${placeName(area.place, places, { short: true })}${area.km > 0 ? ` (${area.km.toFixed(0)} km)` : ''}`;
     return rows.length ? { rows, where } : null;

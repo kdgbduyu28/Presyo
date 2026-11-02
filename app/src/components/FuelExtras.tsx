@@ -7,6 +7,7 @@ import type { Spot } from '../lib/location';
 import { placeName } from '../lib/names';
 import { lpgArea, NCR, Place, PlacesFile } from '../lib/places';
 import { usePrefs } from '../lib/prefs';
+import { t } from '../i18n';
 import { C, R, themed } from '../theme';
 import { Chart } from './Chart';
 import { Card, Notice, PriceRow, SectionTitle } from './bits';
@@ -36,19 +37,19 @@ export function AdjustmentBanner({ week, compact }: { week: AdjustWeek; compact?
   const n = Math.max(...order.map((k) => week.products[k].n));
   return (
     <View style={[s.banner, compact && { marginHorizontal: 0 }]}>
-      <Text style={s.bannerTitle}>Pump price changes · week of {rangeLabel(week.start, week.end)}</Text>
+      <Text style={s.bannerTitle}>{t('Pump price changes · week of {dates}', { dates: rangeLabel(week.start, week.end) })}</Text>
       <View style={s.bannerRow}>
         {order.map((k) => {
           const v = week.products[k].median;
           return (
             <View key={k} style={s.adj}>
-              <Text style={s.adjLabel}>{ADJ_LABEL[k]}</Text>
+              <Text style={s.adjLabel}>{t(ADJ_LABEL[k])}</Text>
               <Text style={[s.adjValue, { color: v > 0 ? C.up : v < 0 ? C.down : C.muted }]}>{signed(v)}</Text>
             </View>
           );
         })}
       </View>
-      <Text style={s.bannerNote}>Per liter, typical across {n} oil companies (DOE prior notices).</Text>
+      <Text style={s.bannerNote}>{t('Per liter, typical across {n} oil companies (DOE prior notices).', { n })}</Text>
     </View>
   );
 }

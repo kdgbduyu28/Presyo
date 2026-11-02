@@ -6,7 +6,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Market, Meta, useJson } from '../lib/data';
 import { periodLabel } from '../lib/format';
 import { Prefs, usePrefs } from '../lib/prefs';
-import { C, MAX_WIDTH, R, TAB_LABELS, themed } from '../theme';
+import { t } from '../i18n';
+import { C, MAX_WIDTH, R, tabLabel, themed } from '../theme';
 
 const CONTACT_EMAIL = 'timothyborja28@gmail.com';
 
@@ -17,6 +18,8 @@ const FUELS: [string, string][] = [
   ['fuel_ron91', 'RON 91'], ['fuel_ron95', 'RON 95'], ['fuel_ron97', 'RON 97'],
   ['fuel_ron100', 'RON 100'], ['fuel_diesel', 'Diesel'], ['fuel_diesel_plus', 'Diesel Plus'],
 ];
+
+const LANGS: [Prefs['lang'], string][] = [['en', 'English'], ['fil', 'Filipino']];
 
 const LPG_BRANDS = ['Gasul', 'Solane', 'Fiesta Gas', 'Pryce Gas', 'Regasco', 'Island Gas',
   'Phoenix', 'Brent Gas', 'Superkalan', 'Shinegaz', 'Eco-Savers Gas'];
@@ -50,94 +53,98 @@ export default function Settings() {
       <View style={s.column}>
         <View style={s.header}>
           <Pressable onPress={() => (router.canGoBack() ? router.back() : router.replace('/'))} hitSlop={12}
-            accessibilityRole="button" accessibilityLabel="Back">
-            <Text style={s.back}>‹ Back</Text>
+            accessibilityRole="button" accessibilityLabel={t('Back')}>
+            <Text style={s.back}>‹ {t('Back')}</Text>
           </Pressable>
-          <Text style={s.title}>Settings</Text>
+          <Text style={s.title}>{t('Settings')}</Text>
         </View>
         <ScrollView contentContainerStyle={{ paddingBottom: insets.bottom + 32 }}>
-          <Section title="Appearance">
+          <Section title={t('Language')} hint={t('Labels and headings. Market items use their Filipino names where DA and PSA give them.')}>
+            <Segmented value={prefs.lang} options={LANGS} onChange={(lang) => set({ lang: lang as Prefs['lang'] })} />
+          </Section>
+
+          <Section title={t('Appearance')}>
             <Segmented
               value={prefs.theme}
-              options={[['system', 'Follow phone'], ['light', 'Light'], ['dark', 'Dark']]}
+              options={[['system', t('Follow phone')], ['light', t('Light')], ['dark', t('Dark')]]}
               onChange={(theme) => set({ theme: theme as Prefs['theme'] })}
             />
           </Section>
 
-          <Section title="Location">
-            <Row label="Use GPS every time I open Presyo"
-              hint="Only after you've used “Use my location” once. Otherwise your chosen city stays.">
+          <Section title={t('Location')}>
+            <Row label={t('Use GPS every time I open Presyo')}
+              hint={t('Only after you\'ve used “Use my location” once. Otherwise your chosen city stays.')}>
               <Switch value={prefs.gpsOnOpen} onValueChange={(gpsOnOpen) => set({ gpsOnOpen })}
                 trackColor={{ true: C.primary, false: C.faint }} thumbColor={C.card} />
             </Row>
             {prefs.recent.length ? (
-              <Row label={`Recent places: ${prefs.recent.map((r) => r.name).join(', ')}`}>
+              <Row label={t('Recent places: {list}', { list: prefs.recent.map((r) => r.name).join(', ') })}>
                 <Pressable onPress={() => set({ recent: [] })} accessibilityRole="button">
-                  <Text style={s.link}>Clear</Text>
+                  <Text style={s.link}>{t('Clear')}</Text>
                 </Pressable>
               </Row>
             ) : null}
           </Section>
 
-          <Section title="Start on">
-            <Chips value={prefs.startTab} options={TAB_IDS.filter((t) => !prefs.hiddenTabs.includes(t)).map((t) => [t, TAB_LABELS[t]])}
+          <Section title={t('Start on')}>
+            <Chips value={prefs.startTab} options={TAB_IDS.filter((id) => !prefs.hiddenTabs.includes(id)).map((id) => [id, tabLabel(id)])}
               onChange={(startTab) => set({ startTab })} />
           </Section>
 
-          <Section title="Tabs" hint="Hide the tabs you never use.">
-            {TAB_IDS.filter((t) => t !== 'today').map((t) => (
-              <Row key={t} label={TAB_LABELS[t]}>
-                <Switch value={!prefs.hiddenTabs.includes(t)} onValueChange={() => toggle('hiddenTabs', t)}
+          <Section title={t('Tabs')} hint={t('Hide the tabs you never use.')}>
+            {TAB_IDS.filter((id) => id !== 'today').map((id) => (
+              <Row key={id} label={tabLabel(id)}>
+                <Switch value={!prefs.hiddenTabs.includes(id)} onValueChange={() => toggle('hiddenTabs', id)}
                   trackColor={{ true: C.primary, false: C.faint }} thumbColor={C.card}
-                  accessibilityLabel={`Show ${TAB_LABELS[t]} tab`} />
+                  accessibilityLabel={t('Show {tab} tab', { tab: tabLabel(id) })} />
               </Row>
             ))}
           </Section>
 
-          <Section title="Fuel" hint="Your fuel shows first on Today; mileage fills the trip calculator.">
+          <Section title={t('Fuel')} hint={t('Your fuel shows first on Today; mileage fills the trip calculator.')}>
             <Chips value={prefs.fuel} options={FUELS} onChange={(fuel) => set({ fuel })} />
-            <Row label="Mileage (km per liter)">
+            <Row label={t('Mileage (km per liter)')}>
               <NumberField value={prefs.kmpl} onChange={(kmpl) => set({ kmpl })} />
             </Row>
           </Section>
 
-          <Section title="Electricity" hint="Pick your utility in the Electricity tab.">
-            <Row label="Usual monthly use (kWh)">
+          <Section title={t('Electricity')} hint={t('Pick your utility in the Electricity tab.')}>
+            <Row label={t('Usual monthly use (kWh)')}>
               <NumberField value={prefs.kwh} onChange={(kwh) => set({ kwh })} />
             </Row>
           </Section>
 
-          <Section title="LPG brand" hint="Today shows this brand's price when DOE lists it near you.">
-            <Chips value={prefs.lpgBrand ?? ''} options={[['', 'Any (common price)'], ...LPG_BRANDS.map((b) => [b, b] as [string, string])]}
+          <Section title={t('LPG brand')} hint={t("Today shows this brand's price when DOE lists it near you.")}>
+            <Chips value={prefs.lpgBrand ?? ''} options={[['', t('Any (common price)')], ...LPG_BRANDS.map((b) => [b, b] as [string, string])]}
               onChange={(b) => set({ lpgBrand: b || null })} />
           </Section>
 
-          <Section title="Eggs">
-            <Segmented value={prefs.eggs} options={[['pc', 'Per piece'], ['tray', 'Per tray (30)']]}
+          <Section title={t('Eggs')}>
+            <Segmented value={prefs.eggs} options={[['pc', t('Per piece')], ['tray', t('Per tray (30)')]]}
               onChange={(eggs) => set({ eggs: eggs as Prefs['eggs'] })} />
           </Section>
 
-          <Section title="Local or imported" hint="Used for the Basket and to list your choice first.">
-            <Segmented value={prefs.origin} options={[['local', 'Local'], ['imported', 'Imported'], ['any', 'Cheapest']]}
+          <Section title={t('Local or imported')} hint={t('Used for the Basket and to list your choice first.')}>
+            <Segmented value={prefs.origin} options={[['local', t('Local')], ['imported', t('Imported')], ['any', t('Cheapest')]]}
               onChange={(origin) => set({ origin: origin as Prefs['origin'] })} />
           </Section>
 
-          <Section title="Basket" hint="Markets within this distance are compared; favourites always are.">
+          <Section title={t('Basket')} hint={t('Markets within this distance are compared; favourites always are.')}>
             <Chips value={String(prefs.basketKm)} options={[5, 10, 15, 20, 30].map((k) => [String(k), `${k} km`] as [string, string])}
               onChange={(k) => set({ basketKm: Number(k) })} />
-            <Text style={s.sub}>Favourite markets (Metro Manila)</Text>
+            <Text style={s.sub}>{t('Favourite markets (Metro Manila)')}</Text>
             {(markets.data ?? []).map((m) => (
               <Row key={m.id} label={m.name.split('/')[0]}>
                 <Switch value={prefs.favMarkets.includes(m.id)} onValueChange={() => toggle('favMarkets', m.id)}
                   trackColor={{ true: C.star, false: C.faint }} thumbColor={C.card}
-                  accessibilityLabel={`Favourite ${m.name}`} />
+                  accessibilityLabel={t('Favourite {market}', { market: m.name })} />
               </Row>
             ))}
           </Section>
 
-          <Section title="Data">
+          <Section title={t('Data')}>
             {meta.data ? Object.entries(meta.data.sources).map(([k, v]) => (
-              <Row key={k} label={SOURCE_LABEL[k] ?? k}>
+              <Row key={k} label={SOURCE_LABEL[k] ? t(SOURCE_LABEL[k]) : k}>
                 <Text style={s.value}>{periodLabel(v.latest)}</Text>
               </Row>
             )) : null}
@@ -151,29 +158,27 @@ export default function Settings() {
               accessibilityRole="button"
             >
               <Text style={[s.dangerText, confirmClear && { color: C.onPrimary }]}>
-                {confirmClear ? 'Tap again to erase everything' : 'Clear saved data'}
+                {confirmClear ? t('Tap again to erase everything') : t('Clear saved data')}
               </Text>
             </Pressable>
             <Text style={s.hint}>
-              Removes your location, starred items, basket, settings and offline copy from this device.
-              Nothing is stored anywhere else.
+              {t('Removes your location, starred items, basket, settings and offline copy from this device. Nothing is stored anywhere else.')}
             </Text>
           </Section>
 
-          <Section title="Contact">
+          <Section title={t('Contact')}>
             <Pressable onPress={() => Linking.openURL(`mailto:${CONTACT_EMAIL}?subject=Presyo`).catch(() => {})}
               style={[s.row, { borderBottomWidth: 0 }]} accessibilityRole="link">
               <View style={{ flex: 1 }}>
-                <Text style={s.label}>Contact me</Text>
-                <Text style={s.rowHint}>Wrong price, missing item or an idea? {CONTACT_EMAIL}</Text>
+                <Text style={s.label}>{t('Contact me')}</Text>
+                <Text style={s.rowHint}>{t('Wrong price, missing item or an idea?')} {CONTACT_EMAIL}</Text>
               </View>
-              <Text style={s.link}>Email ›</Text>
+              <Text style={s.link}>{t('Email')} ›</Text>
             </Pressable>
           </Section>
 
           <Text style={s.about}>
-            Presyo shows prices published by DA (Bantay Presyo), PSA (OpenSTAT), DOE and DTI. It is not
-            affiliated with the government. Data updates twice a day.
+            {t('Presyo shows prices published by DA (Bantay Presyo), PSA (OpenSTAT), DOE and DTI. It is not affiliated with the government. Data updates twice a day.')}
           </Text>
         </ScrollView>
       </View>
@@ -244,9 +249,9 @@ function NumberField({ value, onChange }: { value: number; onChange: (n: number)
   return (
     <TextInput
       value={text}
-      onChangeText={(t) => {
-        setText(t);
-        const n = parseFloat(t);
+      onChangeText={(v) => {
+        setText(v);
+        const n = parseFloat(v);
         if (n > 0) onChange(n);
       }}
       keyboardType="decimal-pad"

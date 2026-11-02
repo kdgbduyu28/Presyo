@@ -8,6 +8,7 @@ export type RecentPlace = { code: string; name: string; lat: number; lng: number
 
 export type Prefs = {
   theme: 'system' | 'light' | 'dark';
+  lang: 'en' | 'fil';
   startTab: string;
   hiddenTabs: string[];
   /** Re-locate with GPS on every app open (only if GPS was used before). */
@@ -45,6 +46,7 @@ export type Prefs = {
 
 export const DEFAULT_PREFS: Prefs = {
   theme: 'system',
+  lang: 'en',
   startTab: 'today',
   hiddenTabs: [],
   gpsOnOpen: false,

@@ -4,8 +4,10 @@ Planned work, roughly in priority order. Done items move to the changelog / git 
 
 ## Next up
 
-- **Language**: English / Filipino for labels and headings (and Filipino item names where
-  DA/PSA give them), as a Settings option.
+- **Language**: done 2026-11-02. Settings → Language switches labels and headings (`src/i18n`, `t()`
+  keyed by English) and shows Filipino item names (`src/i18n/items.ts`: the local name DA/PSA give, else
+  the everyday word). Search matches both. Translated so far: home, Settings, Today, Basket, food tabs,
+  search; Fuel/LPG details, Electricity, Water, Fares, Forex, Gadgets and Medicine still show English.
 - **Variant preferences on Today**: done 2026-10-28 (summary rows carry `variants`; Today follows Settings → local / imported / cheapest).
 
 ## Done (2026-10-08)

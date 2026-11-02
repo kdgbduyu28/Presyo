@@ -37,7 +37,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
-    "test": "node --test --experimental-strip-types src/lib/*.test.ts",
+    "test": "node --test --experimental-strip-types src/lib/*.test.ts src/i18n/*.test.ts",
     "data": "cd ../ingest && uv run presyo-ingest build",
     "build:web": "expo export --platform web"
   },

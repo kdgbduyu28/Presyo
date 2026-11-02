@@ -6,7 +6,9 @@ import { useSlashToFocus } from '../lib/hotkey';
 import { lastTwo, peso, value } from '../lib/format';
 import type { Spot } from '../lib/location';
 import { fold, FoodSource } from '../lib/places';
-import { C, R, TAB_LABELS, themed } from '../theme';
+import { t } from '../i18n';
+import { filipinoName, itemName } from '../i18n/items';
+import { C, R, TAB_LABELS, tabLabel, themed } from '../theme';
 import { Card, Loading, PriceRow } from './bits';
 import { ItemDetail, titleOf } from './FoodView';
 import { Sheet } from './Sheet';
@@ -42,7 +44,8 @@ export function Search({ source, spot, markets }: { source: FoodSource | null; s
     for (const f of files) {
       for (const it of f.data?.items ?? []) {
         if (!CATS.includes(it.cat as (typeof CATS)[number])) continue;
-        if (fold(`${it.item} ${it.spec ?? ''} ${TAB_LABELS[it.cat] ?? ''}`).includes(needle) && lastTwo(it.s).lastIdx >= 0) {
+        // English and Filipino names both match ("sibuyas" finds Red Onion)
+        if (fold(`${it.item} ${filipinoName(it.item)} ${it.spec ?? ''} ${TAB_LABELS[it.cat] ?? ''} ${tabLabel(it.cat)}`).includes(needle) && lastTwo(it.s).lastIdx >= 0) {
           items.push({ it, periods: f.data!.periods });
         }
       }
@@ -59,11 +62,11 @@ export function Search({ source, spot, markets }: { source: FoodSource | null; s
         ref={input}
         value={q}
         onChangeText={setQ}
-        placeholder="Search any price: galunggong, sibuyas, kape…"
+        placeholder={t('Search any price: galunggong, sibuyas, kape…')}
         placeholderTextColor={C.faint}
         style={s.input}
         autoCorrect={false}
-        accessibilityLabel="Search prices"
+        accessibilityLabel={t('Search prices')}
         clearButtonMode="while-editing"
       />
       {on ? (
@@ -74,9 +77,9 @@ export function Search({ source, spot, markets }: { source: FoodSource | null; s
                 {results.items.map(({ it, periods }) => {
                   const { last, prev, lastIdx } = lastTwo(it.s);
                   return (
-                    <PriceRow key={`${it.cat}|${it.item}|${it.spec}|${it.origin}`} title={it.item}
-                      subtitle={[TAB_LABELS[it.cat], it.spec].filter(Boolean).join(' · ')}
-                      badge={it.origin === 'imported' ? 'Imported' : it.origin === 'local' ? 'Local' : undefined}
+                    <PriceRow key={`${it.cat}|${it.item}|${it.spec}|${it.origin}`} title={itemName(it.item)}
+                      subtitle={[tabLabel(it.cat), it.spec].filter(Boolean).join(' · ')}
+                      badge={it.origin === 'imported' ? t('Imported') : it.origin === 'local' ? t('Local') : undefined}
                       price={it.s[lastIdx] ?? null} unit={it.unit} last={last} prev={prev}
                       onPress={() => setOpen({ item: it, periods })} />
                   );
@@ -96,7 +99,7 @@ export function Search({ source, spot, markets }: { source: FoodSource | null; s
                 ))}
               </Card>
             ) : null}
-            {!results.items.length && !results.grocery.length ? <Text style={s.none}>No matches for “{q}”.</Text> : null}
+            {!results.items.length && !results.grocery.length ? <Text style={s.none}>{t('No matches for “{q}”.', { q })}</Text> : null}
           </>
         )
       ) : null}
