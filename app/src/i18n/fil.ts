@@ -22,6 +22,7 @@ export const fil: Record<string, string> = {
   // Tabs
   Today: 'Ngayon',
   Basket: 'Basket',
+  Compare: 'Ikumpara',
   Rice: 'Bigas',
   Fuel: 'Gasolina',
   'Meat & Eggs': 'Karne at Itlog',
@@ -142,6 +143,29 @@ export const fil: Record<string, string> = {
   'Metro Manila average prices (DA), last report of each week.': 'Average na presyo sa Metro Manila (DA), huling ulat bawat linggo.',
   'Average prices (PSA), by month.': 'Average na presyo (PSA), bawat buwan.',
 
+  // Location picker
+  'Use my location': 'Gamitin ang lokasyon ko',
+  'You can search for your city instead.': 'Puwede mong hanapin na lang ang lungsod mo.',
+  'Use {place}': 'Gamitin ang {place}',
+  'or choose your city / town': 'o piliin ang lungsod / bayan mo',
+  'e.g. Quezon City, Cebu, Tagum': 'hal. Quezon City, Cebu, Tagum',
+  'Search city or town': 'Hanapin ang lungsod o bayan',
+
+  // Compare
+  'Compare prices here with a second place, like where you work or your province.':
+    'Ikumpara ang presyo rito sa ibang lugar, gaya ng pinagtatrabahuhan mo o probinsiya mo.',
+  'Compare with': 'Ikumpara sa',
+  here: 'dito',
+  'Change the second place': 'Palitan ang ikalawang lugar',
+  'Your Basket list': 'Ang listahan mo sa Basket',
+  '{amount} cheaper in {place}': 'Mas mura ng {amount} sa {place}',
+  'About the same in both places': 'Halos pareho sa dalawang lugar',
+  '{n} of your {total} items (priced in both)': '{n} sa {total} mong item (may presyo sa dalawa)',
+  'Both places use the same food averages, so only fuel and LPG can differ.':
+    'Iisang average ng pagkain ang gamit ng dalawang lugar, kaya gasolina at LPG lang ang puwedeng magkaiba.',
+  'Metro Manila food prices are daily DA averages; elsewhere PSA monthly averages, about a month behind.':
+    'Araw-araw na average ng DA ang presyo ng pagkain sa Metro Manila; sa ibang lugar, buwanang average ng PSA na mga isang buwang huli.',
+
   // Settings
   Language: 'Wika',
   'Labels and headings. Market items use their Filipino names where DA and PSA give them.':
@@ -153,7 +177,7 @@ export const fil: Record<string, string> = {
   Location: 'Lokasyon',
   'Use GPS every time I open Presyo': 'Gamitin ang GPS tuwing bubuksan ang Presyo',
   "Only after you've used “Use my location” once. Otherwise your chosen city stays.":
-    'Kapag nagamit mo na ang “Use my location” kahit minsan. Kung hindi, mananatili ang lungsod na pinili mo.',
+    'Kapag nagamit mo na ang “Gamitin ang lokasyon ko” kahit minsan. Kung hindi, mananatili ang lungsod na pinili mo.',
   'Recent places: {list}': 'Mga huling lugar: {list}',
   Clear: 'Burahin',
   'Start on': 'Unang bubuksan',

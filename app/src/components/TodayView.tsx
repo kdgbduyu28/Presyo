@@ -130,7 +130,7 @@ const FUEL_LABEL: Record<string, string> = {
 };
 
 /** Your fuel (Settings) plus RON 91 / diesel: common price in the nearest DOE-monitored area. */
-function useFuelHeadline(place: Place, spot: Spot, places: PlacesFile, preferred: string) {
+export function useFuelHeadline(place: Place, spot: Spot, places: PlacesFile, preferred: string) {
   const area = useMemo(() => fuelArea(places.rows, place, spot.lat, spot.lng), [places, place, spot]);
   const { data } = useJson<FuelFile>(area ? `fuel/${area.place.code}.json` : null);
   return useMemo(() => {

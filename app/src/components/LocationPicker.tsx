@@ -5,6 +5,7 @@ import { locate, Spot } from '../lib/location';
 import { placeName } from '../lib/names';
 import { PlacesFile, searchPlaces } from '../lib/places';
 import type { RecentPlace } from '../lib/prefs';
+import { t } from '../i18n';
 import { C, R, themed } from '../theme';
 
 type Picked = { code: string; name: string };
@@ -34,29 +35,29 @@ export function LocationPicker({ places, onPick, recent = [] }: {
     <View>
       <Pressable onPress={useGps} style={({ pressed }) => [s.gps, pressed && { opacity: 0.85 }]}
         accessibilityRole="button" disabled={busy}>
-        {busy ? <ActivityIndicator color="#fff" /> : <Text style={s.gpsText}>📍  Use my location</Text>}
+        {busy ? <ActivityIndicator color="#fff" /> : <Text style={s.gpsText}>📍  {t('Use my location')}</Text>}
       </Pressable>
-      {err ? <Text style={s.err}>{err} You can search for your city instead.</Text> : null}
+      {err ? <Text style={s.err}>{err} {t('You can search for your city instead.')}</Text> : null}
       {recent.length ? (
         <View style={s.recent}>
           {recent.map((r) => (
             <Pressable key={r.code} onPress={() => onPick({ lat: r.lat, lng: r.lng, via: 'pick' }, r)} style={s.recentChip}
-              accessibilityRole="button" accessibilityLabel={`Use ${r.name}`}>
+              accessibilityRole="button" accessibilityLabel={t('Use {place}', { place: r.name })}>
               <Text style={s.recentText}>🕘 {r.name}</Text>
             </Pressable>
           ))}
         </View>
       ) : null}
-      <Text style={s.or}>or choose your city / town</Text>
+      <Text style={s.or}>{t('or choose your city / town')}</Text>
       <TextInput
         value={q}
         onChangeText={setQ}
-        placeholder="e.g. Quezon City, Cebu, Tagum"
+        placeholder={t('e.g. Quezon City, Cebu, Tagum')}
         placeholderTextColor={C.faint}
         style={s.input}
         autoCorrect={false}
         autoCapitalize="none"
-        accessibilityLabel="Search city or town"
+        accessibilityLabel={t('Search city or town')}
       />
       {results.map((p) => (
         <Pressable key={p.code} onPress={() => onPick({ lat: p.lat, lng: p.lng, via: 'pick' }, { code: p.code, name: placeName(p, places, { short: true }) })}

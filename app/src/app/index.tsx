@@ -4,6 +4,7 @@ import { Pressable, ScrollView, StyleSheet, Text, useWindowDimensions, View } fr
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { BasketView } from '../components/BasketView';
+import { CompareView } from '../components/CompareView';
 import { Chips, Loading, Notice } from '../components/bits';
 import { FaresView } from '../components/FaresView';
 import { FoodView } from '../components/FoodView';
@@ -26,7 +27,7 @@ import { usePrefs, withRecent } from '../lib/prefs';
 import { t } from '../i18n';
 import { C, MAX_WIDTH, R, tabLabel, themed, WIDE } from '../theme';
 
-const TABS = ['today', 'basket', 'rice', 'fuel', 'meat', 'vegetables', 'seafood', 'fruits', 'pantry', 'grocery', 'power',
+const TABS = ['today', 'basket', 'compare', 'rice', 'fuel', 'meat', 'vegetables', 'seafood', 'fruits', 'pantry', 'grocery', 'power',
   'water', 'fares', 'forex', 'gadgets', 'medicine'] as const;
 type Tab = (typeof TABS)[number];
 
@@ -81,6 +82,8 @@ export default function Home() {
         <TodayView place={here} spot={spot} places={places.data!} markets={markets.data!} onOpenTab={openTab} wide={wide} />
       ) : tab === 'basket' ? (
         <BasketView place={here} spot={spot} places={places.data!} markets={markets.data!} wide={wide} />
+      ) : tab === 'compare' ? (
+        <CompareView place={here} spot={spot} places={places.data!} />
       ) : tab === 'grocery' ? (
         <GroceryView />
       ) : tab === 'power' ? (

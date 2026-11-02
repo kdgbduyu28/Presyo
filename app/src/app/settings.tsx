@@ -11,7 +11,7 @@ import { C, MAX_WIDTH, R, tabLabel, themed } from '../theme';
 
 const CONTACT_EMAIL = 'timothyborja28@gmail.com';
 
-const TAB_IDS = ['today', 'basket', 'rice', 'fuel', 'meat', 'vegetables', 'seafood', 'fruits', 'pantry', 'grocery', 'power',
+const TAB_IDS = ['today', 'basket', 'compare', 'rice', 'fuel', 'meat', 'vegetables', 'seafood', 'fruits', 'pantry', 'grocery', 'power',
   'water', 'fares', 'forex', 'gadgets', 'medicine'];
 
 const FUELS: [string, string][] = [

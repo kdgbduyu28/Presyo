@@ -91,6 +91,7 @@ export const WIDE = 1024;
 export const TAB_LABELS: Record<string, string> = {
   today: 'Today',
   basket: 'Basket',
+  compare: 'Compare',
   fruits: 'Fruits',
   pantry: 'Pantry',
   grocery: 'Grocery SRP',

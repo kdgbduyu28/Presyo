@@ -12,7 +12,8 @@ const SRC = join(import.meta.dirname, '..');
 // The parts of the app that are translated so far.
 const TRANSLATED = ['app/index.tsx', 'app/settings.tsx', 'components/TodayView.tsx', 'components/BasketView.tsx',
   'components/FoodView.tsx', 'components/Search.tsx', 'components/bits.tsx', 'components/TodayGadgets.tsx',
-  'components/FuelExtras.tsx', 'components/ShareImage.tsx'];
+  'components/FuelExtras.tsx', 'components/ShareImage.tsx', 'components/CompareView.tsx',
+  'components/LocationPicker.tsx'];
 
 /** Every t('...') key in the translated screens, ternary branches included. */
 function keysUsed(): string[] {

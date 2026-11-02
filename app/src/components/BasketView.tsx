@@ -14,7 +14,7 @@ import { itemName } from '../i18n/items';
 import { C, R, themed } from '../theme';
 import { Card, Columns, Loading, Notice, SectionTitle } from './bits';
 
-const STARTER: BasketLine[] = [
+export const STARTER: BasketLine[] = [
   { key: 'rice_well_milled', qty: 5 },
   { key: 'egg_medium', qty: 30 },
   { key: 'pork_liempo', qty: 1 },

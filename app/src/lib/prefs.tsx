@@ -14,6 +14,8 @@ export type Prefs = {
   /** Re-locate with GPS on every app open (only if GPS was used before). */
   gpsOnOpen: boolean;
   recent: RecentPlace[];
+  /** second place on the Compare tab (e.g. where you work) */
+  compare: RecentPlace | null;
   /** catalog key of the fuel you buy, shown first on Today */
   fuel: string;
   /** km per liter for the trip calculator */
@@ -51,6 +53,7 @@ export const DEFAULT_PREFS: Prefs = {
   hiddenTabs: [],
   gpsOnOpen: false,
   recent: [],
+  compare: null,
   fuel: 'fuel_ron91',
   kmpl: 12,
   kwh: 200,
