@@ -151,6 +151,9 @@ export const fil: Record<string, string> = {
   'e.g. Quezon City, Cebu, Tagum': 'hal. Quezon City, Cebu, Tagum',
   'Search city or town': 'Hanapin ang lungsod o bayan',
 
+  'You are here': 'Nandito ka',
+  '* missing some items': '* kulang ang ilang item',
+
   // Compare
   'Compare prices here with a second place, like where you work or your province.':
     'Ikumpara ang presyo rito sa ibang lugar, gaya ng pinagtatrabahuhan mo o probinsiya mo.',

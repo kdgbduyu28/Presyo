@@ -13,6 +13,7 @@ import { t } from '../i18n';
 import { itemName } from '../i18n/items';
 import { C, R, themed } from '../theme';
 import { Card, Columns, Loading, Notice, SectionTitle } from './bits';
+import { MarketMap } from './MarketMap';
 
 export const STARTER: BasketLine[] = [
   { key: 'rice_well_milled', qty: 5 },
@@ -127,6 +128,12 @@ export function BasketView({ place, spot, places, markets, wide }: {
               })}
             </Card>
             <Savings results={results} />
+            <MarketMap you={spot} pins={results.map((r, i) => ({
+              id: r.market.id, lat: r.market.lat, lng: r.market.lng,
+              label: `₱${Math.round(r.total).toLocaleString('en-PH')}${r.missing.length ? '*' : ''}`,
+              best: i === 0 && !r.missing.length,
+            }))} />
+            {results.some((r) => r.missing.length) ? <Text style={s.mapNote}>{t('* missing some items')}</Text> : null}
           </>
         ) : lines.length ? <Notice>{t('No DA-monitored market within {km} km reports these items. Raise the distance or add favourite markets in Settings.', { km: prefs.basketKm })}</Notice> : null
       ) : estimate ? (
@@ -264,5 +271,6 @@ const s = themed(() => ({
   bar: { height: 10, borderRadius: R.pill, backgroundColor: C.faint },
   histTotal: { width: 88, textAlign: 'right', fontSize: 14, fontWeight: '600', color: C.text, fontVariant: ['tabular-nums'] },
   histNote: { fontSize: 12, color: C.muted, marginHorizontal: 16, marginBottom: 16, lineHeight: 17 },
+  mapNote: { fontSize: 12, color: C.muted, marginHorizontal: 16, marginTop: -6, marginBottom: 12 },
   bigTotal: { fontSize: 28, fontWeight: '800', color: C.text, fontVariant: ['tabular-nums'] },
 }));
