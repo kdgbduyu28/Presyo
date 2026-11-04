@@ -13,7 +13,8 @@ const SRC = join(import.meta.dirname, '..');
 const TRANSLATED = ['app/index.tsx', 'app/settings.tsx', 'components/TodayView.tsx', 'components/BasketView.tsx',
   'components/FoodView.tsx', 'components/Search.tsx', 'components/bits.tsx', 'components/TodayGadgets.tsx',
   'components/FuelExtras.tsx', 'components/ShareImage.tsx', 'components/CompareView.tsx',
-  'components/LocationPicker.tsx', 'components/MarketMap.tsx'];
+  'components/LocationPicker.tsx', 'components/MarketMap.tsx',
+  'components/FuelView.tsx'];
 
 /** Every t('...') key in the translated screens, ternary branches included. */
 function keysUsed(): string[] {

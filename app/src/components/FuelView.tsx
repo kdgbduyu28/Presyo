@@ -6,6 +6,7 @@ import { daysAgo, peso, pesoPrice, rangeLabel, value } from '../lib/format';
 import type { Spot } from '../lib/location';
 import { placeName } from '../lib/names';
 import { fuelArea, Place, PlacesFile } from '../lib/places';
+import { t } from '../i18n';
 import { C, themed } from '../theme';
 import { Chart } from './Chart';
 import { Card, Columns, Delta, Loading, Notice, PriceRow, SectionTitle } from './bits';
@@ -55,9 +56,9 @@ export function FuelView({ place, spot, places, wide }: { place: Place; spot: Sp
   const [open, setOpen] = useState<string | null>(null);
   const adjustment = useLatestAdjustment();
 
-  if (!area) return <Notice tone="warn">No DOE fuel monitoring near you yet.</Notice>;
+  if (!area) return <Notice tone="warn">{t('No DOE fuel monitoring near you yet.')}</Notice>;
   if (loading) return <Loading />;
-  if (error || !data?.weeks.length) return <Notice tone="warn">Couldn't load fuel prices ({error}).</Notice>;
+  if (error || !data?.weeks.length) return <Notice tone="warn">{t("Couldn't load fuel prices ({error}).", { error: error ?? '' })}</Notice>;
 
   const weeks = data.weeks;
   const latest = weeks[weeks.length - 1];
@@ -73,23 +74,23 @@ export function FuelView({ place, spot, places, wide }: { place: Place; spot: Sp
       {adjustment ? <AdjustmentBanner week={adjustment} /> : null}
       {area.km > 0 ? (
         <Notice>
-          DOE doesn't monitor pump prices in {placeName(place, places, { short: true })}. Showing {name},
-          the nearest monitored area ({area.km.toFixed(area.km < 10 ? 1 : 0)} km away).
+          {t("DOE doesn't monitor pump prices in {place}. Showing {area}, the nearest monitored area ({km} km away).", {
+            place: placeName(place, places, { short: true }), area: name, km: area.km.toFixed(area.km < 10 ? 1 : 0),
+          })}
         </Notice>
       ) : null}
       {stale ? (
         <Notice tone="warn">
-          The latest DOE report for this area is for {rangeLabel(latest.start, latest.end)}. Newer weeks
-          weren't readable (scanned PDFs), so these may be out of date.
+          {t("The latest DOE report for this area is for {dates}. Newer weeks weren't readable (scanned PDFs), so these may be out of date.", { dates: rangeLabel(latest.start, latest.end) })}
         </Notice>
       ) : null}
-      <SectionTitle>Week of {rangeLabel(latest.start, latest.end)}</SectionTitle>
+      <SectionTitle>{t('Week of {dates}', { dates: rangeLabel(latest.start, latest.end) })}</SectionTitle>
       <Card>
         {summaries.map((x) => (
           <PriceRow
             key={x.key}
-            title={x.label}
-            subtitle={[x.hint, x.lo != null && x.hi != null && x.lo !== x.hi ? `${peso(x.lo)}–${x.hi.toFixed(2)} across stations` : null]
+            title={t(x.label)}
+            subtitle={[x.hint && t(x.hint), x.lo != null && x.hi != null && x.lo !== x.hi ? t('{range} across stations', { range: `${peso(x.lo)}–${x.hi.toFixed(2)}` }) : null]
               .filter(Boolean).join(' · ') || undefined}
             price={x.main}
             unit="L"
@@ -101,7 +102,7 @@ export function FuelView({ place, spot, places, wide }: { place: Place; spot: Sp
         ))}
       </Card>
       <Text style={s.source}>
-        {name} · DOE weekly retail pump price monitoring. Prices change every Tuesday.
+        {name} · {t('DOE weekly retail pump price monitoring. Prices change every Tuesday.')}
       </Text>
     </>
   );
@@ -110,18 +111,18 @@ export function FuelView({ place, spot, places, wide }: { place: Place; spot: Sp
     <>
       <Columns wide={wide} left={left} right={<LpgSection place={place} spot={spot} places={places} />} />
 
-      <Sheet open={sel != null} onClose={() => setOpen(null)} title={sel?.label}>
+      <Sheet open={sel != null} onClose={() => setOpen(null)} title={sel ? t(sel.label) : undefined}>
         {sel ? (
           <View>
             <View style={s.big}>
               <Text style={s.bigPrice}>{sel.main != null ? peso(sel.main) : '—'}<Text style={s.bigUnit}>/L</Text></Text>
               <Delta last={sel.main} prev={prevMain(sel.key)} />
             </View>
-            <Text style={s.caption}>Common price in {name} · vs previous week</Text>
+            <Text style={s.caption}>{t('Common price in {area} · vs previous week', { area: name })}</Text>
             <View style={{ marginTop: 16 }}>
               <Chart periods={weeks.map((w) => w.start)} values={weeks.map((w) => summarize(w.rows, sel.key, '', '')?.main ?? null)} />
             </View>
-            <Text style={[s.h3, { marginTop: 20 }]}>By brand · lowest to highest</Text>
+            <Text style={[s.h3, { marginTop: 20 }]}>{t('By brand · lowest to highest')}</Text>
             {sel.brands.map((b) => (
               <View key={b.brand} style={s.brandRow}>
                 <Text style={s.brand}>{b.brand}</Text>

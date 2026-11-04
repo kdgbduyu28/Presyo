@@ -143,6 +143,34 @@ export const fil: Record<string, string> = {
   'Metro Manila average prices (DA), last report of each week.': 'Average na presyo sa Metro Manila (DA), huling ulat bawat linggo.',
   'Average prices (PSA), by month.': 'Average na presyo (PSA), bawat buwan.',
 
+  // Fuel and LPG
+  'No DOE fuel monitoring near you yet.': 'Wala pang monitoring ng DOE sa gasolina malapit sa iyo.',
+  "Couldn't load fuel prices ({error}).": 'Hindi ma-load ang presyo ng gasolina ({error}).',
+  "DOE doesn't monitor pump prices in {place}. Showing {area}, the nearest monitored area ({km} km away).":
+    'Hindi binabantayan ng DOE ang presyo sa pump sa {place}. Ipinapakita ang {area}, ang pinakamalapit na binabantayan ({km} km ang layo).',
+  "The latest DOE report for this area is for {dates}. Newer weeks weren't readable (scanned PDFs), so these may be out of date.":
+    'Ang pinakabagong ulat ng DOE para sa lugar na ito ay para sa {dates}. Hindi mabasa ang mas bagong linggo (scanned PDF), kaya baka luma na ang mga ito.',
+  'Week of {dates}': 'Linggo ng {dates}',
+  'Regular unleaded': 'Regular unleaded',
+  Premium: 'Premium',
+  'Super premium': 'Super premium',
+  'Premium diesel': 'Premium diesel',
+  Gaas: 'Gaas',
+  '{range} across stations': '{range} sa iba-ibang gasolinahan',
+  'DOE weekly retail pump price monitoring. Prices change every Tuesday.':
+    'Lingguhang monitoring ng DOE sa presyo sa pump. Nagbabago ang presyo tuwing Martes.',
+  'Common price in {area} · vs previous week': 'Karaniwang presyo sa {area} · kumpara sa nakaraang linggo',
+  'By brand · lowest to highest': 'Bawat brand · mula pinakamura hanggang pinakamahal',
+  'Cooking gas (LPG)': 'Gas sa pagluluto (LPG)',
+  '{range} by brand': '{range} depende sa brand',
+  'DOE monthly monitoring, {month}': 'buwanang monitoring ng DOE, {month}',
+  "Metro Manila, 2026 (middle of DOE's price range)": 'Metro Manila, 2026 (gitna ng price range ng DOE)',
+  'Trip cost': 'Gastos sa biyahe',
+  'Distance (km)': 'Layo (km)',
+  'Mileage (km/L)': 'Mileage (km/L)',
+  'At {price}/L. Mileage: ~10–14 km/L for a small car, 30–40 for a motorcycle.':
+    'Sa {price}/L. Mileage: ~10–14 km/L sa maliit na kotse, 30–40 sa motorsiklo.',
+
   // Location picker
   'Use my location': 'Gamitin ang lokasyon ko',
   'You can search for your city instead.': 'Puwede mong hanapin na lang ang lungsod mo.',

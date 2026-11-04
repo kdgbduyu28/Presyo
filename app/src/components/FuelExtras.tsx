@@ -93,13 +93,13 @@ export function LpgSection({ place, spot, places }: { place: Place; spot: Spot; 
   const name = placeName(area.place, places);
   return (
     <View>
-      <SectionTitle>Cooking gas (LPG) · {periodLabel(month.start.slice(0, 7))}</SectionTitle>
+      <SectionTitle>{t('Cooking gas (LPG)')} · {periodLabel(month.start.slice(0, 7))}</SectionTitle>
       <Card>
         <PriceRow
-          title="LPG, 11 kg tank"
+          title={t('LPG, 11 kg tank')}
           subtitle={[
-            summary.lo != null && summary.hi != null && summary.lo !== summary.hi ? `${peso(summary.lo)}–${summary.hi.toFixed(2)} by brand` : null,
-            area.km > 0 ? `${name}, ${area.km.toFixed(0)} km away` : null,
+            summary.lo != null && summary.hi != null && summary.lo !== summary.hi ? t('{range} by brand', { range: `${peso(summary.lo)}–${summary.hi.toFixed(2)}` }) : null,
+            area.km > 0 ? `${name}, ${t('{km} km away', { km: area.km.toFixed(0) })}` : null,
           ].filter(Boolean).join(' · ') || undefined}
           price={summary.main}
           unit="tank"
@@ -108,9 +108,9 @@ export function LpgSection({ place, spot, places }: { place: Place; spot: Spot; 
           onPress={() => setOpen(true)}
         />
       </Card>
-      <Sheet open={open} onClose={() => setOpen(false)} title="LPG, 11 kg tank">
-        <Text style={s.caption}>{name} · DOE monthly monitoring, {periodLabel(month.start.slice(0, 7))}</Text>
-        <Text style={[s.h3, { marginTop: 14 }]}>By brand · lowest to highest</Text>
+      <Sheet open={open} onClose={() => setOpen(false)} title={t('LPG, 11 kg tank')}>
+        <Text style={s.caption}>{name} · {t('DOE monthly monitoring, {month}', { month: periodLabel(month.start.slice(0, 7)) })}</Text>
+        <Text style={[s.h3, { marginTop: 14 }]}>{t('By brand · lowest to highest')}</Text>
         {summary.brands.map((b) => (
           <View key={b.brand} style={s.brandRow}>
             <Text style={s.brand}>{b.brand}</Text>
@@ -119,7 +119,7 @@ export function LpgSection({ place, spot, places }: { place: Place; spot: Spot; 
         ))}
         {monthly.data ? (
           <View style={{ marginTop: 20 }}>
-            <Text style={s.h3}>Metro Manila, 2026 (middle of DOE's price range)</Text>
+            <Text style={s.h3}>{t("Metro Manila, 2026 (middle of DOE's price range)")}</Text>
             <Chart periods={monthly.data.periods} values={monthly.data.s.map((r) => (r[0] + r[1]) / 2)} />
           </View>
         ) : null}
@@ -139,13 +139,13 @@ export function TripCost({ pricePerLiter }: { pricePerLiter: number }) {
   const cost = d > 0 && e > 0 ? (d / e) * pricePerLiter : null;
   return (
     <View style={s.trip}>
-      <Text style={s.h3}>Trip cost</Text>
+      <Text style={s.h3}>{t('Trip cost')}</Text>
       <View style={s.tripRow}>
-        <Field label="Distance (km)" value={km} onChange={setKm} />
-        <Field label="Mileage (km/L)" value={kmpl} onChange={setKmpl} />
+        <Field label={t('Distance (km)')} value={km} onChange={setKm} />
+        <Field label={t('Mileage (km/L)')} value={kmpl} onChange={setKmpl} />
       </View>
       <Text style={s.tripResult}>{cost != null ? `≈ ${peso(cost)}` : '—'}</Text>
-      <Text style={s.caption}>At {peso(pricePerLiter)}/L. Mileage: ~10–14 km/L for a small car, 30–40 for a motorcycle.</Text>
+      <Text style={s.caption}>{t('At {price}/L. Mileage: ~10–14 km/L for a small car, 30–40 for a motorcycle.', { price: peso(pricePerLiter) })}</Text>
     </View>
   );
 }
