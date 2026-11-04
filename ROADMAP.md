@@ -7,7 +7,7 @@ Planned work, roughly in priority order. Done items move to the changelog / git 
 - **Language**: done 2026-11-02. Settings → Language switches labels and headings (`src/i18n`, `t()`
   keyed by English) and shows Filipino item names (`src/i18n/items.ts`: the local name DA/PSA give, else
   the everyday word). Search matches both. Translated so far: home, Settings, Today, Basket, food tabs,
-  search, Compare and the place picker; Fuel/LPG details, Electricity, Water, Fares, Forex, Gadgets and Medicine still show English.
+  search, Compare, the place picker, Fuel and LPG; Electricity, Water, Fares, Forex, Gadgets and Medicine still show English.
 - **Variant preferences on Today**: done 2026-10-28 (summary rows carry `variants`; Today follows Settings → local / imported / cheapest).
 
 ## Done (2026-10-08)
@@ -46,7 +46,7 @@ Planned work, roughly in priority order. Done items move to the changelog / git 
   (Supabase + Expo push / web push) — the first thing that would need an account.
 - **Market map**: done 2026-11-02 for the Basket (Metro Manila): your list's total on a pin at each nearby DA
   market, cheapest in green, on OpenStreetMap tiles placed by hand (`src/lib/map.ts`, no map library).
-  Next: the same map in an item's "Within 8 km" list; spread out pins that overlap; pan/zoom.
+  Item details show the same map for the item's "Within 8 km" markets. Next: spread out pins that overlap; pan/zoom.
 - **Share as image**: done on web 2026-11-02 (item detail → "Share as image" / "Save as image": a 1080×1080
   PNG card from `src/lib/card.ts`, shared as a file on phones, downloaded on desktop). Native builds still
   share text; an image there needs `expo-sharing` + `expo-file-system` (or `react-native-view-shot`).
