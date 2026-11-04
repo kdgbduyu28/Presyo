@@ -14,6 +14,7 @@ import { C, themed } from '../theme';
 import { AlertControl } from './AlertControl';
 import { Chart } from './Chart';
 import { Card, Chips, Delta, Loading, Notice, PriceRow, SectionTitle, ShareButton, StarButton } from './bits';
+import { MarketMap } from './MarketMap';
 import { ShareImageButton } from './ShareImage';
 import { Sheet } from './Sheet';
 
@@ -254,6 +255,9 @@ function NearbyMarkets({ item, spot, markets }: { item: SeriesItem; spot: Spot; 
   return (
     <View style={{ marginTop: 20 }}>
       <Text style={s.h3}>{t('Within {km} km', { km: 8 })} · {periodLabel(data.date)}</Text>
+      <MarketMap you={spot} height={240} style={{ marginHorizontal: 0, marginTop: 4 }} pins={rows.map((r, i) => ({
+        id: r.m.id, lat: r.m.lat, lng: r.m.lng, label: pesoPrice(value(r.p)), best: i === 0,
+      }))} />
       {rows.map((r, i) => (
         <View key={r.m.id} style={s.cmpRow}>
           <Text style={[s.cmpName, i === 0 && { color: C.down, fontWeight: '700' }]} numberOfLines={1}>

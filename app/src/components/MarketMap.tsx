@@ -8,7 +8,9 @@ import { C, getScheme, R, themed } from '../theme';
 export type Pin = { id: string; lat: number; lng: number; label: string; best?: boolean };
 
 /** Markets on an OpenStreetMap background with a label (price) on each pin, plus "you". */
-export function MarketMap({ pins, you, height = 300 }: { pins: Pin[]; you: { lat: number; lng: number }; height?: number }) {
+export function MarketMap({ pins, you, height = 300, style }: {
+  pins: Pin[]; you: { lat: number; lng: number }; height?: number; style?: object;
+}) {
   const [w, setW] = useState(0);
   const onLayout = (e: LayoutChangeEvent) => setW(Math.round(e.nativeEvent.layout.width));
   const view = w > 0 ? fitView([you, ...pins], w, height, { pad: 36 }) : null;
@@ -19,7 +21,7 @@ export function MarketMap({ pins, you, height = 300 }: { pins: Pin[]; you: { lat
   // cheapest drawn last so it sits on top of crowded pins
   const order = [...pins].sort((a, b) => Number(!!a.best) - Number(!!b.best));
   return (
-    <View style={[s.box, { height }]} onLayout={onLayout}>
+    <View style={[s.box, { height }, style]} onLayout={onLayout}>
       {view ? (
         <>
           {tilesFor(view, w, height).map((tile) => (
