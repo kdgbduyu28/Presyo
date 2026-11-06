@@ -59,7 +59,7 @@ Planned work, roughly in priority order. Done items move to the changelog / git 
   Manila water.
 
 ## Infra
-- Push touching `ingest/` also fetches (not only rebuilds).
-- Health check: warn when a source hasn't produced a new document for N days
-  (e.g. DA format change) via a GitHub Actions annotation or issue.
+- Push touching `ingest/` also fetches: done 2026-11-06 (`update.yml` diffs the push against its base).
+- Health check: done 2026-11-06. `presyo-ingest health` warns (GitHub Actions annotation) when a source's latest
+  document is older than its usual cadence (`ingest/src/presyo_ingest/health.py`). Next: open an issue instead.
 - Store builds (EAS) once native features (push, widgets) are needed.

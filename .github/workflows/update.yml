@@ -2,7 +2,8 @@ name: Update prices
 
 # Twice a day: fetch new government reports, commit the normalized data,
 # rebuild the app's JSON and deploy to Cloudflare Pages. Code pushes to main
-# rebuild and deploy without fetching.
+# rebuild and deploy; they also fetch when they change the ingest (a parser
+# fix should reach the data now, not at the next scheduled run).
 on:
   schedule:
     - cron: "0 4 * * *"   # 12:00 Manila (DA posts the day's reports by then)
@@ -50,18 +51,32 @@ jobs:
           (cd ingest && uv run pytest -q)
           (cd app && npm test && npx tsc --noEmit)
 
+      - name: Did this push change the ingest?
+        id: changes
+        if: github.event_name == 'push'
+        env:
+          BEFORE: ${{ github.event.before }}
+        run: |
+          git fetch -q --depth=1 origin "$BEFORE" || true
+          # unknown base (new branch, force push): treat as changed
+          if git diff --quiet "$BEFORE" HEAD -- ingest/ 2>/dev/null; then
+            echo "ingest=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ingest=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Fetch new reports
-        if: github.event_name != 'push'
+        if: github.event_name != 'push' || steps.changes.outputs.ingest == 'true'
         working-directory: ingest
         run: uv run presyo-ingest all
 
       - name: Check for stale sources
-        if: github.event_name != 'push'
+        if: github.event_name != 'push' || steps.changes.outputs.ingest == 'true'
         working-directory: ingest
         run: uv run presyo-ingest health
 
       - name: Commit new data
-        if: github.event_name != 'push'
+        if: github.event_name != 'push' || steps.changes.outputs.ingest == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
