@@ -13,6 +13,7 @@
     presyo-ingest markets        geocode DA markets missing coordinates
     presyo-ingest all            everything above + build
     presyo-ingest build          write app/public/data from data/
+    presyo-ingest health         warn about sources with no new document for too long
     (add --force to re-parse documents already on disk)
 """
 
@@ -20,7 +21,7 @@ import sys
 
 
 def main() -> None:
-    from . import build, geo
+    from . import build, geo, health
     from .sources import da, doe, dpri, dti, forex, gadgets, lpg, meralco, power, psa
 
     cmd = sys.argv[1] if len(sys.argv) > 1 else "all"
@@ -53,6 +54,8 @@ def main() -> None:
         da.geocode_markets(geo.Gazetteer())
     elif cmd == "build":
         build.build()
+    elif cmd == "health":
+        health.check()
     elif cmd == "all":
         # One government site being down must not block the others (or the
         # build): run every source, report failures, and still build.

@@ -55,6 +55,11 @@ jobs:
         working-directory: ingest
         run: uv run presyo-ingest all
 
+      - name: Check for stale sources
+        if: github.event_name != 'push'
+        working-directory: ingest
+        run: uv run presyo-ingest health
+
       - name: Commit new data
         if: github.event_name != 'push'
         run: |
