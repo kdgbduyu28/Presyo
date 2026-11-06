@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 
-import { fitView, project, tilesFor, TILE } from './map.ts';
+import { fitView, placeLabels, project, tilesFor, TILE } from './map.ts';
 
 test('project: equator / prime meridian is the middle of the world', () => {
   const p = project(0, 0, 1);
@@ -31,4 +31,16 @@ test('tilesFor: covers the view', () => {
   const tiles = tilesFor(v, 400, 280);
   assert.equal(tiles.length, 4); // x 100..500 and y 200..480: 2 × 2 tiles
   assert.deepEqual(tiles[0], { key: '12/3425/1879', url: 'https://tile.openstreetmap.org/12/3425/1879.png', x: -100, y: -200 });
+});
+
+test('placeLabels: keeps lone labels above their point and moves overlapping ones', () => {
+  const [a, b, c] = placeLabels([
+    { x: 100, y: 100, w: 60, h: 20 },
+    { x: 110, y: 104, w: 60, h: 20 }, // overlaps a
+    { x: 300, y: 100, w: 60, h: 20 }, // far away
+  ]);
+  assert.deepEqual(a, { left: 70, top: 74 });
+  assert.deepEqual(c, { left: 270, top: 74 });
+  assert.equal(b.left, 80);
+  assert.ok(b.top + 20 + 2 <= a.top || b.top >= a.top + 20 + 2, `b at ${b.top} still overlaps a`);
 });

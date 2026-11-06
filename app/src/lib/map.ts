@@ -45,3 +45,21 @@ export function tilesFor(view: { z: number; left: number; top: number }, w: numb
   }
   return out;
 }
+
+export type Label = { x: number; y: number; w: number; h: number };
+
+/** Nudge labels (centred above their point) up or down so none overlap;
+ *  earlier labels keep their spot. Returns each label's top-left. */
+export function placeLabels(labels: Label[], gap = 2): { left: number; top: number }[] {
+  const placed: { left: number; top: number; w: number; h: number }[] = [];
+  const hits = (r: { left: number; top: number; w: number; h: number }) => placed.some((p) =>
+    r.left < p.left + p.w + gap && p.left < r.left + r.w + gap && r.top < p.top + p.h + gap && p.top < r.top + r.h + gap);
+  return labels.map((l) => {
+    const base = { left: l.x - l.w / 2, top: l.y - l.h - 6, w: l.w, h: l.h };
+    // try the default spot, then alternately further up and below the point
+    const tries = [0, -1, 1, -2, 2, -3, 3].map((k) => ({ ...base, top: k <= 0 ? base.top + k * (l.h + gap) : l.y + 6 + (k - 1) * (l.h + gap) }));
+    const spot = tries.find((r) => !hits(r)) ?? base;
+    placed.push(spot);
+    return { left: spot.left, top: spot.top };
+  });
+}
