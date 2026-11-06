@@ -377,6 +377,10 @@ export const fil: Record<string, string> = {
   'Metro Manila food prices are daily DA averages; elsewhere PSA monthly averages, about a month behind.':
     'Araw-araw na average ng DA ang presyo ng pagkain sa Metro Manila; sa ibang lugar, buwanang average ng PSA na mga isang buwang huli.',
 
+  Bills: 'Mga bayarin',
+  'Electricity: residential rate of the utility you picked in the Electricity tab (Meralco where it serves). Water: Metro Manila concessionaires only, average all-in tariff.':
+    'Kuryente: singil pambahay ng utility na pinili mo sa tab na Kuryente (Meralco kung saan ito nagseserbisyo). Tubig: mga concessionaire sa Metro Manila lang, average na all-in tariff.',
+
   // Settings
   Language: 'Wika',
   'Labels and headings. Market items use their Filipino names where DA and PSA give them.':

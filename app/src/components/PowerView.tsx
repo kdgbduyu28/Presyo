@@ -12,11 +12,11 @@ import { Chart } from './Chart';
 import { Card, Delta, Loading, Notice, SectionTitle } from './bits';
 
 type Utility = { id: string; name?: string; type?: string; s: (number | null)[] };
-type PowerFile = { periods: string[]; utilities: Utility[] };
+export type PowerFile = { periods: string[]; utilities: Utility[] };
 type MeralcoFile = { months: { month: string; url: string; regular: BillPoint[]; lifeline: BillPoint[] }[] };
 
 // Meralco's franchise also covers parts of Central Luzon and CALABARZON.
-const MERALCO_REGIONS = new Set([NCR, '030000000', '040000000']);
+export const MERALCO_REGIONS = new Set([NCR, '030000000', '040000000']);
 const TYPE_LABEL: Record<string, string> = { PIOU: 'Private utility', EC: 'Electric cooperative' };
 
 /** Residential electricity rate of your distribution utility (DOE monthly). */

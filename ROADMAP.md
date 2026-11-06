@@ -4,10 +4,10 @@ Planned work, roughly in priority order. Done items move to the changelog / git 
 
 ## Next up
 
-- **Language**: done 2026-11-02. Settings → Language switches labels and headings (`src/i18n`, `t()`
-  keyed by English) and shows Filipino item names (`src/i18n/items.ts`: the local name DA/PSA give, else
-  the everyday word). Search matches both. Translated so far: home, Settings, Today, Basket, food tabs,
-  search, Compare, the place picker, Fuel and LPG; Electricity, Water, Fares, Forex, Gadgets and Medicine still show English.
+- **Language**: done 2026-11-02, all tabs by 2026-11-06. Settings → Language switches labels and headings
+  (`src/i18n`, `t()` keyed by English) and shows Filipino item names (`src/i18n/items.ts`: the local name DA/PSA
+  give, else the everyday word). Search matches both. Still English: text that comes from the data files
+  (fare notice, DTI section and item names, medicine names, store notes).
 - **Variant preferences on Today**: done 2026-10-28 (summary rows carry `variants`; Today follows Settings → local / imported / cheapest).
 
 ## Done (2026-10-08)
@@ -55,7 +55,8 @@ Planned work, roughly in priority order. Done items move to the changelog / git 
   (`basketHistory` in `src/lib/basket.ts`). It reprices today's list; it doesn't remember past lists.
 - **Compare two places**: done 2026-11-02. New Compare tab (hideable): pick a second place; your Basket
   list total, fuel, LPG and every headline food item side by side, cheaper side in green
-  (`src/components/CompareView.tsx`, `src/lib/compare.ts`). Could add electricity and water next.
+  (`src/components/CompareView.tsx`, `src/lib/compare.ts`), plus electricity (your utility's rate) and Metro
+  Manila water.
 
 ## Infra
 - Push touching `ingest/` also fetches (not only rebuilds).

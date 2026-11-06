@@ -5,11 +5,12 @@ import { t } from '../i18n';
 import { itemName } from '../i18n/items';
 import { basketFromAverages, BasketLine, OriginPref, pickVariant } from '../lib/basket';
 import { cheaper, compareItems } from '../lib/compare';
+import { waterProviders, WaterFile } from '../lib/bills';
 import { SummaryFile, useJson } from '../lib/data';
-import { peso, periodLabel, UNIT_LABEL, value } from '../lib/format';
+import { lastTwo, peso, periodLabel, UNIT_LABEL, value } from '../lib/format';
 import type { Spot } from '../lib/location';
 import { placeName } from '../lib/names';
-import { foodSource, nearestPlace, Place, PlacesFile } from '../lib/places';
+import { foodSource, NCR, nearestPlace, Place, PlacesFile } from '../lib/places';
 import { usePrefs, withRecent } from '../lib/prefs';
 import { BASKET_KEY, useStored } from '../lib/stored';
 import { C, tabLabel, themed } from '../theme';
@@ -17,6 +18,7 @@ import { STARTER } from './BasketView';
 import { Card, Loading, Notice, SectionTitle } from './bits';
 import { useLpg } from './FuelExtras';
 import { LocationPicker } from './LocationPicker';
+import { MERALCO_REGIONS, PowerFile } from './PowerView';
 import { Sheet } from './Sheet';
 import { useFuelHeadline } from './TodayView';
 
@@ -58,7 +60,19 @@ export function CompareView({ place, spot, places }: { place: Place; spot: Spot;
   );
 }
 
+/** Your utility's residential rate there: the one picked in the Electricity tab, else Meralco where it serves. */
+function usePower(place: Place, chosen: Record<string, string>) {
+  const region = place.region;
+  const own = useJson<PowerFile>(`power/${region}.json`);
+  const ncr = useJson<PowerFile>(MERALCO_REGIONS.has(region) && region !== NCR ? `power/${NCR}.json` : null);
+  const id = chosen[region] ?? (MERALCO_REGIONS.has(region) ? 'MERALCO' : null);
+  const u = [...(ncr.data?.utilities ?? []), ...(own.data?.utilities ?? [])].find((x) => x.id === id);
+  const rate = u ? lastTwo(u.s).last : null;
+  return u && rate != null ? { id: u.id, rate } : null;
+}
+
 function useSide(side: Side, places: PlacesFile, fuel: string) {
+  const { prefs } = usePrefs();
   const source = foodSource(side.place, places.psa);
   const scope = source?.kind === 'da' ? 'ncr' : source?.code ?? null;
   const summary = useJson<SummaryFile>(scope ? `summary/${scope}.json` : null);
@@ -68,6 +82,7 @@ function useSide(side: Side, places: PlacesFile, fuel: string) {
     summary,
     fuel: useFuelHeadline(side.place, side.spot, places, fuel),
     lpg: useLpg(side.place, side.spot, places),
+    power: usePower(side.place, prefs.utility),
     name: placeName(side.place, places, { short: true }),
   };
 }
@@ -77,6 +92,15 @@ function Comparison({ a, b, places, onChange }: { a: Side; b: Side; places: Plac
   const [lines] = useStored<BasketLine[]>(BASKET_KEY, STARTER);
   const A = useSide(a, places, prefs.fuel);
   const B = useSide(b, places, prefs.fuel);
+  const water = useJson<WaterFile>('water.json');
+  // Metro Manila concessionaires only; your pick from the Water tab where both serve
+  const waterAt = (p: Place) => {
+    const list = water.data ? waterProviders(water.data, p.code) : [];
+    const c = list.find((x) => x.id === prefs.waterCo) ?? list[0];
+    return c ? { name: c.name, rate: prefs.sewered ? c.all_in.sewered : c.all_in.unsewered } : null;
+  };
+  const wA = waterAt(a.place);
+  const wB = waterAt(b.place);
 
   const food = useMemo(
     () => compareItems(A.summary.data?.items ?? [], B.summary.data?.items ?? [], prefs.origin),
@@ -138,6 +162,25 @@ function Comparison({ a, b, places, onChange }: { a: Side; b: Side; places: Plac
         </>
       ) : null}
 
+      {A.power || B.power || wA || wB ? (
+        <>
+          <SectionTitle>{t('Bills')}</SectionTitle>
+          <Card>
+            {A.power || B.power ? (
+              <Line title={t('Electricity')} unit="kWh" a={A.power?.rate ?? null} b={B.power?.rate ?? null}
+                sub={[A.power?.id ?? '—', B.power?.id ?? '—'].join(' · ')} />
+            ) : null}
+            {wA || wB ? (
+              <Line title={t('Water')} unit="cu.m" a={wA?.rate ?? null} b={wB?.rate ?? null}
+                sub={[wA?.name ?? '—', wB?.name ?? '—'].join(' · ')} />
+            ) : null}
+          </Card>
+          <Text style={s.source}>
+            {t('Electricity: residential rate of the utility you picked in the Electricity tab (Meralco where it serves). Water: Metro Manila concessionaires only, average all-in tariff.')}
+          </Text>
+        </>
+      ) : null}
+
       {A.summary.loading || B.summary.loading ? <Loading /> : (
         <>
           {A.scope && A.scope === B.scope ? (
@@ -172,7 +215,7 @@ function priceMap(file: SummaryFile, origin: OriginPref) {
   return out;
 }
 
-function Line({ title, unit, a, b }: { title: string; unit: string; a: number | null; b: number | null }) {
+function Line({ title, unit, a, b, sub }: { title: string; unit: string; a: number | null; b: number | null; sub?: string }) {
   const win = cheaper(a, b);
   const cell = (v: number | null, side: 'a' | 'b') => (
     <Text style={[s.cell, win === side && s.win]}>{v == null ? '—' : peso(v)}</Text>
@@ -181,7 +224,7 @@ function Line({ title, unit, a, b }: { title: string; unit: string; a: number | 
     <View style={s.line}>
       <View style={s.headItem}>
         <Text style={s.title} numberOfLines={3}>{title}</Text>
-        <Text style={s.unit}>{UNIT_LABEL[unit] ?? ''}</Text>
+        <Text style={s.unit}>{UNIT_LABEL[unit] ?? `/${unit}`}{sub ? ` · ${sub}` : ''}</Text>
       </View>
       {cell(a, 'a')}
       {cell(b, 'b')}
