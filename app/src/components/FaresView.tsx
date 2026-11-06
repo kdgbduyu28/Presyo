@@ -5,6 +5,7 @@ import { fare, FaresFile } from '../lib/bills';
 import { useJson } from '../lib/data';
 import { peso, periodLabel } from '../lib/format';
 import { usePrefs } from '../lib/prefs';
+import { t } from '../i18n';
 import { C, R, themed } from '../theme';
 import { Card, Chips, Columns, Loading, Notice, SectionTitle } from './bits';
 
@@ -16,13 +17,13 @@ export function FaresView({ wide }: { wide?: boolean }) {
   const { prefs, set } = usePrefs();
   const [kmText, setKmText] = useState(String(prefs.fareKm));
   const [matrixMode, setMatrixMode] = useState('jeep');
-  const setKm = (t: string) => {
-    setKmText(t);
-    if (parseFloat(t) > 0) set({ fareKm: parseFloat(t) });
+  const setKm = (v: string) => {
+    setKmText(v);
+    if (parseFloat(v) > 0) set({ fareKm: parseFloat(v) });
   };
 
   if (file.loading) return <Loading />;
-  if (!file.data) return <Notice tone="warn">Fares aren't available right now.</Notice>;
+  if (!file.data) return <Notice tone="warn">{t("Fares aren't available right now.")}</Notice>;
   const f = file.data;
   const km = parseFloat(kmText);
   const opts = { rounding: f.rounding, discountPct: prefs.fareDiscount ? f.discount.pct : 0 };
@@ -31,18 +32,18 @@ export function FaresView({ wide }: { wide?: boolean }) {
   const trip = (
     <>
       <Notice>{f.status}</Notice>
-      <SectionTitle>Your trip</SectionTitle>
+      <SectionTitle>{t('Your trip')}</SectionTitle>
       <Card style={{ padding: 16 }}>
         <View style={s.inputRow}>
-          <Text style={s.label}>Distance</Text>
+          <Text style={s.label}>{t('Distance')}</Text>
           <TextInput value={kmText} onChangeText={setKm} keyboardType="decimal-pad" style={s.input}
-            accessibilityLabel="Trip distance in kilometers" selectTextOnFocus />
+            accessibilityLabel={t('Trip distance in kilometers')} selectTextOnFocus />
           <Text style={s.label}>km</Text>
         </View>
         <View style={s.inputRow}>
-          <Text style={[s.label, { flex: 1 }]}>{f.discount.who} ({f.discount.pct}% off)</Text>
+          <Text style={[s.label, { flex: 1 }]}>{t(f.discount.who)} ({t('{n}% off', { n: f.discount.pct })})</Text>
           <Switch value={prefs.fareDiscount} onValueChange={(v) => set({ fareDiscount: v })}
-            trackColor={{ true: C.primary, false: C.line }} accessibilityLabel="Discounted fare" />
+            trackColor={{ true: C.primary, false: C.line }} accessibilityLabel={t('Discounted fare')} />
         </View>
       </Card>
       <Card>
@@ -53,15 +54,15 @@ export function FaresView({ wide }: { wide?: boolean }) {
           return (
             <View key={m.id} style={s.row}>
               <View style={{ flex: 1 }}>
-                <Text style={s.rowName}>{m.name}</Text>
+                <Text style={s.rowName}>{t(m.name)}</Text>
                 <Text style={s.rowSub}>
-                  {peso(m.base)} first {m.base_km} km, then {peso(m.per_km)}/km
+                  {t('{base} first {km} km, then {perKm}/km', { base: peso(m.base), km: m.base_km, perKm: peso(m.per_km) })}
                 </Text>
               </View>
               <View style={{ alignItems: 'flex-end' }}>
                 <Text style={s.rowPrice}>{now == null ? '—' : peso(now)}</Text>
                 {before != null && now != null && before !== now ? (
-                  <Text style={s.was}>was {peso(before)}</Text>
+                  <Text style={s.was}>{t('was {amount}', { amount: peso(before) })}</Text>
                 ) : null}
               </View>
             </View>
@@ -69,21 +70,20 @@ export function FaresView({ wide }: { wide?: boolean }) {
         })}
       </Card>
       <Text style={s.source}>
-        LTFRB fares effective {periodLabel(f.effective)}, {f.effective.slice(0, 4)}. Fares are rounded to the
-        nearest 25 centavos, like the official fare matrix. Taxi, UV Express and TNVS fares aren't included yet.
+        {t("LTFRB fares effective {date}, {year}. Fares are rounded to the nearest 25 centavos, like the official fare matrix. Taxi, UV Express and TNVS fares aren't included yet.", { date: periodLabel(f.effective), year: f.effective.slice(0, 4) })}
       </Text>
     </>
   );
 
   const matrix = (
     <>
-      <SectionTitle>Fare matrix</SectionTitle>
-      <Chips options={f.modes.map((m) => ({ id: m.id, label: m.name }))} value={mode.id} onChange={setMatrixMode} />
+      <SectionTitle>{t('Fare matrix')}</SectionTitle>
+      <Chips options={f.modes.map((m) => ({ id: m.id, label: t(m.name) }))} value={mode.id} onChange={setMatrixMode} />
       <Card>
         <View style={[s.mRow, s.mHead]}>
           <Text style={[s.mCell, s.mHeadText]}>km</Text>
-          <Text style={[s.mCell, s.mHeadText, s.mNum]}>Regular</Text>
-          <Text style={[s.mCell, s.mHeadText, s.mNum]}>Discounted</Text>
+          <Text style={[s.mCell, s.mHeadText, s.mNum]}>{t('Regular')}</Text>
+          <Text style={[s.mCell, s.mHeadText, s.mNum]}>{t('Discounted')}</Text>
         </View>
         {MATRIX_KM.map((k) => (
           <Pressable key={k} onPress={() => setKm(String(k))}

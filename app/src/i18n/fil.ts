@@ -171,6 +171,65 @@ export const fil: Record<string, string> = {
   'At {price}/L. Mileage: ~10–14 km/L for a small car, 30–40 for a motorcycle.':
     'Sa {price}/L. Mileage: ~10–14 km/L sa maliit na kotse, 30–40 sa motorsiklo.',
 
+  // Electricity
+  'No electricity rates for this region yet.': 'Wala pang singil sa kuryente para sa rehiyong ito.',
+  'Your utility': 'Utility mo',
+  'Private utility': 'Pribadong utility',
+  'Electric cooperative': 'Electric cooperative',
+  'Residential rate, all charges · vs previous month': 'Singil sa bahay, lahat ng bayarin · kumpara sa nakaraang buwan',
+  'Monthly use': 'Gamit bawat buwan',
+  'Monthly use in kWh': 'Gamit bawat buwan sa kWh',
+  "{month} bill from Meralco's rate table: all charges, VAT and 0.5% franchise tax (varies by city).":
+    'Bill noong {month} mula sa rate table ng Meralco: lahat ng bayarin, VAT at 0.5% franchise tax (iba-iba bawat lungsod).',
+  'Check “kWh used” on your bill. A typical home uses 150–250 kWh a month.':
+    'Tingnan ang “kWh used” sa bill mo. Karaniwang 150–250 kWh bawat buwan ang gamit ng isang bahay.',
+  "Pick your electric utility below. It's printed at the top of your bill.":
+    'Piliin ang electric utility mo sa ibaba. Nakasulat ito sa itaas ng bill mo.',
+  '{region} utilities · lowest rate first': 'Mga utility sa {region} · pinakamura muna',
+  'DOE electricity rates per distribution utility (residential). Tap a utility to make it yours.':
+    'Singil sa kuryente ng DOE bawat distribution utility (pambahay). I-tap ang utility para gawin itong iyo.',
+
+  // Water
+  "Water rates aren't available right now.": 'Hindi available ang singil sa tubig ngayon.',
+  "Presyo covers Metro Manila's two water concessionaires (and the Rizal and Cavite towns they serve). Elsewhere, your local water district sets its own rates; these are shown for reference.":
+    'Sakop ng Presyo ang dalawang water concessionaire ng Metro Manila (at ang mga bayan sa Rizal at Cavite na sineserbisyuhan nila). Sa ibang lugar, ang local water district ang nagtatakda ng singil; pang-reference lang ang mga ito.',
+  'Both concessionaires serve parts of {place}. Your bill says which one is yours.':
+    'Parehong concessionaire ang nagseserbisyo sa ilang bahagi ng {place}. Nakasulat sa bill mo kung alin ang sa iyo.',
+  'MWSS Regulatory Office rates as reported when announced (last checked {date}). Tap an adjustment for the announcement.':
+    'Singil ng MWSS Regulatory Office ayon sa anunsiyo (huling sinuri noong {date}). I-tap ang adjustment para sa anunsiyo.',
+  'Average all-in tariff since {month}': 'Average na all-in tariff mula {month}',
+  'vs {year}': 'kumpara sa {year}',
+  'Average across all customer types, before the quarterly adjustments below. Households pay less per cu.m: the first 10 cu.m is a minimum charge, and rates rise with use.':
+    'Average ng lahat ng uri ng customer, bago ang quarterly adjustment sa ibaba. Mas mababa ang bayad ng bahay bawat cu.m: minimum charge ang unang 10 cu.m, at tumataas ang singil habang lumalaki ang gamit.',
+  'Connected to the sewer line (sewerage charge on your bill)': 'Nakakonekta sa sewer line (may sewerage charge sa bill mo)',
+  'Sewered connection': 'May sewer na koneksiyon',
+  'Quarterly adjustments': 'Quarterly adjustment',
+  Bill: 'Bill',
+  '{amount} at {n} cu.m': '{amount} sa {n} cu.m',
+  '4Ps beneficiaries and other qualified households using up to 20 cu.m a month get reduced rates and are exempt from the FCDA. Ask {company} about its lifeline program.':
+    'Mas mababa ang singil sa mga benepisyaryo ng 4Ps at iba pang kuwalipikadong bahay na gumagamit ng hanggang 20 cu.m bawat buwan, at exempted sila sa FCDA. Magtanong sa {company} tungkol sa lifeline program nito.',
+
+  // Fares
+  "Fares aren't available right now.": 'Hindi available ang pamasahe ngayon.',
+  'Your trip': 'Biyahe mo',
+  Distance: 'Layo',
+  'Trip distance in kilometers': 'Layo ng biyahe sa kilometro',
+  'Students, senior citizens and persons with disabilities': 'Estudyante, senior citizen at PWD',
+  '{n}% off': '{n}% diskuwento',
+  'Discounted fare': 'May diskuwentong pamasahe',
+  '{base} first {km} km, then {perKm}/km': '{base} sa unang {km} km, tapos {perKm}/km',
+  'was {amount}': 'dating {amount}',
+  "LTFRB fares effective {date}, {year}. Fares are rounded to the nearest 25 centavos, like the official fare matrix. Taxi, UV Express and TNVS fares aren't included yet.":
+    'Pamasahe ng LTFRB mula {date}, {year}. Ini-round sa pinakamalapit na 25 sentimo, gaya ng opisyal na fare matrix. Hindi pa kasama ang taxi, UV Express at TNVS.',
+  'Fare matrix': 'Fare matrix',
+  Regular: 'Regular',
+  Discounted: 'May diskuwento',
+  'Jeepney (traditional)': 'Jeep (tradisyonal)',
+  'Modern jeepney': 'Modern jeep',
+  'City bus (ordinary)': 'City bus (ordinary)',
+  'City bus (aircon)': 'City bus (aircon)',
+  'Provincial bus (ordinary)': 'Provincial bus (ordinary)',
+
   // Location picker
   'Use my location': 'Gamitin ang lokasyon ko',
   'You can search for your city instead.': 'Puwede mong hanapin na lang ang lungsod mo.',

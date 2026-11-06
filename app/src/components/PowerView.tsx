@@ -6,6 +6,7 @@ import { useJson } from '../lib/data';
 import { lastTwo, peso, periodLabel } from '../lib/format';
 import { NCR, Place, PlacesFile } from '../lib/places';
 import { usePrefs } from '../lib/prefs';
+import { t } from '../i18n';
 import { C, R, themed } from '../theme';
 import { Chart } from './Chart';
 import { Card, Delta, Loading, Notice, SectionTitle } from './bits';
@@ -26,9 +27,9 @@ export function PowerView({ place, places }: { place: Place; places: PlacesFile 
   const { prefs, set } = usePrefs();
   const choice = prefs.utility;
   const [kwh, setKwhText] = useState(String(prefs.kwh));
-  const setKwh = (t: string) => {
-    setKwhText(t);
-    if (parseFloat(t) > 0) set({ kwh: parseFloat(t) }); // remembered in Settings
+  const setKwh = (v: string) => {
+    setKwhText(v);
+    if (parseFloat(v) > 0) set({ kwh: parseFloat(v) }); // remembered in Settings
   };
 
   const file = useMemo(() => {
@@ -38,7 +39,7 @@ export function PowerView({ place, places }: { place: Place; places: PlacesFile 
   }, [own.data, ncr.data]);
 
   if (own.loading) return <Loading />;
-  if (!file?.utilities.length) return <Notice tone="warn">No electricity rates for this region yet.</Notice>;
+  if (!file?.utilities.length) return <Notice tone="warn">{t('No electricity rates for this region yet.')}</Notice>;
 
   const latest = (u: Utility) => lastTwo(u.s);
   const ranked = file.utilities
@@ -59,27 +60,27 @@ export function PowerView({ place, places }: { place: Place; places: PlacesFile 
     <View>
       {chosen ? (
         <>
-          <SectionTitle>Your utility · {periodLabel(file.periods[chosen.lastIdx])}</SectionTitle>
+          <SectionTitle>{t('Your utility')} · {periodLabel(file.periods[chosen.lastIdx])}</SectionTitle>
           <Card style={{ padding: 16 }}>
             <Text style={s.du}>{chosen.u.name ?? chosen.u.id}</Text>
-            <Text style={s.duType}>{TYPE_LABEL[chosen.u.type ?? ''] ?? chosen.u.type}</Text>
+            <Text style={s.duType}>{TYPE_LABEL[chosen.u.type ?? ''] ? t(TYPE_LABEL[chosen.u.type ?? '']) : chosen.u.type}</Text>
             <View style={s.big}>
               <Text style={s.bigPrice}>{peso(chosen.last as number)}<Text style={s.bigUnit}>/kWh</Text></Text>
               <Delta last={chosen.last} prev={chosen.prev} />
             </View>
-            <Text style={s.caption}>Residential rate, all charges · vs previous month</Text>
+            <Text style={s.caption}>{t('Residential rate, all charges · vs previous month')}</Text>
             <View style={s.bill}>
-              <Text style={s.billLabel}>Monthly use</Text>
+              <Text style={s.billLabel}>{t('Monthly use')}</Text>
               <TextInput value={kwh} onChangeText={setKwh} keyboardType="number-pad" style={s.input}
-                accessibilityLabel="Monthly use in kWh" selectTextOnFocus />
+                accessibilityLabel={t('Monthly use in kWh')} selectTextOnFocus />
               <Text style={s.billLabel}>kWh  ≈</Text>
               <Text style={s.billValue}>{merBill != null ? peso(merBill) : k > 0 ? peso(k * (chosen.last as number)) : '—'}</Text>
             </View>
             <Text style={s.caption}>
               {merBill != null && mer
-                ? `${periodLabel(mer.month)} bill from Meralco's rate table: all charges, VAT and 0.5% franchise tax (varies by city). `
+                ? `${t("{month} bill from Meralco's rate table: all charges, VAT and 0.5% franchise tax (varies by city).", { month: periodLabel(mer.month) })} `
                 : ''}
-              Check “kWh used” on your bill. A typical home uses 150–250 kWh a month.
+              {t('Check “kWh used” on your bill. A typical home uses 150–250 kWh a month.')}
             </Text>
             <View style={{ marginTop: 14 }}>
               <Chart periods={file.periods} values={chosen.u.s} height={130} />
@@ -87,10 +88,10 @@ export function PowerView({ place, places }: { place: Place; places: PlacesFile 
           </Card>
         </>
       ) : (
-        <Notice>Pick your electric utility below. It's printed at the top of your bill.</Notice>
+        <Notice>{t("Pick your electric utility below. It's printed at the top of your bill.")}</Notice>
       )}
 
-      <SectionTitle>{region} utilities · lowest rate first</SectionTitle>
+      <SectionTitle>{t('{region} utilities · lowest rate first', { region })}</SectionTitle>
       <Card>
         {ranked.map(({ u, last, prev, lastIdx }) => (
           <Pressable key={u.id} onPress={() => pick(u.id)} style={({ pressed }) => [s.row, pressed && { backgroundColor: C.bg }]}
@@ -100,7 +101,7 @@ export function PowerView({ place, places }: { place: Place; places: PlacesFile 
                 {u.id === chosenId ? '● ' : ''}{u.id}
               </Text>
               <Text style={s.rowSub} numberOfLines={1}>
-                {[u.name && u.name !== u.id ? u.name : null, TYPE_LABEL[u.type ?? ''] ?? u.type,
+                {[u.name && u.name !== u.id ? u.name : null, TYPE_LABEL[u.type ?? ''] ? t(TYPE_LABEL[u.type ?? '']) : u.type,
                   periodLabel(file.periods[lastIdx])].filter(Boolean).join(' · ')}
               </Text>
             </View>
@@ -111,7 +112,7 @@ export function PowerView({ place, places }: { place: Place; places: PlacesFile 
           </Pressable>
         ))}
       </Card>
-      <Text style={s.source}>DOE electricity rates per distribution utility (residential). Tap a utility to make it yours.</Text>
+      <Text style={s.source}>{t('DOE electricity rates per distribution utility (residential). Tap a utility to make it yours.')}</Text>
     </View>
   );
 }
