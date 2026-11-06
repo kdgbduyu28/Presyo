@@ -4,6 +4,7 @@ import { Pressable, Text, TextInput, View } from 'react-native';
 import { peso } from '../lib/format';
 import { usePrefs } from '../lib/prefs';
 import { useWatch } from '../lib/watch';
+import { t } from '../i18n';
 import { C, R, themed } from '../theme';
 
 /** "Tell me when it's ₱X or less": a target kept on this device. Today shows
@@ -38,15 +39,15 @@ export function AlertControl({ id, current, unit }: { id: string; current: numbe
     return (
       <View style={[s.box, met && { borderColor: C.down, backgroundColor: C.downBg }]}>
         <Text style={s.text}>
-          🔔 {met ? 'Target reached: ' : 'Alert at '}<Text style={s.bold}>{peso(target)}{per}</Text>
-          {met ? ' — it’s at or below your price now.' : ' or less. Shows on Today when it drops there.'}
+          🔔 {met ? t('Target reached:') : t('Alert at')} <Text style={s.bold}>{peso(target)}{per}</Text>
+          {' '}{met ? t('— it’s at or below your price now.') : t('or less. Shows on Today when it drops there.')}
         </Text>
         <View style={s.actions}>
           <Pressable onPress={() => { setDraft(String(target)); setEditing(true); }} hitSlop={6} accessibilityRole="button">
-            <Text style={s.link}>Change</Text>
+            <Text style={s.link}>{t('Change')}</Text>
           </Pressable>
           <Pressable onPress={remove} hitSlop={6} accessibilityRole="button">
-            <Text style={s.link}>Remove</Text>
+            <Text style={s.link}>{t('Remove')}</Text>
           </Pressable>
         </View>
       </View>
@@ -56,25 +57,25 @@ export function AlertControl({ id, current, unit }: { id: string; current: numbe
     return (
       <Pressable onPress={() => { setDraft(current ? String(Math.floor(current * 0.95)) : ''); setEditing(true); }}
         style={s.add} accessibilityRole="button">
-        <Text style={s.addText}>🔔 Alert me when it drops</Text>
+        <Text style={s.addText}>🔔 {t('Alert me when it drops')}</Text>
       </Pressable>
     );
   }
   return (
     <View style={s.box}>
-      <Text style={s.text}>Tell me when it’s at or below:</Text>
+      <Text style={s.text}>{t('Tell me when it’s at or below:')}</Text>
       <View style={s.row}>
         <Text style={s.peso}>₱</Text>
         <TextInput value={draft} onChangeText={setDraft} keyboardType="decimal-pad" style={s.input} autoFocus
-          onSubmitEditing={save} accessibilityLabel="Target price in pesos" selectTextOnFocus />
+          onSubmitEditing={save} accessibilityLabel={t('Target price in pesos')} selectTextOnFocus />
         <Pressable onPress={save} style={s.save} accessibilityRole="button">
-          <Text style={s.saveText}>Set alert</Text>
+          <Text style={s.saveText}>{t('Set alert')}</Text>
         </Pressable>
         <Pressable onPress={() => setEditing(false)} hitSlop={6} accessibilityRole="button">
-          <Text style={s.link}>Cancel</Text>
+          <Text style={s.link}>{t('Cancel')}</Text>
         </Pressable>
       </View>
-      {current != null ? <Text style={s.hint}>Now {peso(current)}{per}</Text> : null}
+      {current != null ? <Text style={s.hint}>{t('Now {price}', { price: `${peso(current)}${per}` })}</Text> : null}
     </View>
   );
 }

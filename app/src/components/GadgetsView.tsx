@@ -6,6 +6,7 @@ import { peso, periodLabel } from '../lib/format';
 import { abroadRows, bestOffer, gadgetId, installment, money } from '../lib/gadgets';
 import { usePrefs } from '../lib/prefs';
 import { useWatch } from '../lib/watch';
+import { t } from '../i18n';
 import { C, R, themed } from '../theme';
 import { AlertControl } from './AlertControl';
 import { StepChart } from './Chart';
@@ -29,7 +30,7 @@ export function GadgetsView({ wide }: { wide?: boolean }) {
   const [open, setOpen] = useState(false);
 
   if (idx.loading) return <Loading />;
-  if (!idx.data?.models.length) return <Notice tone="warn">Gadget prices aren't available right now.</Notice>;
+  if (!idx.data?.models.length) return <Notice tone="warn">{t("Gadget prices aren't available right now.")}</Notice>;
   const data = idx.data;
   const { models, stores, categories } = data;
   const cat = categories.some((c) => c.id === prefs.gadgetCat) ? prefs.gadgetCat : categories[0].id;
@@ -48,27 +49,27 @@ export function GadgetsView({ wide }: { wide?: boolean }) {
     const on = wide && m.key === selected?.key;
     const below = m.srp && m.from && m.from < m.srp ? m.srp - m.from : 0;
     const badge = m.deal
-      ? `▼ ${pct(m.deal.pct)} at ${storeName(m.deal.store)}`
-      : m.low30 ? 'Lowest in 30 days' : below ? `${whole(below)} below Apple` : null;
+      ? `▼ ${t('{pct} at {store}', { pct: pct(m.deal.pct), store: storeName(m.deal.store) })}`
+      : m.low30 ? t('Lowest in 30 days') : below ? t('{amount} below Apple', { amount: whole(below) }) : null;
     return (
       <Pressable key={m.key} onPress={() => pick(m)}
         style={({ pressed }) => [s.row, (pressed || on) && { backgroundColor: on ? C.primarySoft : C.bg }]}
         accessibilityRole="button" accessibilityState={{ selected: on }}
-        accessibilityLabel={`${m.name}, ${m.from ? `from ${whole(m.from)}` : 'out of stock'}${badge ? `, ${badge}` : ''}`}>
+        accessibilityLabel={`${m.name}, ${m.from ? t('from {price}', { price: whole(m.from) }) : t('out of stock')}${badge ? `, ${badge}` : ''}`}>
         <View style={{ flex: 1 }}>
           <Text style={[s.name, on && { color: C.primary }]} numberOfLines={2}>{m.name}</Text>
           <Text style={s.sub} numberOfLines={1}>
-            {m.cat === 'games' ? m.specs.join(', ') : m.specs.length > 1 ? `${m.specs.length} versions` : m.specs[0]}
-            {' · '}{m.stores} {m.stores === 1 ? 'store' : 'stores'}
+            {m.cat === 'games' ? m.specs.join(', ') : m.specs.length > 1 ? t('{n} versions', { n: m.specs.length }) : m.specs[0]}
+            {' · '}{m.stores === 1 ? t('1 store') : t('{n} stores', { n: m.stores })}
           </Text>
         </View>
         <View style={{ alignItems: 'flex-end', maxWidth: '50%' }}>
           {m.from ? (
             <>
-              <Text style={s.price}><Text style={s.from}>from </Text>{whole(m.from)}</Text>
+              <Text style={s.price}><Text style={s.from}>{t('from')} </Text>{whole(m.from)}</Text>
               <Text style={[s.sub, badge ? s.good : null]} numberOfLines={1}>{badge ?? storeName(m.from_store)}</Text>
             </>
-          ) : <Text style={s.sub}>Out of stock</Text>}
+          ) : <Text style={s.sub}>{t('Out of stock')}</Text>}
         </View>
       </Pressable>
     );
@@ -76,11 +77,11 @@ export function GadgetsView({ wide }: { wide?: boolean }) {
 
   const list = (
     <>
-      <Chips options={categories.map((c) => ({ id: c.id, label: c.label }))} value={cat}
+      <Chips options={categories.map((c) => ({ id: c.id, label: t(c.label) }))} value={cat}
         onChange={(id) => set({ gadgetCat: id })} />
       {deals.length ? (
         <>
-          <SectionTitle>Price drops, last 2 weeks</SectionTitle>
+          <SectionTitle>{t('Price drops, last 2 weeks')}</SectionTitle>
           <Card>{deals.slice(0, 5).map(modelRow)}</Card>
         </>
       ) : null}
@@ -91,9 +92,9 @@ export function GadgetsView({ wide }: { wide?: boolean }) {
         </View>
       ))}
       <Text style={s.source}>
-        Prices from the stores’ own websites ({stores.map((st) => st.name).join(', ')}), checked twice a day
-        (last {periodLabel(data.end)}). “From” is the lowest price of one in stock. Presyo is not affiliated with
-        these stores.
+        {t('Prices from the stores’ own websites ({stores}), checked twice a day (last {date}). “From” is the lowest price of one in stock. Presyo is not affiliated with these stores.', {
+          stores: stores.map((st) => st.name).join(', '), date: periodLabel(data.end),
+        })}
       </Text>
     </>
   );
@@ -137,7 +138,7 @@ export function GadgetDetail({ modelKey, index }: { modelKey: string; index: Gad
   }, [file.data]);
 
   if (file.loading) return <Loading />;
-  if (!file.data) return <Notice tone="warn">Couldn't load prices ({file.error}).</Notice>;
+  if (!file.data) return <Notice tone="warn">{t("Couldn't load prices ({error}).", { error: file.error ?? '' })}</Notice>;
   const { variants, end } = file.data;
   const variant = variants.find((v) => v.spec === prefs.gadgetSpec) ?? variants[0];
   const best = bestOffer(variant);
@@ -156,7 +157,7 @@ export function GadgetDetail({ modelKey, index }: { modelKey: string; index: Gad
       {variants.length > 1 ? (
         <View style={{ marginHorizontal: -16 }}>
           <Chips options={variants.map((v) => ({
-            id: v.spec, label: v.spec, hint: lowest[v.spec] ? whole(lowest[v.spec]) : 'out of stock',
+            id: v.spec, label: v.spec, hint: lowest[v.spec] ? whole(lowest[v.spec]) : t('out of stock'),
           }))} value={variant.spec} onChange={(spec) => set({ gadgetSpec: spec })} />
         </View>
       ) : null}
@@ -164,14 +165,14 @@ export function GadgetDetail({ modelKey, index }: { modelKey: string; index: Gad
       <View style={s.actionsRow}>
         <Pressable onPress={() => watch.toggle(id)} style={[s.star, starred && s.starOn]} hitSlop={6}
           accessibilityRole="button" accessibilityState={{ selected: starred }}>
-          <Text style={[s.starText, starred && { color: C.onPrimary }]}>{starred ? '★ On Today' : '☆ Show on Today'}</Text>
+          <Text style={[s.starText, starred && { color: C.onPrimary }]}>{starred ? `★ ${t('On Today')}` : `☆ ${t('Show on Today')}`}</Text>
         </Pressable>
       </View>
       <View style={{ marginBottom: 12 }}>
         <AlertControl id={id} current={best?.price ?? null} />
       </View>
 
-      <Text style={s.h}>Prices now · {variant.spec}</Text>
+      <Text style={s.h}>{t('Prices now')} · {variant.spec}</Text>
       {variant.offers.map((o) => (
         <OfferRow key={o.store} offer={o} name={storeName(o.store)} color={storeColor(stores, o.store)}
           official={!!stores.find((st) => st.id === o.store)?.official}
@@ -180,26 +181,27 @@ export function GadgetDetail({ modelKey, index }: { modelKey: string; index: Gad
 
       {best?.price ? (
         <>
-          <Text style={[s.h, { marginTop: 20 }]}>Installment</Text>
+          <Text style={[s.h, { marginTop: 20 }]}>{t('Installment')}</Text>
           <View style={s.monthRow}>
             {MONTHS.map((n) => (
               <Pressable key={n} onPress={() => setMonths(n)} style={[s.month, months === n && s.monthOn]}
                 accessibilityRole="button" accessibilityState={{ selected: months === n }}>
-                <Text style={[s.monthText, months === n && s.monthTextOn]}>{n} mo</Text>
+                <Text style={[s.monthText, months === n && s.monthTextOn]}>{t('{n} mo', { n })}</Text>
               </Pressable>
             ))}
           </View>
-          <Text style={s.instBig}>{whole(installment(best.price, months))}<Text style={s.from}> /month × {months}</Text></Text>
+          <Text style={s.instBig}>{whole(installment(best.price, months))}<Text style={s.from}> {t('/month × {n}', { n: months })}</Text></Text>
           <Text style={s.caption}>
-            At 0% on {whole(best.price)} ({storeName(best.store)}). Many credit cards offer 0% at these stores for
-            up to 24 months; with a 1%/month add-on it’s {whole(installment(best.price, months, 0.01))}/month.
+            {t('At 0% on {price} ({store}). Many credit cards offer 0% at these stores for up to 24 months; with a 1%/month add-on it’s {monthly}/month.', {
+              price: whole(best.price), store: storeName(best.store), monthly: whole(installment(best.price, months, 0.01)),
+            })}
           </Text>
         </>
       ) : null}
 
       {abroad.length ? (
         <>
-          <Text style={[s.h, { marginTop: 20 }]}>Apple Store abroad · {variant.spec}</Text>
+          <Text style={[s.h, { marginTop: 20 }]}>{t('Apple Store abroad')} · {variant.spec}</Text>
           {abroad.map((r) => (
             <Pressable key={r.country.cc} onPress={() => Linking.openURL(r.url).catch(() => {})} style={s.offer}
               accessibilityRole="link">
@@ -211,27 +213,27 @@ export function GadgetDetail({ modelKey, index }: { modelKey: string; index: Gad
                 <Text style={s.price}>≈ {whole(r.php)}</Text>
                 {r.vsPh != null && Math.abs(r.vsPh) >= 0.005 ? (
                   <Text style={[s.sub, { color: r.vsPh > 0 ? C.down : C.up }]}>
-                    {pct(Math.abs(r.vsPh))} {r.vsPh > 0 ? 'cheaper' : 'dearer'}
+                    {pct(Math.abs(r.vsPh))} {r.vsPh > 0 ? t('cheaper') : t('dearer')}
                   </Text>
                 ) : null}
               </View>
             </Pressable>
           ))}
           <Text style={s.caption}>
-            In pesos at BSP’s reference rate ({periodLabel(abroad[0].country.rate_date)}), compared with{' '}
-            {apple ? 'Apple PH' : 'the lowest PH price'}. Cards add 1–3% on foreign purchases; check that the model
-            works on PH networks before buying abroad.
+            {t('In pesos at BSP’s reference rate ({date}), compared with {base}. Cards add 1–3% on foreign purchases; check that the model works on PH networks before buying abroad.', {
+              date: periodLabel(abroad[0].country.rate_date), base: apple ? 'Apple PH' : t('the lowest PH price'),
+            })}
           </Text>
         </>
       ) : null}
 
-      <Text style={[s.h, { marginTop: 20 }]}>Price history · {variant.spec}</Text>
+      <Text style={[s.h, { marginTop: 20 }]}>{t('Price history')} · {variant.spec}</Text>
       <StepChart start={start} end={end} series={series} />
       <Text style={s.caption}>
         {start === end
-          ? `Presyo started tracking these stores on ${periodLabel(start)}; the lines grow as prices change.`
-          : 'Each line holds a store’s price until it changes; a gap means the store stopped listing it.'}
-        {' '}Press or hover on the chart to read a date’s prices.
+          ? t('Presyo started tracking these stores on {date}; the lines grow as prices change.', { date: periodLabel(start) })
+          : t('Each line holds a store’s price until it changes; a gap means the store stopped listing it.')}
+        {' '}{t('Press or hover on the chart to read a date’s prices.')}
       </Text>
     </View>
   );
@@ -242,33 +244,33 @@ function OfferRow({ offer: o, name, color, official, lowest, apple }: {
 }) {
   const listed = o.price != null;
   const status = !listed
-    ? 'No longer listed'
+    ? t('No longer listed')
     : o.pre
-      ? 'Pre-order'
+      ? t('Pre-order')
       : o.stock === false
-        ? 'Out of stock'
+        ? t('Out of stock')
         : o.stock && o.colors?.length
-          ? `In stock: ${o.colors.join(', ')}`
-          : official ? 'Official price' : 'In stock';
+          ? t('In stock: {colors}', { colors: o.colors.join(', ') })
+          : official ? t('Official price') : t('In stock');
   const off = o.was && o.price ? Math.round((1 - o.price / o.was) * 100) : 0;
   const vsApple = listed && apple && !official ? (o.price as number) - apple : 0;
   return (
     <Pressable disabled={!o.url} onPress={() => o.url && Linking.openURL(o.url).catch(() => {})}
       style={({ pressed }) => [s.offer, pressed && { backgroundColor: C.bg }]}
-      accessibilityRole="link" accessibilityLabel={`${name}: ${listed ? whole(o.price as number) : 'not listed'}, ${status}. Open store`}>
+      accessibilityRole="link" accessibilityLabel={`${name}: ${listed ? whole(o.price as number) : t('not listed')}, ${status}. ${t('Open store')}`}>
       <View style={[s.dot, { backgroundColor: color }]} />
       <View style={{ flex: 1 }}>
         <View style={s.nameLine}>
           <Text style={s.store}>{name}</Text>
-          {official ? <Text style={s.badge}>Official</Text> : null}
-          {lowest ? <Text style={[s.badge, s.badgeBest]}>Lowest</Text> : null}
-          {o.low30 ? <Text style={[s.badge, s.badgeBest]}>30-day low</Text> : null}
+          {official ? <Text style={s.badge}>{t('Official')}</Text> : null}
+          {lowest ? <Text style={[s.badge, s.badgeBest]}>{t('Lowest')}</Text> : null}
+          {o.low30 ? <Text style={[s.badge, s.badgeBest]}>{t('30-day low')}</Text> : null}
         </View>
         <Text style={[s.sub, o.stock === false || !listed ? { color: C.faint } : null]} numberOfLines={2}>
           {status}{o.note ? ` · ${o.note}` : ''}
         </Text>
         {o.drop && o.since ? (
-          <Text style={[s.sub, s.good]}>▼ {whole(o.drop)} on {periodLabel(o.since)}</Text>
+          <Text style={[s.sub, s.good]}>▼ {t('{amount} on {date}', { amount: whole(o.drop), date: periodLabel(o.since) })}</Text>
         ) : null}
       </View>
       <View style={{ alignItems: 'flex-end' }}>
@@ -280,7 +282,7 @@ function OfferRow({ offer: o, name, color, official, lowest, apple }: {
         ) : null}
         {vsApple ? (
           <Text style={[s.sub, { color: vsApple < 0 ? C.down : C.up }]}>
-            {whole(Math.abs(vsApple))} {vsApple < 0 ? 'below' : 'above'} Apple
+            {vsApple < 0 ? t('{amount} below Apple', { amount: whole(Math.abs(vsApple)) }) : t('{amount} above Apple', { amount: whole(Math.abs(vsApple)) })}
           </Text>
         ) : null}
       </View>
