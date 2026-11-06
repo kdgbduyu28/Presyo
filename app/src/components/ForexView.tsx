@@ -5,6 +5,7 @@ import { fxPer } from '../lib/bills';
 import { useJson } from '../lib/data';
 import { lastTwo, peso, periodLabel } from '../lib/format';
 import { usePrefs } from '../lib/prefs';
+import { t } from '../i18n';
 import { C, R, themed } from '../theme';
 import { Chart } from './Chart';
 import { Card, Chips, Columns, Delta, Loading, Notice, SectionTitle } from './bits';
@@ -36,7 +37,7 @@ export function ForexView({ wide }: { wide?: boolean }) {
   }, [fx.data]);
 
   if (fx.loading) return <Loading />;
-  if (!fx.data?.currencies.length) return <Notice tone="warn">Exchange rates aren't available right now.</Notice>;
+  if (!fx.data?.currencies.length) return <Notice tone="warn">{t("Exchange rates aren't available right now.")}</Notice>;
   const { periods, currencies, bsp } = fx.data;
 
   const code = currencies.some((c) => c.code === prefs.fx) ? prefs.fx : 'USD';
@@ -48,14 +49,14 @@ export function ForexView({ wide }: { wide?: boolean }) {
 
   const converter = (
     <>
-      <SectionTitle>Convert · BSP rate {periodLabel(periods[lastIdx])}</SectionTitle>
+      <SectionTitle>{t('Convert · BSP rate {date}', { date: periodLabel(periods[lastIdx]) })}</SectionTitle>
       <Card style={{ padding: 16 }}>
         <View style={s.convRow}>
           <TextInput value={amount} onChangeText={setAmount} keyboardType="decimal-pad" style={s.input}
-            accessibilityLabel={`Amount in ${toPeso ? code : 'pesos'}`} selectTextOnFocus />
+            accessibilityLabel={t('Amount in {currency}', { currency: toPeso ? code : t('pesos') })} selectTextOnFocus />
           <Text style={s.convUnit}>{toPeso ? code : 'PHP'}</Text>
           <Pressable onPress={() => setToPeso((v) => !v)} style={s.swap} hitSlop={8}
-            accessibilityRole="button" accessibilityLabel="Swap direction">
+            accessibilityRole="button" accessibilityLabel={t('Swap direction')}>
             <Text style={s.swapText}>⇄</Text>
           </Pressable>
         </View>
@@ -72,14 +73,13 @@ export function ForexView({ wide }: { wide?: boolean }) {
         </View>
         <Chart periods={periods} values={cur.s.map((v) => (v == null ? null : v * per))} height={130} />
         <Text style={s.caption}>
-          Pesos per {per > 1 ? `${per.toLocaleString()} ` : ''}{code}. Banks and money changers buy lower and sell higher
-          than this reference rate.
+          {t('Pesos per {unit}. Banks and money changers buy lower and sell higher than this reference rate.', { unit: `${per > 1 ? `${per.toLocaleString()} ` : ''}${code}` })}
         </Text>
       </Card>
 
       {bsp.bsp_ref ? (
         <>
-          <SectionTitle>US dollar at BSP · {bsp.date ? periodLabel(bsp.date) : ''}</SectionTitle>
+          <SectionTitle>{t('US dollar at BSP')} · {bsp.date ? periodLabel(bsp.date) : ''}</SectionTitle>
           <Card>
             {[
               ['Reference rate', bsp.bsp_ref],
@@ -87,13 +87,13 @@ export function ForexView({ wide }: { wide?: boolean }) {
               ['BSP selling (T/T)', bsp.bsp_sell],
             ].map(([label, v]) => v ? (
               <View key={label as string} style={s.row}>
-                <Text style={s.rowName}>{label}</Text>
+                <Text style={s.rowName}>{t(label as string)}</Text>
                 <Text style={s.rowPrice}>{peso(v as number)}</Text>
               </View>
             ) : null)}
             {bsp.gold_usd ? (
               <View style={s.row}>
-                <Text style={s.rowName}>Gold, BSP buying</Text>
+                <Text style={s.rowName}>{t('Gold, BSP buying')}</Text>
                 <Text style={s.rowPrice}>${money(bsp.gold_usd)}<Text style={s.unit}>/oz</Text></Text>
               </View>
             ) : null}
@@ -105,7 +105,7 @@ export function ForexView({ wide }: { wide?: boolean }) {
 
   const list = (
     <>
-      <SectionTitle>All currencies · pesos per unit</SectionTitle>
+      <SectionTitle>{t('All currencies · pesos per unit')}</SectionTitle>
       <Card>
         {currencies.map((c) => {
           const l = latest[c.code];
@@ -118,7 +118,7 @@ export function ForexView({ wide }: { wide?: boolean }) {
               accessibilityRole="button" accessibilityState={{ selected: on }}>
               <View style={{ flex: 1 }}>
                 <Text style={[s.rowName, on && { color: C.primary }]}>{on ? '● ' : ''}{c.code}</Text>
-                <Text style={s.rowSub} numberOfLines={1}>{c.name}{k > 1 ? ` · per ${k.toLocaleString()}` : ''}</Text>
+                <Text style={s.rowSub} numberOfLines={1}>{c.name}{k > 1 ? ` · ${t('per {n}', { n: k.toLocaleString() })}` : ''}</Text>
               </View>
               <View style={{ alignItems: 'flex-end' }}>
                 <Text style={s.rowPrice}>{peso(l.last * k)}</Text>
@@ -129,8 +129,7 @@ export function ForexView({ wide }: { wide?: boolean }) {
         })}
       </Card>
       <Text style={s.source}>
-        BSP Reference Exchange Rate Bulletin: rates as of the previous trading day (USD is the weighted average of
-        the peso–dollar market). Change is vs the trading day before.
+        {t('BSP Reference Exchange Rate Bulletin: rates as of the previous trading day (USD is the weighted average of the peso–dollar market). Change is vs the trading day before.')}
       </Text>
     </>
   );

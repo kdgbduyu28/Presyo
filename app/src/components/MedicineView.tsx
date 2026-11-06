@@ -3,6 +3,7 @@ import { Linking, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { MedicineFile, MedicineItem, useJson } from '../lib/data';
 import { peso, periodLabel } from '../lib/format';
+import { t } from '../i18n';
 import { C, R, themed } from '../theme';
 import { Card, Chips, Loading, Notice, SectionTitle } from './bits';
 
@@ -44,42 +45,42 @@ export function MedicineView() {
   }, [data, q, mode]);
 
   if (loading) return <Loading />;
-  if (!data?.items.length) return <Notice tone="warn">Medicine prices aren't available right now{error ? ` (${error})` : ''}.</Notice>;
+  if (!data?.items.length) return <Notice tone="warn">{t("Medicine prices aren't available right now")}{error ? ` (${error})` : ''}.</Notice>;
 
   return (
     <View>
       <View style={s.searchBox}>
-        <TextInput value={q} onChangeText={setQ} placeholder="Search a medicine, e.g. losartan 50 mg"
-          placeholderTextColor={C.faint} style={s.search} accessibilityLabel="Search medicines" autoCorrect={false}
+        <TextInput value={q} onChangeText={setQ} placeholder={t('Search a medicine, e.g. losartan 50 mg')}
+          placeholderTextColor={C.faint} style={s.search} accessibilityLabel={t('Search medicines')} autoCorrect={false}
           clearButtonMode="while-editing" />
       </View>
       {!q ? (
         <Chips options={[
-          { id: 'common', label: 'Common' },
-          { id: 'mrp', label: 'Price-capped (MRP)' },
-          { id: 'all', label: `All ${data.items.length}` },
+          { id: 'common', label: t('Common') },
+          { id: 'mrp', label: t('Price-capped (MRP)') },
+          { id: 'all', label: t('All {n}', { n: data.items.length }) },
         ]} value={mode} onChange={setMode} />
       ) : null}
 
       <SectionTitle>
-        {q ? `${list.length} found` : mode === 'mrp' ? 'Legal maximum retail prices' : mode === 'common' ? 'Common medicines' : 'All medicines'}
-        {' '}· per unit
+        {q ? t('{n} found', { n: list.length }) : mode === 'mrp' ? t('Legal maximum retail prices')
+          : mode === 'common' ? t('Common medicines') : t('All medicines')}
+        {' '}· {t('per unit')}
       </SectionTitle>
       {list.length ? (
         <Card>{list.slice(0, MAX).map((it, i) => <MedRow key={`${it.name}|${it.desc}|${i}`} it={it} />)}</Card>
       ) : (
-        <Notice>No match. DOH lists medicines by generic name (e.g. “paracetamol”, not a brand).</Notice>
+        <Notice>{t('No match. DOH lists medicines by generic name (e.g. “paracetamol”, not a brand).')}</Notice>
       )}
-      {list.length > MAX ? <Text style={s.more}>Showing {MAX} of {list.length}; type more to narrow it down.</Text> : null}
+      {list.length > MAX ? <Text style={s.more}>{t('Showing {n} of {total}; type more to narrow it down.', { n: MAX, total: list.length })}</Text> : null}
 
       <Text style={s.source}>
-        <Text style={s.bold}>Reference price</Text>: the median (and lowest–highest) price government hospitals paid
-        per unit, from DOH’s Drug Price Reference Index
-        {data.dpri ? ` (${periodLabel(data.dpri.date)} ${data.dpri.date.slice(0, 4)})` : ''}. Drugstores usually charge
-        more, but a price far above the highest is worth questioning.{'\n'}
-        <Text style={s.bold}>Legal max (MRP)</Text>: the most a drugstore may charge for a price-regulated medicine
-        {data.mrp ? ` (DOH list of ${periodLabel(data.mrp.date)} ${data.mrp.date.slice(0, 4)})` : ''}. Generic name
-        only; brands may differ.{' '}
+        <Text style={s.bold}>{t('Reference price')}</Text>: {t('the median (and lowest–highest) price government hospitals paid per unit, from DOH’s Drug Price Reference Index')}
+        {data.dpri ? ` (${periodLabel(data.dpri.date)} ${data.dpri.date.slice(0, 4)})` : ''}.{' '}
+        {t('Drugstores usually charge more, but a price far above the highest is worth questioning.')}{'\n'}
+        <Text style={s.bold}>{t('Legal max (MRP)')}</Text>: {t('the most a drugstore may charge for a price-regulated medicine')}
+        {data.mrp ? ` (${t('DOH list of {date}', { date: `${periodLabel(data.mrp.date)} ${data.mrp.date.slice(0, 4)}` })})` : ''}.{' '}
+        {t('Generic name only; brands may differ.')}{' '}
         <Text style={s.link} onPress={() => Linking.openURL('https://dpri.doh.gov.ph/').catch(() => {})}>dpri.doh.gov.ph</Text>
       </Text>
     </View>
@@ -104,12 +105,12 @@ function MedRow({ it }: { it: MedicineItem }) {
             ) : null}
             {change != null && Math.abs(change) >= 0.005 ? (
               <Text style={[s.sub, { color: change > 0 ? C.up : C.down }]}>
-                {change > 0 ? '▲' : '▼'} {Math.abs(change * 100).toFixed(0)}% vs last list
+                {change > 0 ? '▲' : '▼'} {Math.abs(change * 100).toFixed(0)}% {t('vs last list')}
               </Text>
             ) : null}
           </>
         ) : null}
-        {it.mrp != null ? <Text style={s.mrp}>Legal max {peso(it.mrp)}</Text> : null}
+        {it.mrp != null ? <Text style={s.mrp}>{t('Legal max')} {peso(it.mrp)}</Text> : null}
       </View>
     </View>
   );

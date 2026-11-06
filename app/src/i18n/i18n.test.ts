@@ -14,7 +14,8 @@ const TRANSLATED = ['app/index.tsx', 'app/settings.tsx', 'components/TodayView.t
   'components/FoodView.tsx', 'components/Search.tsx', 'components/bits.tsx', 'components/TodayGadgets.tsx',
   'components/FuelExtras.tsx', 'components/ShareImage.tsx', 'components/CompareView.tsx',
   'components/LocationPicker.tsx', 'components/MarketMap.tsx',
-  'components/FuelView.tsx', 'components/PowerView.tsx', 'components/WaterView.tsx', 'components/FaresView.tsx'];
+  'components/FuelView.tsx', 'components/PowerView.tsx', 'components/WaterView.tsx', 'components/FaresView.tsx',
+  'components/ForexView.tsx', 'components/GroceryView.tsx', 'components/MedicineView.tsx'];
 
 /** Every t('...') key in the translated screens, ternary branches included. */
 function keysUsed(): string[] {

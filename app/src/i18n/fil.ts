@@ -230,6 +230,60 @@ export const fil: Record<string, string> = {
   'City bus (aircon)': 'City bus (aircon)',
   'Provincial bus (ordinary)': 'Provincial bus (ordinary)',
 
+  // Forex
+  "Exchange rates aren't available right now.": 'Hindi available ang palitan ng pera ngayon.',
+  'Convert · BSP rate {date}': 'I-convert · BSP rate {date}',
+  'Amount in {currency}': 'Halaga sa {currency}',
+  pesos: 'piso',
+  'Swap direction': 'Baligtarin',
+  'Pesos per {unit}. Banks and money changers buy lower and sell higher than this reference rate.':
+    'Piso bawat {unit}. Mas mababa ang bili at mas mataas ang benta ng bangko at money changer kaysa sa reference rate na ito.',
+  'US dollar at BSP': 'US dollar sa BSP',
+  'Reference rate': 'Reference rate',
+  'BSP buying (T/T)': 'Bili ng BSP (T/T)',
+  'BSP selling (T/T)': 'Benta ng BSP (T/T)',
+  'Gold, BSP buying': 'Ginto, bili ng BSP',
+  'All currencies · pesos per unit': 'Lahat ng pera · piso bawat isa',
+  'per {n}': 'bawat {n}',
+  'BSP Reference Exchange Rate Bulletin: rates as of the previous trading day (USD is the weighted average of the peso–dollar market). Change is vs the trading day before.':
+    'BSP Reference Exchange Rate Bulletin: palitan noong nakaraang trading day (ang USD ay weighted average ng peso–dollar market). Ang pagbabago ay kumpara sa trading day bago nito.',
+
+  // Grocery SRP
+  "Couldn't load grocery prices ({error}).": 'Hindi ma-load ang presyo ng grocery ({error}).',
+  "DTI's suggested retail prices (SRP) for basic goods, nationwide, effective {date} {year}. Stores shouldn't charge more. Report overpricing to the DTI hotline 1-384.":
+    'Suggested retail price (SRP) ng DTI para sa mga pangunahing bilihin sa buong bansa, mula {date} {year}. Hindi dapat lumampas dito ang tindahan. I-report ang overpricing sa DTI hotline 1-384.',
+  'Search: sardinas, kape, pandesal, sabon…': 'Hanapin: sardinas, kape, pandesal, sabon…',
+  'Search grocery items': 'Maghanap ng grocery item',
+  'No item matches “{q}”.': 'Walang item na tugma sa “{q}”.',
+  'DTI Basic Necessities and Prime Commodities SRP bulletin.': 'SRP bulletin ng DTI para sa Basic Necessities at Prime Commodities.',
+
+  // Medicine
+  "Medicine prices aren't available right now": 'Hindi available ang presyo ng gamot ngayon',
+  'Search a medicine, e.g. losartan 50 mg': 'Maghanap ng gamot, hal. losartan 50 mg',
+  'Search medicines': 'Maghanap ng gamot',
+  Common: 'Karaniwan',
+  'Price-capped (MRP)': 'May price cap (MRP)',
+  'All {n}': 'Lahat ({n})',
+  '{n} found': '{n} ang nakita',
+  'Legal maximum retail prices': 'Legal na pinakamataas na presyo',
+  'Common medicines': 'Karaniwang gamot',
+  'All medicines': 'Lahat ng gamot',
+  'per unit': 'bawat piraso',
+  'No match. DOH lists medicines by generic name (e.g. “paracetamol”, not a brand).':
+    'Walang tugma. Generic name ang gamit ng DOH (hal. “paracetamol”, hindi brand).',
+  'Showing {n} of {total}; type more to narrow it down.': 'Ipinapakita ang {n} sa {total}; mag-type pa para paliitin.',
+  'Reference price': 'Reference price',
+  'the median (and lowest–highest) price government hospitals paid per unit, from DOH’s Drug Price Reference Index':
+    'ang median (at pinakamababa–pinakamataas) na presyong binayaran ng mga ospital ng gobyerno bawat piraso, mula sa Drug Price Reference Index ng DOH',
+  'Drugstores usually charge more, but a price far above the highest is worth questioning.':
+    'Kadalasang mas mahal sa botika, pero dapat itanong kung lampas na lampas sa pinakamataas.',
+  'Legal max (MRP)': 'Legal max (MRP)',
+  'the most a drugstore may charge for a price-regulated medicine': 'ang pinakamataas na puwedeng singilin ng botika para sa gamot na may price regulation',
+  'DOH list of {date}': 'listahan ng DOH noong {date}',
+  'Generic name only; brands may differ.': 'Generic name lang; puwedeng iba ang brand.',
+  'vs last list': 'kumpara sa nakaraang listahan',
+  'Legal max': 'Legal max',
+
   // Location picker
   'Use my location': 'Gamitin ang lokasyon ko',
   'You can search for your city instead.': 'Puwede mong hanapin na lang ang lungsod mo.',

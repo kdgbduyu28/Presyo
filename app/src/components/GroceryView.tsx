@@ -5,6 +5,7 @@ import { useJson } from '../lib/data';
 import { useSlashToFocus } from '../lib/hotkey';
 import { fold } from '../lib/places';
 import { peso, periodLabel } from '../lib/format';
+import { t } from '../i18n';
 import { C, R, themed } from '../theme';
 import { Card, Loading, Notice, SectionTitle } from './bits';
 
@@ -33,22 +34,21 @@ export function GroceryView() {
   }, [data, q]);
 
   if (loading) return <Loading />;
-  if (error || !data) return <Notice tone="warn">Couldn't load grocery prices ({error}).</Notice>;
+  if (error || !data) return <Notice tone="warn">{t("Couldn't load grocery prices ({error}).", { error: error ?? '' })}</Notice>;
   return (
     <View>
       <Notice>
-        DTI's suggested retail prices (SRP) for basic goods, nationwide, effective {periodLabel(data.effective)}{' '}
-        {data.effective.slice(0, 4)}. Stores shouldn't charge more. Report overpricing to the DTI hotline 1-384.
+        {t("DTI's suggested retail prices (SRP) for basic goods, nationwide, effective {date} {year}. Stores shouldn't charge more. Report overpricing to the DTI hotline 1-384.", { date: periodLabel(data.effective), year: data.effective.slice(0, 4) })}
       </Notice>
       <TextInput
         ref={input}
         value={q}
         onChangeText={setQ}
-        placeholder="Search: sardinas, kape, pandesal, sabon…"
+        placeholder={t('Search: sardinas, kape, pandesal, sabon…')}
         placeholderTextColor={C.faint}
         style={s.search}
         autoCorrect={false}
-        accessibilityLabel="Search grocery items"
+        accessibilityLabel={t('Search grocery items')}
       />
       {sections.map((sec) => (
         <View key={sec.name}>
@@ -66,8 +66,8 @@ export function GroceryView() {
           </Card>
         </View>
       ))}
-      {!sections.length ? <Notice>No item matches “{q}”.</Notice> : null}
-      <Text style={s.source}>DTI Basic Necessities and Prime Commodities SRP bulletin.</Text>
+      {!sections.length ? <Notice>{t('No item matches “{q}”.', { q })}</Notice> : null}
+      <Text style={s.source}>{t('DTI Basic Necessities and Prime Commodities SRP bulletin.')}</Text>
     </View>
   );
 }
