@@ -18,6 +18,7 @@ type MeralcoFile = { months: { month: string; url: string; regular: BillPoint[];
 // Meralco's franchise also covers parts of Central Luzon and CALABARZON.
 export const MERALCO_REGIONS = new Set([NCR, '030000000', '040000000']);
 const TYPE_LABEL: Record<string, string> = { PIOU: 'Private utility', EC: 'Electric cooperative' };
+const typeLabel = (type?: string) => (type && TYPE_LABEL[type] ? t(TYPE_LABEL[type]) : type);
 
 /** Residential electricity rate of your distribution utility (DOE monthly). */
 export function PowerView({ place, places }: { place: Place; places: PlacesFile }) {
@@ -63,7 +64,7 @@ export function PowerView({ place, places }: { place: Place; places: PlacesFile 
           <SectionTitle>{t('Your utility')} · {periodLabel(file.periods[chosen.lastIdx])}</SectionTitle>
           <Card style={{ padding: 16 }}>
             <Text style={s.du}>{chosen.u.name ?? chosen.u.id}</Text>
-            <Text style={s.duType}>{TYPE_LABEL[chosen.u.type ?? ''] ? t(TYPE_LABEL[chosen.u.type ?? '']) : chosen.u.type}</Text>
+            <Text style={s.duType}>{typeLabel(chosen.u.type)}</Text>
             <View style={s.big}>
               <Text style={s.bigPrice}>{peso(chosen.last as number)}<Text style={s.bigUnit}>/kWh</Text></Text>
               <Delta last={chosen.last} prev={chosen.prev} />
@@ -101,7 +102,7 @@ export function PowerView({ place, places }: { place: Place; places: PlacesFile 
                 {u.id === chosenId ? '● ' : ''}{u.id}
               </Text>
               <Text style={s.rowSub} numberOfLines={1}>
-                {[u.name && u.name !== u.id ? u.name : null, TYPE_LABEL[u.type ?? ''] ? t(TYPE_LABEL[u.type ?? '']) : u.type,
+                {[u.name && u.name !== u.id ? u.name : null, typeLabel(u.type),
                   periodLabel(file.periods[lastIdx])].filter(Boolean).join(' · ')}
               </Text>
             </View>
