@@ -1,0 +1,6 @@
+{
+ "doc": {"source": "doe_lpg", "url": "https://d24qbtp4vooyzi.cloudfront.net/api/media/file/NORTH%20LUZON%20LPG%20PRICE%20MONITORING%20REPORT%20FOR%20THE%20MONTH%20OF%20NOVEMBER%202026.pdf", "filename": "NORTH LUZON LPG PRICE MONITORING REPORT FOR THE MONTH OF NOVEMBER 2026.pdf", "sha256": "9228181db288d23c9e37b9cb5ba2a68e88567901c6d412fc8a262a07c1db14f8", "period_start": "2026-11-01", "period_end": "2026-11-30", "status": "needs_ocr", "areas": 0, "parser_version": 1, "parsed_at": "2026-11-12T11:58:08Z", "rows": 0},
+ "rows": [
+
+ ]
+}
