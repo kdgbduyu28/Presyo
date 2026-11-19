@@ -1,0 +1,6 @@
+{
+ "doc": {"source": "doe_north_luzon", "url": "https://d24qbtp4vooyzi.cloudfront.net/api/media/file/North%20Luzon%20Liquid%20Fuels%20Price%20Monitoring%20Report%20for%2017-23%20November%202026.pdf", "filename": "North Luzon Liquid Fuels Price Monitoring Report for 17-23 November 2026.pdf", "sha256": "8bcb6e539d1c3bdcf7202cde93f24b59c3ae715b637e409c438fe50934628d4e", "period_start": "2026-11-17", "period_end": "2026-11-23", "status": "empty", "areas": 0, "parser_version": 1, "parsed_at": "2026-11-19T19:42:43Z", "rows": 0},
+ "rows": [
+
+ ]
+}
