@@ -1,5 +1,5 @@
 {
- "doc": {"source": "gadgets_istore", "url": "https://istore.ph", "status": "ok", "period_start": "2026-11-21", "period_end": "2026-11-21", "parser_version": 1, "parsed_at": "2026-11-20T19:26:55Z", "rows": 128},
+ "doc": {"source": "gadgets_istore", "url": "https://istore.ph", "status": "ok", "period_start": "2026-11-21", "period_end": "2026-11-21", "parser_version": 1, "parsed_at": "2026-11-21T11:54:43Z", "rows": 128},
  "rows": [
   {"item": "AirPods 3", "key": "airpods-3", "spec": "Standard", "brand": "istore", "cat": "audio", "unit": "pc", "price": 9490.0, "was": 10990.0, "stock": false, "url": "https://istore.ph/products/airpods-3rd-generation-with-lightning-charging-case?variant=41784680808501"},
   {"item": "AirPods 4 with ANC", "key": "airpods-4-with-anc", "spec": "Standard", "brand": "istore", "cat": "audio", "unit": "pc", "price": 9990.0, "was": 12990.0, "stock": false, "url": "https://istore.ph/products/airpods-4-with-active-noise-cancellation?variant=44113748262965"},
@@ -38,7 +38,7 @@
   {"item": "iPhone 18 Pro", "key": "iphone-18-pro", "spec": "256GB", "brand": "istore", "cat": "phones", "unit": "pc", "price": 94990.0, "was": 99990.0, "stock": true, "colors": ["Black", "Burgundy", "Glacier", "Silver"], "url": "https://istore.ph/products/iphone-18-pro?variant=67596021825589"},
   {"item": "iPhone 17 Pro Max", "key": "iphone-17-pro-max", "spec": "256GB", "brand": "istore", "cat": "phones", "unit": "pc", "price": 83990.0, "was": 91990.0, "stock": true, "colors": ["Cosmic Orange", "Deep Blue"], "url": "https://istore.ph/products/iphone-17-pro-max?variant=44712650506293"},
   {"item": "iPhone 17 Pro", "key": "iphone-17-pro", "spec": "256GB", "brand": "istore", "cat": "phones", "unit": "pc", "price": 76490.0, "was": 84990.0, "stock": true, "colors": ["Deep Blue"], "url": "https://istore.ph/products/iphone-17-pro?variant=44712636710965"},
-  {"item": "iPhone 17", "key": "iphone-17", "spec": "256GB", "brand": "istore", "cat": "phones", "unit": "pc", "price": 69990.0, "stock": true, "colors": ["Lavender", "Mist Blue", "Sage"], "url": "https://istore.ph/products/iphone-17?variant=44711853064245"},
+  {"item": "iPhone 17", "key": "iphone-17", "spec": "256GB", "brand": "istore", "cat": "phones", "unit": "pc", "price": 69990.0, "stock": true, "colors": ["Lavender", "Sage"], "url": "https://istore.ph/products/iphone-17?variant=44711853064245"},
   {"item": "iPhone 16", "key": "iphone-16", "spec": "128GB", "brand": "istore", "cat": "phones", "unit": "pc", "price": 60990.0, "stock": true, "colors": ["Pink"], "url": "https://istore.ph/products/iphone-16?variant=44041402712117"},
   {"item": "iPhone Air", "key": "iphone-air", "spec": "256GB", "brand": "istore", "cat": "phones", "unit": "pc", "price": 57990.0, "was": 77990.0, "stock": true, "colors": ["Sky Blue"], "url": "https://istore.ph/products/iphone-air?variant=44712744943669"},
   {"item": "iPhone 15", "key": "iphone-15", "spec": "256GB", "brand": "istore", "cat": "phones", "unit": "pc", "price": 56490.0, "was": 68990.0, "stock": false, "url": "https://istore.ph/products/iphone-15?variant=42628603215925"},
